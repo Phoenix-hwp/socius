@@ -20,7 +20,7 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | **最后更新** | 2026-05-01 |
 | **当前任务 ID** | `T06` |
 | **已完成** | T01–T05（T05：`notion_client.databases_query`；`routes/databases.py` 同路径 GET+POST `/notion/databases/{id}/query`；行投影含 §6.1 元数据；title 内存过滤占位；`scripts/probe_database_query.py` 手测通过） |
-| **阻塞/备注** | 下一步：T06「全部」模式——级联 JSON 内全部 database 多库 `query` → 合并 → `last_edited_time` 降序 → `id` 去重 → 内存分页（Spec §5.1）。**Git**：远程 `origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`；本轮收工后执行 `git push origin master` 同步 T05 提交。 |
+| **阻塞/备注** | 下一步：T06「全部」模式——级联 JSON 内全部 database 多库 `query` → 合并 → `last_edited_time` 降序 → `id` 去重 → 内存分页（Spec §5.1）。**Git**：`origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`；T05 已推送 `master`（提交 `7e5f5f0`）。 |
 
 > **约定**：任一对话结束前，可发 **`更新任务进度`**（别名 **`记进度`**、**`更进度`**）由 Agent 半自动回写本表；或手动编辑。若有未提交代码，在备注里写 **分支名 / 未合并说明**。
 
