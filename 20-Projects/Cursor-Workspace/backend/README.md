@@ -91,6 +91,7 @@ curl "http://127.0.0.1:8787/notion/databases/all/query?page=0&page_size=25"
 
 ## 后续任务衔接
 
-- T10+：前端列表（`databases/{id}/query` + `databases/all/query` + page 占位）、写入与日志等。
+- T10 已接入：前端按 `selection.mode` 调用三端点（`databases/all/query` / `databases/{id}/query` / `pages/{id}/list`），无新增/破坏后端接口。
+- T11+：写入（创建库内行 / 子页）、T12 更新页（覆盖 / 补充）、T13 行为偏好分支、T14 操作日志。
 
 详见 [`10-Topics/Cursor-Workspace-Notion-Plan-Tasks.md`](../../../10-Topics/Cursor-Workspace-Notion-Plan-Tasks.md)。

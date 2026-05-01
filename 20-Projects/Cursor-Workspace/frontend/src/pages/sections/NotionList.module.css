@@ -1,0 +1,86 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.titleInput {
+  flex: 1 1 16rem;
+  min-width: 12rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  background: var(--card-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.titleInput:focus-visible {
+  outline: none;
+  border-color: var(--active-bg);
+}
+
+.meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.banner {
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.35rem;
+  border: 1px dashed var(--border);
+  background: color-mix(in srgb, var(--active-bg) 8%, transparent);
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.banner[data-kind="error"] {
+  border-color: color-mix(in srgb, var(--err) 50%, var(--border));
+  background: color-mix(in srgb, var(--err) 10%, transparent);
+}
+
+.bannerKey {
+  display: inline-block;
+  min-width: 6rem;
+  color: var(--placeholder);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  margin-right: 0.4rem;
+}
+
+.pageHint {
+  padding: 0.6rem 0.7rem;
+  border: 1px dashed var(--border);
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.openInNotion {
+  align-self: flex-start;
+  font-size: 0.8rem;
+  color: var(--active-fg);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.3rem;
+}
+
+.openInNotion:hover {
+  border-color: var(--active-bg);
+  background: color-mix(in srgb, var(--active-bg) 18%, transparent);
+}

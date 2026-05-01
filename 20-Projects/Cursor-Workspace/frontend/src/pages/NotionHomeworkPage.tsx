@@ -7,6 +7,7 @@ import {
   CascaderOptionsPayload,
   CascaderSelection,
 } from "../types/cascader";
+import { NotionList } from "./sections/NotionList";
 import styles from "./NotionHomeworkPage.module.css";
 
 function shortId(id: string | undefined | null): string {
@@ -23,6 +24,23 @@ function describeNode(node: CascaderNode | null, mode: CascaderSelection["mode"]
     `notionObjectType=${node.notionObjectType}`,
     `id…${shortId(node.id)}`,
   ].join(" · ");
+}
+
+/** DFS：仅收集 notionObjectType==='database' 的节点，输出 `id → label` 映射。 */
+function buildDatabaseLabelByID(roots: CascaderNode[]): Record<string, string> {
+  const map: Record<string, string> = {};
+  function walk(nodes: CascaderNode[]) {
+    for (const n of nodes) {
+      if (n.notionObjectType === "database" && n.id) {
+        map[n.id] = n.label;
+      }
+      if (Array.isArray(n.children) && n.children.length > 0) {
+        walk(n.children);
+      }
+    }
+  }
+  walk(roots);
+  return map;
 }
 
 export function NotionHomeworkPage() {
@@ -78,6 +96,11 @@ export function NotionHomeworkPage() {
     [cascaderPayload],
   );
 
+  const databaseLabelByID = useMemo(
+    () => buildDatabaseLabelByID(options),
+    [options],
+  );
+
   const generatedAt = cascaderPayload?.generatedAt ?? "—";
   const rootCount = options.length;
   const selectionDesc = describeNode(selection.node, selection.mode);
@@ -86,8 +109,8 @@ export function NotionHomeworkPage() {
     <div className={styles.wrap}>
       <h1 className={styles.title}>Notion 作业</h1>
       <p className={styles.lead}>
-        MVP 壳（T09）：级联组件已接入 <code>/notion/cascader/options</code>。列表与行内操作将在{" "}
-        <strong>T10</strong> 接入。
+        MVP（T10）：列表已接入；行内 <strong>查看</strong> 直达 Notion，
+        <strong>更新</strong> 暂为占位（T12 接入写入分型）。
       </p>
 
       <section
@@ -133,6 +156,13 @@ export function NotionHomeworkPage() {
           </div>
         )}
       </section>
+
+      {cascaderPayload ? (
+        <section className={styles.card} aria-live="polite">
+          <h2 className={styles.cardTitle}>列表</h2>
+          <NotionList selection={selection} databaseLabelByID={databaseLabelByID} />
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -18,9 +18,9 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | 字段 | 内容 |
 |------|------|
 | **最后更新** | 2026-05-01 |
-| **当前任务 ID** | `T10` |
-| **已完成** | T01–T09（T09：后端 `GET /notion/cascader/options` 同源返回级联 JSON；前端 `types/cascader.ts` + `api/client.ts::fetchCascaderOptions`；新增列式 `components/Cascader.tsx`（含「全部」伪项、`disabled` 拦截、列展开-叶子选中）；`NotionHomeworkPage` 渲染级联与选中预览；`tsc -b` 与 `vite build` 通过；`backend/README.md` 增补端点说明） |
-| **阻塞/备注** | 下一步：**T10** — 列表页：行内查看/更新；按 `selection.mode` 切换 `databases/all/query` ↔ `databases/{id}/query` ↔ `pages/{id}/list`，每行带齐 §6.1 元数据（含 `parent.database_id`）。Node 安装包已下载到仓库根；**MSI 不进 git**（已加忽略规则）。**Git**：`origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`。当轮「更新进度」仅对齐表内状态，**无新增代码交付**；此前后台 uvicorn 退出码为**手动结束进程**所致，非服务崩溃。 |
+| **当前任务 ID** | `T11` |
+| **已完成** | T01–T10（T10：前端 `types/notion.ts` + `api/client.ts` 三类 fetch；`components/RowsTable.tsx`（行内查看/更新）+ `components/Pager.tsx`（page/cursor 双模式）；`pages/sections/NotionList.tsx` 按 `selection.mode` 拉取并防抖标题过滤；`NotionHomeworkPage` DFS 构建 `databaseLabelByID` 并挂载 NotionList；`tsc -b` + `vite build` 通过；联通 3 端点 200，行 0 元数据含 `parent.database_id`） |
+| **阻塞/备注** | 下一步：**T11** — 新增页 + API 创建：database 选中 → `POST /pages` (`parent.database_id` + properties)；page 选中 → 子页（`parent.page_id` + blocks）。需要新增后端写入接口；前端按钮「手动提交」二次确认。**MSI 不进 git**（已加忽略规则）。**Git**：`origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`；**T10 列表页** 已随本轮提交推送至 **`origin/master`**（见修订记录）。 |
 
 > **约定**：任一对话结束前，可发 **`更新任务进度`**（别名 **`记进度`**、**`更进度`**）由 Agent 半自动回写本表；或手动编辑。若有未提交代码，在备注里写 **分支名 / 未合并说明**。
 
@@ -81,7 +81,7 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | T07 | [x] | T03 | API：级联选中 **page 型叶子** 的 MVP（列表占位或空列表 + 说明）；**禁止**把 database 容器当列表行 | 行为符合 Spec §5.1 / §6.1 |
 | T08 | [x] | T01 | 前端：Vite + React 壳；侧栏仅 **Notion 作业** 可点；其余模块占位 | 本地可启动；代理到本机 API（若已就绪） |
 | T09 | [x] | T08,T04 | 前端：级联组件读取 **同源 JSON**（开发态可由 API 提供静态文件或打包复制） | 选项与 `notion_cascader_options.json` 一致 |
-| T10 | [ ] | T08,T05,T06 | 前端：列表页；**无**全局「更新」；行内 **查看 / 更新**；**全部** 与 **单库** 切换 | 每行 state 带齐 §6.1 字段 |
+| T10 | [x] | T08,T05,T06 | 前端：列表页；**无**全局「更新」；行内 **查看 / 更新**；**全部** 与 **单库** 切换 | 每行 state 带齐 §6.1 字段 |
 | T11 | [ ] | T10 | 前端：新增页 + API **创建**（database → 新行；page → 子页，按 Spec §6.1） | 手动提交；失败可提示 |
 | T12 | [ ] | T10 | 前端：更新页 + **覆盖/补充**；API 与 `run_notion_workflow` 的 `replace` 语义对齐或文档说明差异 | 仅 `object===page` 可进正文覆盖/补充；拦截 database 容器 |
 | T13 | [ ] | T12 | **行为偏好页** `4c207a96-1fd6-42d0-8556-cf2e6f565721`：路由检测 + 二次确认文案 + Playbook 链接 | 符合 Spec §7 |
@@ -115,3 +115,5 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | 2026-05-01 | 接入「更新任务进度 / 记进度 / 更进度」半自动规则；进度表同步至 T01 待开始 |
 | 2026-05-01 | T09 完成：后端新增同源级联端点 + 前端列式级联组件与选中预览；`tsc -b` 与 `vite build` 通过；进度表推进至 T10 |
 | 2026-05-01 | 「更新进度 / 记进度」：确认 **当前任务 ID = T10**，**已完成 T01–T09**；任务表状态与上文一致 |
+| 2026-05-01 | T10 完成：前端列表（all/database/page 三模式）+ 行内查看/更新（更新为 T12 占位）+ 受控分页 + 标题过滤；`tsc -b` 与 `vite build` 通过；进度表推进至 T11 |
+| 2026-05-01 | 「更新任务进度」：确认 **当前任务 ID = T11**、**已完成 T01–T10**；**T10 代码已提交并推送 Gitee**（`origin/master`） |
