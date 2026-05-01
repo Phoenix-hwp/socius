@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import load_env_into_process
-from .routes import health, notion
+from .routes import databases, health, notion
 
 load_env_into_process()
 
@@ -32,6 +32,7 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(notion.router)
+app.include_router(databases.router)
 
 
 @app.get("/", include_in_schema=False)

@@ -18,9 +18,9 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | 字段 | 内容 |
 |------|------|
 | **最后更新** | 2026-05-01 |
-| **当前任务 ID** | `T05` |
-| **已完成** | T01–T04（T01–T03 见上轮；T04：`app/cascader.py` 递归收集 `notionObjectType === "database"` + `scripts/list_database_ids.py` 手测 5 条 id，对齐 Spec §5.1） |
-| **阻塞/备注** | 下一步：T05 单库 `databases/query`（分页 + 标题过滤占位；行含 `id`/`object`/`last_edited_time`/`parent.database_id`）。**Git**：工作区根已 `git init`，首提交 `382a02c`（`master`），暂仅纳入 `.gitignore`、`20-Projects/Cursor-Workspace/`、`Cursor-Workspace-Notion-Plan-Tasks.md`；其余目录仍为 untracked。本机曾设 `safe.directory G:/Cursor_Knowledge`；提交身份为仓库内占位 `user.name=lanbi` / `user.email=lanbi@localhost`，请按需改为真实邮箱后 `git commit --amend --reset-author`。远程：`git remote add origin <url>` 后 `git push`。 |
+| **当前任务 ID** | `T06` |
+| **已完成** | T01–T05（T05：`notion_client.databases_query`；`routes/databases.py` 同路径 GET+POST `/notion/databases/{id}/query`；行投影含 §6.1 元数据；title 内存过滤占位；`scripts/probe_database_query.py` 手测通过） |
+| **阻塞/备注** | 下一步：T06「全部」模式——级联 JSON 内全部 database 多库 `query` → 合并 → `last_edited_time` 降序 → `id` 去重 → 内存分页（Spec §5.1）。**Git**：远程 `origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`；本轮收工后执行 `git push origin master` 同步 T05 提交。 |
 
 > **约定**：任一对话结束前，可发 **`更新任务进度`**（别名 **`记进度`**、**`更进度`**）由 Agent 半自动回写本表；或手动编辑。若有未提交代码，在备注里写 **分支名 / 未合并说明**。
 
@@ -76,7 +76,7 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | T02 | [x] | T01 | 定栈：本机 API 用 **Python（FastAPI）或 Node（Express/Fastify）**（二选一写入 README，后续任务按选型叙述） | README 写明运行时与 `NOTION_TOKEN` 读取路径（`.cursor/mcp/notion.env`） |
 | T03 | [x] | T02 | 本机 API：`GET /health`；读取 env；可选 `GET /notion/me` 或等价校验 Token | 无 Token 时明确错误信息；Token 仅服务端 |
 | T04 | [x] | T03 | 解析 `notion_cascader_options.json`；实现 **递归收集所有 database id**（与 Spec §5.1 一致） | 单元测试或脚本可对 JSON 样例输出 id 列表 |
-| T05 | [ ] | T03 | API：`POST/GET` 单库 `databases/query`（分页 + 标题过滤占位）；返回行含 **`id`、`object`、`last_edited_time`、`parent.database_id`** | 响应形状符合 §6.1 元数据要求 |
+| T05 | [x] | T03 | API：`POST/GET` 单库 `databases/query`（分页 + 标题过滤占位）；返回行含 **`id`、`object`、`last_edited_time`、`parent.database_id`** | 响应形状符合 §6.1 元数据要求 |
 | T06 | [ ] | T04,T05 | API：**「全部」模式** 多库 query → 合并 → `last_edited_time` 降序 → `id` 去重 → 分页 | 与 Spec §5.1 一致；文档写明单页条数/上限 |
 | T07 | [ ] | T03 | API：级联选中 **page 型叶子** 的 MVP（列表占位或空列表 + 说明）；**禁止**把 database 容器当列表行 | 行为符合 Spec §5.1 / §6.1 |
 | T08 | [ ] | T01 | 前端：Vite + React 壳；侧栏仅 **Notion 作业** 可点；其余模块占位 | 本地可启动；代理到本机 API（若已就绪） |

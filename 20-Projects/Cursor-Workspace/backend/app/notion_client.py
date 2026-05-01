@@ -1,7 +1,8 @@
 """Minimal async Notion HTTP client used by the local FastAPI backend.
 
-仅承担 T03 范围：调用 `users/me` 校验 Token；后续 T05+ 再在此处扩展
-`databases/{id}` / `databases/{id}/query` / `pages` 等端点。
+承担 T03/T05 范围：
+- `users/me` 校验 Token（T03）
+- `databases/{id}/query` 单库分页查询（T05）
 """
 from __future__ import annotations
 
@@ -62,3 +63,28 @@ class NotionClient:
     async def me(self) -> dict[str, Any]:
         """`GET /users/me` — Notion 集成 / 工作区身份。"""
         return await self._request("GET", "users/me")
+
+    async def databases_query(
+        self,
+        database_id: str,
+        *,
+        page_size: int | None = None,
+        start_cursor: str | None = None,
+        filter_: dict[str, Any] | None = None,
+        sorts: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        """`POST /databases/{id}/query` — 单库分页查询。
+
+        body 仅在字段非空/有意义时透传，避免发送 Notion 不期望的 null。
+        默认排序由调用方决定（route 层会注入 `last_edited_time` 降序）。
+        """
+        body: dict[str, Any] = {}
+        if page_size is not None:
+            body["page_size"] = page_size
+        if start_cursor:
+            body["start_cursor"] = start_cursor
+        if filter_:
+            body["filter"] = filter_
+        if sorts:
+            body["sorts"] = sorts
+        return await self._request("POST", f"databases/{database_id}/query", json_body=body)
