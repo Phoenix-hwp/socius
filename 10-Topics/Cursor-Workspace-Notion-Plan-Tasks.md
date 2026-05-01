@@ -20,7 +20,7 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | **最后更新** | 2026-05-01 |
 | **当前任务 ID** | `T05` |
 | **已完成** | T01–T04（T01–T03 见上轮；T04：`app/cascader.py` 递归收集 `notionObjectType === "database"` + `scripts/list_database_ids.py` 手测 5 条 id，对齐 Spec §5.1） |
-| **阻塞/备注** | 下一步：T05 单库 `databases/query`（分页 + 标题过滤占位；行含 `id`/`object`/`last_edited_time`/`parent.database_id`）。**Git**：若本机已 `git init` 并提交，工作区根为仓库、默认分支见 `git branch`；远程需用户自行 `git remote add` 后 `git push`。 |
+| **阻塞/备注** | 下一步：T05 单库 `databases/query`（分页 + 标题过滤占位；行含 `id`/`object`/`last_edited_time`/`parent.database_id`）。**Git**：工作区根已 `git init`，首提交 `382a02c`（`master`），暂仅纳入 `.gitignore`、`20-Projects/Cursor-Workspace/`、`Cursor-Workspace-Notion-Plan-Tasks.md`；其余目录仍为 untracked。本机曾设 `safe.directory G:/Cursor_Knowledge`；提交身份为仓库内占位 `user.name=lanbi` / `user.email=lanbi@localhost`，请按需改为真实邮箱后 `git commit --amend --reset-author`。远程：`git remote add origin <url>` 后 `git push`。 |
 
 > **约定**：任一对话结束前，可发 **`更新任务进度`**（别名 **`记进度`**、**`更进度`**）由 Agent 半自动回写本表；或手动编辑。若有未提交代码，在备注里写 **分支名 / 未合并说明**。
 
