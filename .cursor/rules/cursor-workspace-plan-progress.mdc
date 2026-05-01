@@ -1,0 +1,34 @@
+---
+description: 收到「更新任务进度」时半自动回写 Cursor 工作间 Notion 作业 Plan 进度表
+alwaysApply: false
+---
+
+# Cursor 工作间 · 更新任务进度（半自动）
+
+## 触发指令
+
+- **完整指令**：`更新任务进度`
+- **别名**：`记进度`、`更进度`（2–4 字，合规）
+
+## 执行流程
+
+1. **Read** [`10-Topics/Cursor-Workspace-Notion-Plan-Tasks.md`](10-Topics/Cursor-Workspace-Notion-Plan-Tasks.md)。
+2. 根据 **本轮对话** 与 **用户本条消息** 推断进度；若用户写明了任务 ID（如「完成 T01–T03，下步 T04」），**以用户明示为准**。
+3. 若无法可靠推断 **当前任务 ID** 或 **已完成区间**：**最多追问 1–2 个短问题**（例如「下一步从哪个任务 ID 开始？」「本轮完成了哪些 ID？」），再落盘。
+4. **写回** 文内 **「当前进度」** 表四项：
+   - **最后更新**：当日日期（YYYY-MM-DD）
+   - **当前任务 ID**：下一步要执行的任务（如 `T04`）
+   - **已完成**：已勾选或已完成的 ID 区间（如 `T01–T03`；无则写「无」）
+   - **阻塞/备注**：未合并分支、环境阻塞、或「下一步一句话」（**推荐**填写，利于新对话续跑）
+5. 同步将 **§ 任务列表** 中对应条目的 **状态** 列更新为 `[x]`（已完成）或 `[~]`（进行中），与上表一致。
+6. **同步续跑模板**：**Read + 写回** [`10-Topics/Cursor-Workspace-MVP-Continue-Prompt.md`](10-Topics/Cursor-Workspace-MVP-Continue-Prompt.md)：
+   - **标准粘贴块**（ fenced `text` 代码块内）：刷新三处与 Plan **逐字一致** — `从任务 **Txx** 开始执行`、`上一段已完成 **Tyy…**`、`下步要点` 段落（摘自或概括 **阻塞/备注**，勿与 **当前任务 ID** / **已完成** 矛盾）。
+   - **同步元数据**表：四项（**最后更新**、**当前任务 ID**、**已完成**、**阻塞/备注**）与 Plan「当前进度」表 **逐字一致**；**已完成** 可写摘要「摘要见 Plan 原文」但 **当前任务 ID** 必须一致。
+   - 更新该文件 frontmatter **`updated`** 为当日 `YYYY-MM-DD`；必要时在文内 **修订记录** 追加一行（一句话）。
+7. 向用户 **简短回执**：已更新 Plan 哪些字段；**已同步** `Cursor-Workspace-MVP-Continue-Prompt.md`；点明下一会话可发 **`继续MVP项目`** 或粘贴标准块。
+
+## 约束
+
+- **不**删除或重写任务定义（ID、依赖、DoD）；仅更新 **状态** 与 **当前进度** 表。
+- **不**删除 `Cursor-Workspace-MVP-Continue-Prompt.md` 中「标准粘贴块」结构（ fenced 代码块与三段阅读清单）；仅更新块内可变文案与同步表。
+- 与 **[Cursor-Workspace-Notion-Execution-Spec.md](10-Topics/Cursor-Workspace-Notion-Execution-Spec.md)** 冲突时，以 **用户当轮明确指令** 为准。

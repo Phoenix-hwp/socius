@@ -1,0 +1,27 @@
+---
+description: 触发「继续MVP项目」时按固定顺序加载规格与进度并续跑 Cursor 工作间 Notion 作业 MVP
+alwaysApply: false
+---
+
+# Cursor 工作间 · Notion 作业 MVP — 继续执行
+
+## 触发指令
+
+- **完整指令**：`继续MVP项目`
+- **别名**：`续MVP`、`续跑MVP`（2–4 字/词，合规）
+
+## 强制流程
+
+1. **Read**（顺序固定，不得跳过）：
+   1. [`10-Topics/Cursor-Workspace-Notion-Execution-Spec.md`](10-Topics/Cursor-Workspace-Notion-Execution-Spec.md)
+   2. [`10-Topics/Cursor-Workspace-Notion-Plan-Tasks.md`](10-Topics/Cursor-Workspace-Notion-Plan-Tasks.md) — 以 **「当前进度」** 表为权威续跑锚点
+   3. [`10-Topics/Cursor-Workspace-MVP-Continue-Prompt.md`](10-Topics/Cursor-Workspace-MVP-Continue-Prompt.md) — 对照 **标准粘贴块** 与 **同步元数据**（应与 Plan 一致；若冲突以 Plan 为准并提示用户刷新模板）
+   4. 模块入口：[`20-Projects/Cursor-Workspace/backend/README.md`](20-Projects/Cursor-Workspace/backend/README.md)、[`20-Projects/Cursor-Workspace/frontend/README.md`](20-Projects/Cursor-Workspace/frontend/README.md)
+2. 从 Plan 表 **当前任务 ID** 起执行实现或排障；**已完成** 区间不得重复劳动。
+3. 冲突处理：**Execution-Spec** 与用户 **当轮明确指令** 优先于模板话术。
+4. 收工或里程碑达成时，提醒用户可发 **`更新任务进度`**（**`记进度`**、**`更进度`**）以回写 Plan **并同步** [`Cursor-Workspace-MVP-Continue-Prompt.md`](10-Topics/Cursor-Workspace-MVP-Continue-Prompt.md)。
+
+## 约束
+
+- Notion 相关 **首条网络操作** 仍遵守工作区「Notion 首条操作前置网络确认」规则（若当轮尚未获 Y，则仅离线准备参数/计划）。
+- **不**在「继续执行」流程中删除 Plan 任务定义行；仅消费进度与 DoD。

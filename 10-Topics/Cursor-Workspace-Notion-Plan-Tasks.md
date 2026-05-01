@@ -22,7 +22,7 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | **已完成** | T01–T10（T10：前端 `types/notion.ts` + `api/client.ts` 三类 fetch；`components/RowsTable.tsx`（行内查看/更新）+ `components/Pager.tsx`（page/cursor 双模式）；`pages/sections/NotionList.tsx` 按 `selection.mode` 拉取并防抖标题过滤；`NotionHomeworkPage` DFS 构建 `databaseLabelByID` 并挂载 NotionList；`tsc -b` + `vite build` 通过；联通 3 端点 200，行 0 元数据含 `parent.database_id`） |
 | **阻塞/备注** | 下一步：**T11** — 新增页 + API 创建：database 选中 → `POST /pages` (`parent.database_id` + properties)；page 选中 → 子页（`parent.page_id` + blocks）。需要新增后端写入接口；前端按钮「手动提交」二次确认。**MSI 不进 git**（已加忽略规则）。**Git**：`origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`；**T10 列表页** 已随本轮提交推送至 **`origin/master`**（见修订记录）。 |
 
-> **约定**：任一对话结束前，可发 **`更新任务进度`**（别名 **`记进度`**、**`更进度`**）由 Agent 半自动回写本表；或手动编辑。若有未提交代码，在备注里写 **分支名 / 未合并说明**。
+> **约定**：任一对话结束前，可发 **`更新任务进度`**（别名 **`记进度`**、**`更进度`**）由 Agent 半自动回写本表，并 **同步** [`Cursor-Workspace-MVP-Continue-Prompt.md`](./Cursor-Workspace-MVP-Continue-Prompt.md)（标准粘贴块 + 同步元数据）；新会话续跑可发 **`继续MVP项目`**（见 `.cursor/rules/cursor-workspace-mvp-continue.mdc`）。若有未提交代码，在备注里写 **分支名 / 未合并说明**。
 
 ---
 
@@ -60,7 +60,8 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 ### 5. 半自动更新进度
 
 - 触发：**`更新任务进度`**（**`记进度`**、**`更进度`**）。  
-- 规则：`.cursor/rules/cursor-workspace-plan-progress.mdc`；别名登记：`10-Topics/Cursor-command-aliases.md`。
+- 规则：`.cursor/rules/cursor-workspace-plan-progress.mdc`（含 **同步** `Cursor-Workspace-MVP-Continue-Prompt.md`）；别名登记：`10-Topics/Cursor-command-aliases.md`。
+- 续跑触发：**`继续MVP项目`**（别名 **`续MVP`**、**`续跑MVP`**）：`.cursor/rules/cursor-workspace-mvp-continue.mdc`。
 
 ---
 
@@ -117,3 +118,4 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | 2026-05-01 | 「更新进度 / 记进度」：确认 **当前任务 ID = T10**，**已完成 T01–T09**；任务表状态与上文一致 |
 | 2026-05-01 | T10 完成：前端列表（all/database/page 三模式）+ 行内查看/更新（更新为 T12 占位）+ 受控分页 + 标题过滤；`tsc -b` 与 `vite build` 通过；进度表推进至 T11 |
 | 2026-05-01 | 「更新任务进度」：确认 **当前任务 ID = T11**、**已完成 T01–T10**；**T10 代码已提交并推送 Gitee**（`origin/master`） |
+| 2026-05-01 | 新增续跑标准话术 `Cursor-Workspace-MVP-Continue-Prompt.md`；指令 **继续MVP项目**（别名续MVP、续跑MVP）；「更新任务进度」流程增加同步该模板 |
