@@ -20,6 +20,16 @@ TokenSource = Literal["env", ".cursor/mcp/notion.env", "missing"]
 _token_source: TokenSource | None = None
 
 
+# 相对 vault 根：Cursor-Workspace 前端构建产物（`npm run build`）
+_FRONTEND_DIST_PARTS = ("20-Projects", "Cursor-Workspace", "frontend", "dist")
+
+
+@lru_cache(maxsize=1)
+def find_frontend_dist_dir() -> Path:
+    """前端 SPA 静态目录；存在且非空时由 FastAPI 挂载为默认站点（与 API 同源）。"""
+    return find_repo_root().joinpath(*_FRONTEND_DIST_PARTS)
+
+
 @lru_cache(maxsize=1)
 def find_repo_root() -> Path:
     """从本文件向上查找包含 `.cursor/mcp/` 的目录，作为仓库根。

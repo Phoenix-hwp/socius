@@ -4,11 +4,13 @@
 **递归**收集所有 `notionObjectType === "database"` 的节点。
 
 使用方：T05 单库 query 与 T06「全部」聚合，将基于本模块返回的列表逐个调用
-Notion `databases/query`。本模块**不**调用 Notion API。
+Notion `databases/query`；T07 使用 `canonical_notion_id` / `find_cascader_node_hit`
+解析级联中的 page/database 分型。本模块**不**调用 Notion API。
 """
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -17,6 +19,12 @@ from .config import find_repo_root
 
 CASCADER_RELATIVE = Path(".cursor/mcp/notion_cascader_options.json")
 DATABASE_OBJECT_TYPE = "database"
+PAGE_OBJECT_TYPE = "page"
+
+_NOTION_HEX_RE = re.compile(r"^[0-9a-fA-F]{32}$")
+_NOTION_HYPHENATED_RE = re.compile(
+    r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+)
 
 
 class CascaderFileNotFoundError(FileNotFoundError):
@@ -45,6 +53,71 @@ class DatabaseNode:
 def find_cascader_json_path() -> Path:
     """定位 `.cursor/mcp/notion_cascader_options.json`（基于仓库根）。"""
     return find_repo_root() / CASCADER_RELATIVE
+
+
+def canonical_notion_id(raw: str) -> str | None:
+    """将 Notion id 规范为带连字符小写 UUID；非法则返回 None。"""
+    s = raw.strip()
+    if _NOTION_HYPHENATED_RE.match(s):
+        return s.lower()
+    if _NOTION_HEX_RE.match(s):
+        h = s.lower()
+        return f"{h[0:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:32]}"
+    return None
+
+
+@dataclass(frozen=True)
+class CascaderNodeHit:
+    """级联树中按 id 命中节点及其目录上下文（供 T07 page 列表与后续 UI）。"""
+
+    node: dict[str, Any]
+    root_label: str
+    path_labels: tuple[str, ...]
+
+
+def find_cascader_node_hit(
+    raw_id: str,
+    options: dict[str, Any] | None = None,
+    *,
+    path: Path | None = None,
+) -> CascaderNodeHit | None:
+    """在级联树中 DFS 查找 `id` 与 `raw_id` 匹配的节点（UUID 比较经 canonical）。"""
+    want = canonical_notion_id(raw_id)
+    if not want:
+        return None
+    if options is None:
+        options = load_cascader_options(path)
+    roots = options.get("options") or []
+    if not isinstance(roots, list):
+        return None
+
+    def search(n: Any, root_label: str, ancestors: tuple[str, ...]) -> CascaderNodeHit | None:
+        if not isinstance(n, dict):
+            return None
+        nid = n.get("id")
+        if isinstance(nid, str):
+            c = canonical_notion_id(nid)
+            if c == want:
+                return CascaderNodeHit(node=n, root_label=root_label, path_labels=ancestors)
+        children = n.get("children") or []
+        if not isinstance(children, list):
+            return None
+        label = n.get("label") or ""
+        next_ancestors = ancestors + (label,) if label else ancestors
+        for ch in children:
+            hit = search(ch, root_label, next_ancestors)
+            if hit is not None:
+                return hit
+        return None
+
+    for root in roots:
+        if not isinstance(root, dict):
+            continue
+        root_label = root.get("label") or ""
+        hit = search(root, root_label, ())
+        if hit is not None:
+            return hit
+    return None
 
 
 def load_cascader_options(path: Path | None = None) -> dict[str, Any]:

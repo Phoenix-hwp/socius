@@ -1,0 +1,148 @@
+.wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 12rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  border-color: var(--active-bg);
+  outline: none;
+}
+
+.trigger[data-open="true"] {
+  border-color: var(--active-bg);
+}
+
+.triggerLabel {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.caret {
+  color: var(--muted);
+  font-size: 0.7rem;
+  transition: transform 120ms ease-out;
+}
+
+.trigger[data-open="true"] .caret {
+  transform: rotate(180deg);
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  z-index: 50;
+  display: flex;
+  max-height: 22rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--card-bg);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.column {
+  width: 13rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 0.25rem 0;
+}
+
+.column:last-child {
+  border-right: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.7rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:hover:not([disabled]) {
+  background: var(--hover);
+}
+
+.option[data-active="true"] {
+  background: var(--hover);
+  color: var(--active-fg);
+}
+
+.option[disabled] {
+  cursor: not-allowed;
+  color: var(--placeholder);
+}
+
+.optionLabel {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.typeBadge {
+  flex-shrink: 0;
+  padding: 0.05rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+}
+
+.typeBadge[data-kind="database"] {
+  color: color-mix(in srgb, var(--ok) 75%, var(--text));
+  background: color-mix(in srgb, var(--ok) 14%, transparent);
+}
+
+.typeBadge[data-kind="page"] {
+  color: color-mix(in srgb, var(--active-bg) 75%, var(--text));
+  background: color-mix(in srgb, var(--active-bg) 14%, transparent);
+}
+
+.chevron {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.allRow {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.empty {
+  padding: 0.6rem 0.7rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
