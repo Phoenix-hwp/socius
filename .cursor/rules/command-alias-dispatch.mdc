@@ -39,6 +39,8 @@ alwaysApply: true
   - Read `.cursor/rules/pre-edit-script-change-brief.mdc`，在本轮修改脚本/自动化入口时严格执行「落盘前先简述预期」
 - `提交git` / `Git同步` / `推仓库` / `提交远端`：
   - Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，遵循 `.cursor/rules/git-workspace-commit.mdc`，在工作区根协助 Git 提交与推送
+- `Notion操作流程` / `Notion增删改查`：
+  - Read `.cursor/rules/notion-unified-crud-workflow.mdc`；创建细节再配合 `.cursor/rules/notion-write-workflow-confirmation.mdc`
 
 ## 失败兜底
 

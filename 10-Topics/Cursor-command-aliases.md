@@ -2,7 +2,7 @@
 title: Cursor 指令别名清单
 type: cursor-command-aliases
 created: 2026-04-21
-updated: 2026-05-03
+updated: 2026-05-02
 tags:
   - cursor
   - aliases
@@ -39,8 +39,9 @@ tags:
 | 图书馆优化 | 优化图书馆、库优化 | 追加知识结构优化建议并进入待处理队列 | `.cursor/rules/earth-library-commands.mdc` |
 | 更新图书馆标签 | 更新标签、标签维护 | 维护 Earth Library 标签词典并长期迭代更新 | `.cursor/rules/earth-library-commands.mdc` |
 | deepseek-pro4配置 | 代理配置备忘、换机代理步骤、pro4配置 | 读取 DeepSeek Cursor 中间件（deepseek-cursor-proxy）换机与日常使用备忘；基于文档作答，默认不回写 | `10-Topics/TMP_DeepSeek-Cursor-Proxy-运行步骤.md`（规则：`.cursor/rules/deepseek-pro4-proxy-setup.mdc`） |
-| Notion写入流程 | 写入流程、落点确认 | 读取并遵循 **固定六步**：**Y** → **目录编号** → **标题 1/2** → **标题落地** → **正文预览** → 用户 **`确认写入`** 后执行；禁止代码式一行拼接 | `.cursor/rules/notion-write-workflow-confirmation.mdc` |
-| Notion写入菜单 | Notion菜单写入 | **默认**：对话内六步（见 `notion-write-workflow-confirmation.mdc`）。**可选**：本机 `.cursor/mcp/notion_write_menu.cmd` 或 `.cursor/tools/notion_gui_menu.ps1` | `.cursor/rules/notion-write-workflow-confirmation.mdc` |
+| Notion操作流程 | Notion增删改查 | **统一**：**Y** → **目录编号** → **增/删/改/查**；**改**须 **`1` 清空重写 / `2` 局部合并** → 预览 → **`确认更新`**；**优先 MCP**，脚本兜底注明原因；全局检索或已知 URL 可跳过目录 | `.cursor/rules/notion-unified-crud-workflow.mdc` |
+| Notion写入流程 | 写入流程、落点确认 | **增（创建）** 仍走固定六步：**Y** → **目录** → **标题 1/2** → **标题落地** → **正文预览** → **`确认写入`**；骨架见统一 CRUD 规则 | `.cursor/rules/notion-write-workflow-confirmation.mdc`（总览：`notion-unified-crud-workflow.mdc`） |
+| Notion写入菜单 | Notion菜单写入 | **可选本机**：`.cursor/mcp/notion_write_menu.cmd`（**CRUD 向导**）或 `.cursor/tools/notion_gui_menu.ps1`；对话内仍以统一 CRUD 规则为准 | `.cursor/rules/notion-unified-crud-workflow.mdc` |
 | （会话约定）脚本改动先说明 | 改动预告、预期先行 | **非口令菜单**：Agent 在实质性修改脚本/自动化入口并落盘前，须先简述改后行为与验收；降低预期偏差导致的反复修改。全文见规则文件 | `.cursor/rules/pre-edit-script-change-brief.mdc` |
 
 ## 2. 维护约定

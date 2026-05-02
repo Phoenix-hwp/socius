@@ -2,7 +2,7 @@
 title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 created: 2026-04-18
-updated: 2026-05-03
+updated: 2026-05-02
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
@@ -239,6 +239,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-04-25 | 增补 Notion 入口切换阈值：写入 >=5 条或跨 >=2 数据源、或需 dry-run/审计时切脚本；其余场景插件优先 |
 | 2026-04-25 | 增补 Notion 首条指令前置确认：每个对话首个 Notion 操作前先问是否开启网络环境；Y 执行，N 不执行 |
 | 2026-05-02 | Notion 写入六步流程规则化；澄清 Notion 仍以对话为主并恢复 GUI 钩子 | 更新 `notion-write-workflow-confirmation`、`script-option-ids`、别名与帮助索引；恢复 `notion_gui_menu.ps1` 与 `notion_gui_popup`；§3「工具与环境」明确 Git 与 Notion 写入相互独立 | 已写入 §6 / §3 |
+| 2026-05-02 | Notion「改」分支：`1`/`2` 更新策略、执行通道 MCP 优先；统一入口 §4.2.2 与索引同步 | 落盘 `notion-unified-crud-workflow.mdc`、`Notion-统一入口规范.md`、`Cursor-command-aliases.md`、`Command-Help-Index.md`、`NOTION_WORKFLOW_README.md` | 本次收束记入 §6 |
 
 ## 6. 会话契合度分析日志（追加写入，勿删历史）
 
@@ -272,5 +273,6 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-04-30 | Notion 脚本性能优化、一级/二级结构拉取、级联枚举文件生成与两项一级节点补充；结束对话 | 连续完成 `run_notion_workflow.py` 提速改造（重试策略收敛、replace 并行归档、read 类型提示）；按用户指定读取多个一级页的二级页面/数据库；生成供 Cascader 使用的 `notion_cascader_options.json`，并对 `page/database` 做类型区分，新增 `悦读笔记/参考文摘` 仅一级节点 | 高 | Notion 结构依赖实时内容，若上游页面调整需定期刷新枚举；`悦读笔记/参考文摘` 当前按一级直挂，后续若要二级需单独扩展拉取策略 | 可选：§3 增补“级联来源文件优先 ID 直达，标题检索仅兜底”执行偏好 | 已采纳（本次写入） |
 | 2026-05-02 | Notion 写入交互收敛；结束对话 | 固定对话内六步（网络→编号目录→标题策略→标题落地→正文预览→**确认写入**→API）；禁止代码式一行拼接；实测任务筐写入与厦门天气摘要；恢复 `notion_gui_menu.ps1`/钩子；精简 `notion_write_menu.cmd`、删示例 json 等；§3 明确 Git 与 Notion 写入相互独立 | 高 | §1–§2 仍为占位 | 无 | 已采纳 |
 | 2026-05-02 | 会话收束：对齐 §5 迭代说明与 §6「采纳」列 | 用户再次触发「结束对话」；将 §5 当日迭代注明 §3 增补；§6 同日行「建议微调」改为已完成 §3、「采纳」改为已采纳 | 高 | 无新增偏差 | 无 | 已写入 §5 / §6 |
+| 2026-05-02 | Notion 统一流程：「改」双策略（清空重写/局部合并）、MCP 优先与脚本兜底落盘；目录 JSON 条数核对；Shell 任务复盘；结束对话 | 扩展 `notion-unified-crud-workflow.mdc` 与 `Notion-统一入口规范` §4.2.2；同步别名与帮助索引、`NOTION_WORKFLOW_README`； Ask 模式对齐插件优先思路；Agent 模式执行 Write/StrReplace；用户「结束对话」收束 | 高 | §3 仍有一处「对话内六步」口径与统一 CRUD「改」分型并存，可按需改为互链说明 | 可选：§3 §6 一行改为「写入见创建六步；更新见统一规则改分支」 | 待定 |
 
 > 说明：每次收束 **新增一行**；档案正文的小幅优化写在 §5 并改对应章节。

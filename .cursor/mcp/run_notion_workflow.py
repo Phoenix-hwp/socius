@@ -5,6 +5,7 @@ Modes:
 - read: resolve URL/ID and read summary
 - create_page: create a page under parent and append markdown content
 - update_page: append or replace page content from markdown
+- archive_page: set archived=true on a page (Notion "delete" / trash)
 """
 from __future__ import annotations
 
@@ -193,6 +194,87 @@ def extract_title_from_page(page: dict[str, Any]) -> str:
     return ""
 
 
+def get_database_title_property_name(db: dict[str, Any]) -> str:
+    for prop_name, meta in (db.get("properties") or {}).items():
+        if isinstance(meta, dict) and meta.get("type") == "title":
+            return str(prop_name)
+    return ""
+
+
+def list_child_pages_under_page(client: NotionClient, page_id: str) -> list[dict[str, Any]]:
+    """Direct child_page blocks under a parent page."""
+    out: list[dict[str, Any]] = []
+    cursor = None
+    while True:
+        endpoint = f"blocks/{page_id}/children?page_size=100"
+        if cursor:
+            endpoint += f"&start_cursor={cursor}"
+        data = client.request("GET", endpoint)
+        for block in data.get("results", []):
+            if block.get("type") != "child_page":
+                continue
+            bid = block.get("id")
+            title = (block.get("child_page") or {}).get("title") or ""
+            if bid:
+                out.append({"id": str(bid), "title": str(title)})
+        if not data.get("has_more"):
+            break
+        cursor = data.get("next_cursor")
+        if not cursor:
+            break
+    return out
+
+
+def query_database_rows_title_contains(
+    client: NotionClient, database_id: str, title_prop: str, substring: str, page_size: int = 25
+) -> list[dict[str, Any]]:
+    body: dict[str, Any] = {
+        "filter": {"property": title_prop, "title": {"contains": substring}},
+        "page_size": min(max(1, page_size), 100),
+    }
+    data = client.request("POST", f"databases/{database_id}/query", body)
+    rows: list[dict[str, Any]] = []
+    for row in data.get("results", []):
+        rid = row.get("id")
+        if not rid:
+            continue
+        t = ""
+        for val in row.get("properties", {}).values():
+            if isinstance(val, dict) and val.get("type") == "title":
+                t = "".join(x.get("plain_text", "") for x in (val.get("title") or []))
+                break
+        rows.append({"id": str(rid), "title": t, "url": row.get("url", "")})
+    return rows
+
+
+def find_candidates_under_parent(client: NotionClient, parent: str, title_query: str) -> list[dict[str, Any]]:
+    """Match by title substring (case-insensitive) under a database (query) or page (child_page)."""
+    raw = (title_query or "").strip()
+    if not raw:
+        return []
+    parent_id = parse_notion_id(parent)
+    needle = raw.lower()
+
+    ok_db, db_or_err = client.try_get_database(parent_id)
+    if ok_db and isinstance(db_or_err, dict):
+        db = db_or_err
+        title_prop = get_database_title_property_name(db)
+        if not title_prop:
+            return []
+        return query_database_rows_title_contains(client, parent_id, title_prop, raw)
+
+    ok_page, _ = client.try_get_page(parent_id)
+    if not ok_page:
+        raise RuntimeError(f"Parent is neither a database nor a page: {parent_id}")
+
+    matched: list[dict[str, Any]] = []
+    for child in list_child_pages_under_page(client, parent_id):
+        title = child.get("title") or ""
+        if needle in title.lower():
+            matched.append({"id": child["id"], "title": title, "url": ""})
+    return matched
+
+
 def append_blocks(client: NotionClient, page_id: str, blocks: list[dict[str, Any]], batch_size: int = 50) -> None:
     for i in range(0, len(blocks), batch_size):
         chunk = blocks[i : i + batch_size]
@@ -216,6 +298,8 @@ def archive_all_top_blocks(client: NotionClient, page_id: str, workers: int = 6)
         if not data.get("has_more"):
             break
         cursor = data.get("next_cursor")
+        if not cursor:
+            break
     if not block_ids:
         return 0
 
@@ -321,6 +405,12 @@ def do_create_page(client: NotionClient, cfg: dict[str, Any], base_dir: Path) ->
     return {"ok": True, "page_id": page_id, "url": page.get("url", ""), "appended_blocks": len(blocks)}
 
 
+def do_archive_page(client: NotionClient, target: str) -> dict[str, Any]:
+    page_id = parse_notion_id(target)
+    client.request("PATCH", f"pages/{page_id}", {"archived": True})
+    return {"ok": True, "page_id": page_id, "archived": True}
+
+
 def do_update_page(client: NotionClient, cfg: dict[str, Any], base_dir: Path) -> dict[str, Any]:
     target = cfg.get("target")
     content_file = cfg.get("content_file")
@@ -408,6 +498,9 @@ def build_execution_plan(mode: str, cfg: dict[str, Any]) -> dict[str, Any]:
     if mode == "sync_topic":
         plan.update({"action": cfg.get("action", ""), "target": cfg.get("target", ""), "parent": cfg.get("parent", ""), "title": cfg.get("title", ""), "replace": bool(cfg.get("replace", False)), "content_file": cfg.get("content_file", "")})
         return plan
+    if mode == "archive_page":
+        plan.update({"target": cfg.get("target", "")})
+        return plan
     return plan
 
 
@@ -442,6 +535,21 @@ def main() -> int:
             if interactive and not cfg.get("target"):
                 cfg["target"] = prompt_text("Target Notion URL or ID")
             result = do_read(client, str(cfg.get("target", "")), str(cfg.get("target_type", "auto")))
+        elif mode == "archive_page":
+            if interactive and not cfg.get("target"):
+                cfg["target"] = prompt_text("Target page URL or ID to archive")
+            plan = build_execution_plan(mode, cfg)
+            if dry_run:
+                result = {"dry_run": True, "plan": plan}
+            else:
+                if interactive or confirm_execute:
+                    print(json.dumps({"execution_plan": plan}, ensure_ascii=False, indent=2))
+                    if not prompt_confirm("Archive (soft-delete) this page now?", default_yes=False):
+                        result = {"cancelled": True, "plan": plan}
+                    else:
+                        result = do_archive_page(client, str(cfg.get("target", "")))
+                else:
+                    result = do_archive_page(client, str(cfg.get("target", "")))
         elif mode in ("create_page", "update_page", "sync_topic"):
             if mode == "create_page" and interactive:
                 if not cfg.get("parent"):
@@ -483,7 +591,7 @@ def main() -> int:
                     else:
                         result = do_sync_topic(client, cfg, base_dir)
         else:
-            raise ValueError("Unsupported mode. Use read | create_page | update_page | sync_topic")
+            raise ValueError("Unsupported mode. Use read | create_page | update_page | sync_topic | archive_page")
     except Exception as exc:
         print(json.dumps({"ok": False, "mode": mode, "error": str(exc)}, ensure_ascii=False))
         return 1

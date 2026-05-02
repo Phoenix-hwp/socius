@@ -15,6 +15,9 @@ KEYWORDS = (
     "打开notion菜单",
     "同步notion",
     "notion同步",
+    "notion向导",
+    "notion crud",
+    "notion增删改查",
 )
 
 

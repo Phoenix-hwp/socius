@@ -19,7 +19,7 @@ function Start-WorkflowCommand {
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Notion 脚本操作面板（本地兜底）"
-$form.Size = New-Object System.Drawing.Size(520, 420)
+$form.Size = New-Object System.Drawing.Size(520, 480)
 $form.StartPosition = "CenterScreen"
 $form.TopMost = $true
 
@@ -50,32 +50,37 @@ function Add-MenuButton {
     $form.Controls.Add($btn)
 }
 
-Add-MenuButton -Text "同步（Interactive）" -Y 95 -OnClick {
+Add-MenuButton -Text "CRUD 向导（notion_write_menu）" -Y 95 -OnClick {
+    Start-WorkflowCommand "python '.\notion_write_menu.py'"
+    $form.Close()
+}
+
+Add-MenuButton -Text "同步（Interactive）" -Y 140 -OnClick {
     Start-WorkflowCommand "python '.\run_notion_workflow.py' --config '.\notion_workflow.sync.json' --interactive"
     $form.Close()
 }
 
-Add-MenuButton -Text "读取（Interactive）" -Y 140 -OnClick {
+Add-MenuButton -Text "读取（Interactive）" -Y 185 -OnClick {
     Start-WorkflowCommand "python '.\run_notion_workflow.py' --config '.\notion_workflow.read.json' --interactive"
     $form.Close()
 }
 
-Add-MenuButton -Text "Drill Read（只读验证）" -Y 185 -OnClick {
+Add-MenuButton -Text "Drill Read（只读验证）" -Y 230 -OnClick {
     Start-WorkflowCommand ".\drill-read.cmd"
     $form.Close()
 }
 
-Add-MenuButton -Text "Drill Create（Dry-Run）" -Y 230 -OnClick {
+Add-MenuButton -Text "Drill Create（Dry-Run）" -Y 275 -OnClick {
     Start-WorkflowCommand ".\drill-create.cmd"
     $form.Close()
 }
 
-Add-MenuButton -Text "Drill Update（Dry-Run）" -Y 275 -OnClick {
+Add-MenuButton -Text "Drill Update（Dry-Run）" -Y 320 -OnClick {
     Start-WorkflowCommand ".\drill-update.cmd"
     $form.Close()
 }
 
-Add-MenuButton -Text "打开 .cursor\\mcp 目录" -Y 320 -OnClick {
+Add-MenuButton -Text "打开 .cursor\\mcp 目录" -Y 365 -OnClick {
     Start-Process explorer.exe $mcpDir | Out-Null
     $form.Close()
 }

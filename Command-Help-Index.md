@@ -86,13 +86,16 @@ help
 
 白名单文件：`.cursor/config/stage-delete-whitelist.txt`
 
-## 8) Notion 写入方案
+## 8) Notion（增删改查）
 
-| 主题 | 路径 | 用途 |
+| 指令 / 主题 | 别名 | 路径或说明 |
 |---|---|---|
-| Notion 统一入口规范 | `10-Topics/Notion-统一入口规范.md` | 统一“插件主用 + 脚本兜底”策略，包含场景选择、标准步骤与最小模板。 |
-| Notion 目录选项 ID | `.cursor/mcp/notion_cascader_directory_choices.json` | 叶子级目录扁平表；对话中用 `notion.dir.*` 指定落点（详见 `10-Topics/script-option-ids.md`）。 |
-| 刷新目录选项 | `.cursor/mcp/refresh_notion_directory_choices.cmd` | 由 `notion_cascader_options.json` 再生扁平表（Python，失败则 Node）。 |
+| Notion操作流程 | Notion增删改查 | `.cursor/rules/notion-unified-crud-workflow.mdc`（网络 → 目录 → 分型；**改**：`1`/`2` 策略；优先 MCP） |
+| Notion写入流程 | 写入流程、落点确认 | 创建六步 `.cursor/rules/notion-write-workflow-confirmation.mdc` |
+| （可选）CRUD 向导 | — | `.cursor/mcp/notion_write_menu.cmd`；GUI `.cursor/tools/notion_gui_menu.ps1` |
+| Notion 统一入口规范 | — | `10-Topics/Notion-统一入口规范.md` |
+| Notion 目录选项 | — | `.cursor/mcp/notion_cascader_directory_choices.json`（见 `10-Topics/script-option-ids.md`） |
+| 刷新目录选项 | — | `.cursor/mcp/refresh_notion_directory_choices.cmd` |
 
 ## 9) Git / Gitee（工作区同步）
 

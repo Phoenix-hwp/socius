@@ -62,4 +62,10 @@ title: DeepSeek Cursor 中间件——换机与日常使用（仅「须重做」
 ## 四、排查与参考
 
 - 连不上：核对 **代理是否在跑**、**ngrok 是否在线**、**模型名**、**Base URL 是否含 `/v1`**。  
+- **`PermissionError: ... config.yaml`（拒绝访问）**：多为 `%USERPROFILE%\.deepseek-cursor-proxy` 的 NTFS 权限过严、或被管理员身份创建的目录导致当前用户读不了 `config.yaml`。  
+  1. 在工作区根打开 PowerShell，执行：  
+     `powershell -NoProfile -ExecutionPolicy Bypass -File ".cursor\tools\fix_deepseek_proxy_config_permissions.ps1"`  
+     然后重新运行 `deepseek-cursor-proxy`。  
+  2. 仍失败时（终端里 `icacls` 也提示「拒绝访问」）：**以管理员身份**打开 CMD 或 PowerShell，先 **`takeown /f "%USERPROFILE%\.deepseek-cursor-proxy" /r /d y`**，再 **`icacls "%USERPROFILE%\.deepseek-cursor-proxy" /grant "此处填 whoami 的完整账户名:(OI)(CI)F" /T`**，然后再运行修复脚本或启动代理。脚本失败时也会打印可复制的一组命令。  
+  3. 若脚本将不可读的 `config.yaml` 备份为 `config.yaml.bak_unreadable_*`，按上游 README 重新生成或手动恢复配置（含 API Key 等）。  
 - 上游文档：[思考模式与工具调用](https://api-docs.deepseek.com/guides/thinking_mode#tool-calls)

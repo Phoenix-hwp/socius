@@ -1,15 +1,17 @@
 ---
-description: Notion 对话内写入固定六步流程；目录编号菜单；正文预览后「确认写入」
+description: Notion「增」对话内固定六步；属统一 CRUD 规则之创建分支
 alwaysApply: true
 ---
 
-# Notion 写入与新建工作流确认
+# Notion 写入与新建工作流确认（增 · 创建分支）
 
 ## 适用范围
 
-凡会向 Notion **写入或新建** 的操作均适用：插件（MCP）、`run_notion_workflow.py` / `do_create_page`、其他脚本、REST **创建或更新落库**。
+凡会向 Notion **写入或新建** 的操作均适用：插件（MCP）、`run_notion_workflow.py` / `do_create_page`、其他脚本、REST **创建页面或数据库行**。
 
-只读（查询、fetch、不涉及选定目录写库的 dry-run）仍须遵守「首条 Notion 操作」的 **网络确认**；本规则侧重 **写库前的交互与确认**。
+**统一骨架**：网络 → 目录 → **本分支持创建**。全流程见 **`notion-unified-crud-workflow.mdc`**。
+
+只读（查询、fetch、不涉及选定目录写库的 dry-run）仍须遵守「首条 Notion 操作」的 **网络确认**；本规则侧重 **新建落库前的交互与确认**。
 
 **与 Git 区分**：工作区同步改为 **`提交git`**（见 **`git-workspace-commit.mdc`** 与 **`10-Topics/Gitee-Workspace-Git-Workflow.md`**）；Notion 写入默认仍在对话内完成，不要求为本任务单独打开系统终端。
 
@@ -54,13 +56,13 @@ alwaysApply: true
 ## 与网络确认的顺序
 
 1. 每个对话中 **第一条** Notion **写入类**操作：须先取得 **`Y`**（`notion-first-action-network-confirmation.mdc`）。
-2. **`Y` 之后**严格按上表 **步骤 2→6** 推进；不得跳过 **目录**、**标题策略**、**正文预览 + 确认口令**。
+2. **`Y` 之后**严格按上表 **步骤 2→6** 推进；不得跳过 **目录**、**标题策略**、**正文预览 + 确认口令**。（目录与统一 CRUD 阶段 B 一致，见 **`notion-unified-crud-workflow.mdc`**。）
 
 ---
 
 ## 目录与标题（摘要）
 
-- **目录**：数据文件 **`notion_cascader_directory_choices.json`**；缺失或过期时提示刷新 **`refresh_notion_directory_choices.cmd`**（刷新动作本身遵守网络确认）。详见 **`notion-directory-option-ids.mdc`**。
+- **目录**：数据文件 **`notion_cascader_directory_choices.json`**；缺失或过期时提示刷新 **`refresh_notion_directory_choices.cmd`**（刷新动作本身遵守网络确认）。详见 **`notion-directory-option-ids.mdc`**（含 **同一对话复用父级**、**换目录须再贴完整表**）。
 - **标题**：须在步骤 3 选定 **1 手动** 或 **2 自动**；自动须在落库前展示拟题。
 - **禁止**：未确认目录即写入；未确认标题策略即自拟标题落库；未收到 **`确认写入`**（或等价且无歧义同意）即调用 API。
 

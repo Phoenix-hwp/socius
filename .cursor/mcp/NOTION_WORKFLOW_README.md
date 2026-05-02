@@ -9,15 +9,15 @@
 
 Use `run_notion_workflow.py` with a JSON config to run repeatable Notion tasks.
 
-## 0) Interactive write wizard (chat default + optional local menu)
+## 0) Unified CRUD workflow (chat default + optional local menu)
 
-**Primary**: In **Cursor chat**, follow the **fixed 6-step** flow in `.cursor/rules/notion-write-workflow-confirmation.mdc` (network → numbered directory → title mode 1/2 → title resolution → **body preview** → user says **`确认写入`** → API). No requirement to use an external terminal for Notion writes.
+**Primary**: In **Cursor chat**, follow `.cursor/rules/notion-unified-crud-workflow.mdc` — network (**`Y`**) → numbered **directory** → branch by operation (**create / read / update / archive**). **Create** detail steps + **`确认写入`** remain in `.cursor/rules/notion-write-workflow-confirmation.mdc`. **Update**: choose **`1` replace-all (clear top-level blocks then write)** vs **`2` merge/diff (fetch + partial patch per anchors / Playbook)** → preview → **`确认更新`**; **prefer Notion MCP**, scripts only as fallback with reason. **Delete** uses Notion archive + **`确认删除`** (see rule).
 
-**Optional** local CMD wizard (same semantics): `"<vault>\.cursor\mcp\notion_write_menu.cmd"` or `python notion_write_menu.py` under `.cursor/mcp`.
+**Optional** local CMD wizard: `"<vault>\.cursor\mcp\notion_write_menu.cmd"` or `python notion_write_menu.py` — interactive **CRUD** (create + read summary + update + archive under chosen parent).
 
-Optional GUI fallback: `.cursor/tools/notion_gui_menu.ps1` (workflow buttons + drill shortcuts).
+GUI fallback: `.cursor/tools/notion_gui_menu.ps1` (includes CRUD wizard launcher + workflow buttons + drill shortcuts).
 
-Uses `notion_cascader_directory_choices.json`; requires `notion.env` with `NOTION_TOKEN`. Supports parent **page** or **database** (`do_create_page` in `run_notion_workflow.py`).
+Uses `notion_cascader_directory_choices.json`; requires `notion.env` with `NOTION_TOKEN`. Parent **page** or **database**. Title-based locate for read/update/archive uses `find_candidates_under_parent()` in `run_notion_workflow.py` (substring match; DB rows via title filter; subpages via `child_page` blocks).
 
 ## 1) Prepare config
 
@@ -56,6 +56,11 @@ python ".cursor/mcp/run_notion_workflow.py" --config ".cursor/mcp/notion_workflo
   - Fields: `action` (`update_page` or `create_page`) + corresponding fields
   - Best with `interactive: true` (or `--interactive`)
   - Behavior: asks for missing fields in CLI, then runs create/update.
+
+- `archive_page`
+  - Required: `target` (page URL or ID)
+  - Behavior: `PATCH pages/{id}` with `archived: true` (Notion trash / soft delete).
+  - With `interactive` or `confirm_execute: true`, prompts before execution.
 
 ## 3.1 Ready-made configs
 
