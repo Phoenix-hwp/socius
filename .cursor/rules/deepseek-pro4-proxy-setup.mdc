@@ -1,0 +1,21 @@
+---
+description: deepseek-pro4配置——调取 DeepSeek Cursor 中间件备忘
+alwaysApply: true
+---
+
+# DeepSeek Cursor 中间件配置备忘指令
+
+## 触发词
+
+- **完整指令**：`deepseek-pro4配置`
+- **别名（均为 2–10 个字）**：`代理配置备忘`、`换机代理步骤`、`pro4配置`
+
+## 执行动作
+
+1. **Read** `10-Topics/TMP_DeepSeek-Cursor-Proxy-运行步骤.md`（若路径不存在，按 `.cursor/rules/command-alias-dispatch.mdc` 失败兜底处理）。
+2. 基于该文档回答用户后续问题：可摘要「换机须重做」「每次使用」两类步骤，或按需全文要点；**模型 ID 以文档为准**（如 `deepseek-v4-pro`，勿使用错误拼写）。
+3. **默认不落盘**；仅当用户明确要求修改该备忘或迁移生命周期时，再执行写入。
+
+## 说明
+
+- 备忘内容为 **deepseek-cursor-proxy + ngrok + Cursor 自定义模型** 的流程；与 Cursor 内置模型列表名称无关，`pro4` 系用户口令习惯用语。

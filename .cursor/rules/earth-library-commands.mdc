@@ -1,0 +1,85 @@
+---
+description: 地球图书馆项目指令与启停规则
+alwaysApply: true
+---
+
+# 地球图书馆（Earth Library）指令规则
+
+## 触发指令
+
+- `存入图书馆`
+- `启用图书馆`
+- `停用图书馆`
+- `图书馆巡检`
+- `图书馆纠错`
+- `图书馆优化`
+- `更新图书馆标签`
+
+## 执行约束
+
+1. 图书馆项目根目录固定为 `Earth_Library/`。
+2. Notion 读取相关操作前，先遵循会话内网络确认（Y/N）规则。
+3. 仅将“新增知识”写入图书馆，不把过程噪音写入。
+
+## 指令行为
+
+### 1) 存入图书馆
+
+- 从当前对话提取新增知识（可含模型知识、网络搜索结果、用户输入、Notion 拉取内容）。
+- 统一字段执行：`title/type/source/source_mode/confidence/keywords/content`（可选 `source_url/source_path`）。
+- 支持自然语言一键入库：当用户仅给一段文本时，自动推断 `source_mode/source_url/keywords/title`。
+- 生成知识卡片到 `Earth_Library/Knowledge_Cards/`。
+- 追加索引到 `Earth_Library/Library_Index.md`。
+- 基于关键词与现有卡片做自动关联，写入 `Earth_Library/Relations/Relations_Index.md`。
+- 优先调用双运行时脚本：
+  - `python Earth_Library/scripts/store_to_library.py ...`
+  - 失败回退 `node Earth_Library/scripts/store_to_library.mjs ...`
+- 自然语言一键模式：
+  - `python Earth_Library/scripts/quick_ingest.py --text "..."`
+  - 失败回退 `node Earth_Library/scripts/quick_ingest.mjs --text "..."`
+
+### 2) 启用图书馆
+
+- 将 `Earth_Library/System/library_switch.json` 的 `enabled` 设置为 `true`。
+- 启用后，在未收到“停用图书馆”前，回答时默认参考图书馆内容作为补充层。
+
+### 3) 停用图书馆
+
+- 将 `Earth_Library/System/library_switch.json` 的 `enabled` 设置为 `false`。
+- 停用后，在未收到“启用图书馆”前，不主动调用图书馆知识。
+
+### 4) 图书馆巡检
+
+- 执行知识卡片相似度巡检，检测疑似重复知识。
+- 写入 `Earth_Library/Review_Queue.md` 与关系索引。
+- 脚本：
+  - `python Earth_Library/scripts/library_review.py`
+  - 失败回退 `node Earth_Library/scripts/library_review.mjs`
+
+### 5) 图书馆纠错
+
+- 执行待处理项的纠错建议标记（非破坏式）。
+- 脚本：
+  - `python Earth_Library/scripts/library_fix.py`
+  - 失败回退 `node Earth_Library/scripts/library_fix.mjs`
+
+### 6) 图书馆优化
+
+- 追加结构优化建议（主题聚合、来源补齐等）到质检队列。
+- 脚本：
+  - `python Earth_Library/scripts/library_optimize.py`
+  - 失败回退 `node Earth_Library/scripts/library_optimize.mjs`
+
+### 7) 更新图书馆标签
+
+- 维护标签词典：`Earth_Library/System/tag_dictionary.json`。
+- 标签维护说明：`Earth_Library/Tag_Guide.md`。
+- 允许新增/合并/停用标签与触发词，供长期演进。
+
+## 回答优先级
+
+默认顺序：
+1. 模型知识与网络实时信息（主）
+2. Earth Library（补充）
+
+仅当图书馆为启用状态时，执行第 2 步。

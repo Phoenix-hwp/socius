@@ -1,0 +1,36 @@
+---
+description: 生命周期分层存储与清理规则
+alwaysApply: true
+---
+
+# 文件生命周期规则
+
+- 长期类文件存放在根目录 `Knowledge-Assets/`，默认不删除。
+- 阶段性文件存放在具体项目目录（如 `469_Sports/`），删除必须二次确认。
+- 临时文件存放在 `Daily-Backups/`，默认保留 15 天并自动清理。
+
+## 状态字段（强制）
+
+- 新增或改写生命周期文件时，必须在 frontmatter 中声明：
+  - `Lifecycle: 长期` / `Lifecycle: 阶段` / `Lifecycle: 临时`
+- 对临时文件，推荐文件名前缀 `TMP_`，用于清理脚本快速识别。
+- 对阶段文件，推荐文件名前缀 `STAGE_`，用于人工与脚本协同管理。
+
+## 删除策略
+
+- 临时清理采用软删除：移动到 `.trash/soft-delete/daily-backups/`。
+- 阶段清理采用白名单 + 交互确认：
+  1. 仅允许清理 `.cursor/config/stage-delete-whitelist.txt` 指定目录；
+  2. 必须显式二次确认后执行；
+  3. 默认软删除到 `.trash/soft-delete/stage-files/`。
+
+## 模板定级确认（强制）
+
+- 当会话中产出“可复用的结论模板”（方法模板、流程模板、检查清单、标准模板）时，不得直接定级为长期。
+- 必须先询问用户：
+  - `该模板是否定义为长期文档并迁移到 Knowledge-Assets？`
+- 仅在用户明确确认后，才执行以下动作：
+  1. 迁移到 `Knowledge-Assets/`
+  2. 将 frontmatter 标记为 `Lifecycle: 长期`
+  3. 同步更新相关规则/索引中的引用路径
+

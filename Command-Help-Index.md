@@ -18,8 +18,6 @@
 | 创建XX项目索引 | 创建项目索引 | 为指定项目初始化项目备份索引与备份目录。 |
 | 总结本轮对话 | 本轮总结 | 收束本轮并落盘：已完成/未完成/待确认/下轮起点。 |
 | 确认合并 | 执行合并 | 触发合并闸门，将已确认内容写入主文档并登记合并日志。 |
-| 更新任务进度 | 记进度、更进度 | 回写 `10-Topics/Cursor-Workspace-Notion-Plan-Tasks.md`「当前进度」与任务状态，并同步 `10-Topics/Cursor-Workspace-MVP-Continue-Prompt.md`（Cursor 工作间 Notion 作业 MVP） |
-| 继续MVP项目 | 续MVP、续跑MVP | 按规则加载 Spec / Plan / 续跑话术，从当前任务 ID 续跑 MVP（见 `.cursor/rules/cursor-workspace-mvp-continue.mdc`） |
 
 ## 3) 项目备忘录相关（469_Sports）
 
@@ -28,22 +26,29 @@
 | 项目备忘录 | 备忘录 | 读取项目备忘清单与最近一条记录。 |
 | 记录备忘 | 记下 | 将当前备忘信息追加到项目备忘录。 |
 
-## 4) 常用示例
+## 4) DeepSeek Cursor 中间件备忘
+
+| 指令 | 别名 | 用途 |
+|---|---|---|
+| deepseek-pro4配置 | 代理配置备忘、换机代理步骤、pro4配置 | 调取 `10-Topics/TMP_DeepSeek-Cursor-Proxy-运行步骤.md`（换机须重做步骤、每次使用步骤）。 |
+
+## 5) 常用示例
 
 ```text
 help
 查看帮助
+deepseek-pro4配置
+代理配置备忘
+pro4配置
 读取4月23日下午的对话
 创建469_Sports项目索引
 总结本轮对话
 确认合并
-更新任务进度
-记进度
-继续MVP项目
-续MVP
+提交git
+Git同步
 ```
 
-## 5) 全局执行策略（风险分级自动执行）
+## 6) 全局执行策略（风险分级自动执行）
 
 > 目标：减少重复确认；仅在高风险动作时询问。
 
@@ -72,7 +77,7 @@ help
 谨慎模式
 ```
 
-## 6) 生命周期清理脚本
+## 7) 生命周期清理脚本
 
 | 目的 | 命令 | 说明 |
 |---|---|---|
@@ -81,19 +86,21 @@ help
 
 白名单文件：`.cursor/config/stage-delete-whitelist.txt`
 
-## 7) Notion 写入方案
+## 8) Notion 写入方案
 
 | 主题 | 路径 | 用途 |
 |---|---|---|
 | Notion 统一入口规范 | `10-Topics/Notion-统一入口规范.md` | 统一“插件主用 + 脚本兜底”策略，包含场景选择、标准步骤与最小模板。 |
+| Notion 目录选项 ID | `.cursor/mcp/notion_cascader_directory_choices.json` | 叶子级目录扁平表；对话中用 `notion.dir.*` 指定落点（详见 `10-Topics/script-option-ids.md`）。 |
+| 刷新目录选项 | `.cursor/mcp/refresh_notion_directory_choices.cmd` | 由 `notion_cascader_options.json` 再生扁平表（Python，失败则 Node）。 |
 
-## 8) CloudDrive2 同步菜单
+## 9) Git / Gitee（工作区同步）
 
 | 指令 | 别名 | 用途 |
 |---|---|---|
-| 同步文件 | 文件同步、同步菜单 | 调用 `.cursor/tools/cd2_sync_menu.bat`，提供 初始化、同步上传、同步下载、卸载、设置 的菜单操作界面。 |
+| 提交git | Git同步、推仓库、提交远端 | 先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根协助 `git status` → `add`/`commit` → `pull`/`push`。强制推送与破坏性操作须确认。规则：`.cursor/rules/git-workspace-commit.mdc`。 |
 
-## 9) Earth Library（地球图书馆）
+## 10) Earth Library（地球图书馆）
 
 | 指令 | 别名 | 用途 |
 |---|---|---|
@@ -122,4 +129,10 @@ help
 - 标签相交
 - 冲突关系
 - 巡检近邻（关键词/标签重合度）
+
+## 11) Agent 工作约定（脚本修改）
+
+| 主题 | 路径 | 用途 |
+|---|---|---|
+| 脚本改动先说明 | `.cursor/rules/pre-edit-script-change-brief.mdc` | 实质性修改脚本或自动化入口并落盘前，先简述「改什么 / 改后行为 / 如何验收 / 风险边界」，减少与预期不符的反复修改；用户可说「直接改、不用说」跳过。 |
 

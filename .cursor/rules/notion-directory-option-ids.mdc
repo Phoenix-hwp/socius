@@ -1,0 +1,20 @@
+---
+description: Notion 目录落点用 notion.dir.* 选项 ID；读取扁平 choices JSON
+alwaysApply: true
+---
+
+# Notion 目录选项 ID（对话落点）
+
+## 数据
+
+- 扁平可选列表：`.cursor/mcp/notion_cascader_directory_choices.json`（字段含 `id`、`path`、`notionObjectType`、`value`、`url`）。
+- 生成逻辑：**有子集则仅叶子**；**无子集则当前级**。刷新：`cmd /c ".cursor\mcp\refresh_notion_directory_choices.cmd"`（工作区根下路径按实际调整）。
+- 权威目录见：`10-Topics/script-option-ids.md`。
+
+## Agent 行为
+
+1. 当用户需要选择「写入哪个 Notion 目录 / 库」时（对话内 **固定流程第 2 步**）：
+   - **本机交互**：可引导 **`.cursor/mcp/notion_write_menu.cmd`**，用 **编号** 选目录；
+   - **对话内（默认）**：**`Read`** JSON 后展示 **编号清单**（`path` + `notionObjectType`），请用户 **只回复编号**。Agent 将编号映射到该项的 **`url` 或 `value`** 再调用写入；**不要**要求用户抄写完整 `notion.dir.*`。
+2. 用户主动给出 **`notion.dir.*`**、URL 或 ID 时，用 **`value` 或 `url`** 作为父级输入，**勿猜路径谐音**。
+3. 若 JSON 缺失或明显过期，提示用户先执行 **`notion.refresh.directory_choices`**（或 `refresh_notion_directory_choices.cmd`），网络侧遵循 Notion 首条操作网络确认规则。

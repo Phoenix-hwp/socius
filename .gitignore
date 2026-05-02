@@ -1,11 +1,5 @@
 .cursor/mcp/notion.env
 
-# Cursor 工作间模块（20-Projects/Cursor-Workspace/）
-20-Projects/Cursor-Workspace/backend/.venv/
-20-Projects/Cursor-Workspace/frontend/node_modules/
-20-Projects/Cursor-Workspace/frontend/*.tsbuildinfo
-# dist 可随仓库同步，换机仅需 Python + uvicorn（见模块 README）
-
 # Local installers (do not commit)
 node-v*-x64.msi
 

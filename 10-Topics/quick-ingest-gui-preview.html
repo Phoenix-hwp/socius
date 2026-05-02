@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一键自然语言入库 - GUI 预览</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f6fb;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 860px;
+      margin: 32px auto;
+      padding: 24px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+    .desc {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .item {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+    }
+    .k {
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+    .v {
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .primary {
+      background: #2563eb;
+      color: #fff;
+    }
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .result {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      white-space: pre-wrap;
+      min-height: 72px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>一键自然语言入库（预期界面）</h1>
+      <p class="desc">输入一段文本，系统自动推断标题、来源模式、URL、关键词，再点击入库。</p>
+    </div>
+
+    <div class="card">
+      <label for="inputText">文本内容（唯一必填）</label>
+      <textarea id="inputText" placeholder="例如：这条方法来自 https://example.com，适合用于 Notion 知识沉淀流程。"></textarea>
+      <div class="btn-row">
+        <button class="primary" id="btnParse">自动推断</button>
+        <button class="secondary" id="btnSubmit">确认入库（模拟）</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>自动推断结果</label>
+      <div class="grid">
+        <div class="item"><div class="k">title</div><div class="v" id="title">-</div></div>
+        <div class="item"><div class="k">source_mode</div><div class="v" id="sourceMode">-</div></div>
+        <div class="item"><div class="k">source_url</div><div class="v" id="sourceUrl">-</div></div>
+        <div class="item"><div class="k">keywords</div><div class="v" id="keywords">-</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>执行反馈（模拟返回）</label>
+      <div class="result" id="result">{}</div>
+    </div>
+  </div>
+
+  <script>
+    function guessSourceMode(text) {
+      const t = text.toLowerCase();
+      if (t.includes("notion") || t.includes("notion.so")) return "notion_page";
+      if (t.includes("http://") || t.includes("https://")) return "web_url";
+      if (t.includes(".md") || t.includes("markdown")) return "markdown_file";
+      return "conversation";
+    }
+
+    function extractUrl(text) {
+      const m = text.match(/https?:\/\/\S+/);
+      return m ? m[0] : "";
+    }
+
+    function buildKeywords(text) {
+      const tokens = text.match(/[\u4e00-\u9fffA-Za-z0-9_]{2,}/g) || [];
+      const seen = [];
+      for (const t of tokens) {
+        if (!seen.includes(t)) seen.push(t);
+      }
+      return seen.slice(0, 8).join(",");
+    }
+
+    function infer(text) {
+      const value = (text || "").trim();
+      return {
+        title: value ? value.slice(0, 24) : "",
+        source_mode: guessSourceMode(value),
+        source_url: extractUrl(value),
+        keywords: buildKeywords(value)
+      };
+    }
+
+    function renderInference(data) {
+      document.getElementById("title").textContent = data.title || "-";
+      document.getElementById("sourceMode").textContent = data.source_mode || "-";
+      document.getElementById("sourceUrl").textContent = data.source_url || "-";
+      document.getElementById("keywords").textContent = data.keywords || "-";
+    }
+
+    document.getElementById("btnParse").addEventListener("click", () => {
+      const text = document.getElementById("inputText").value;
+      renderInference(infer(text));
+    });
+
+    document.getElementById("btnSubmit").addEventListener("click", () => {
+      const text = document.getElementById("inputText").value.trim();
+      if (!text) {
+        document.getElementById("result").textContent = JSON.stringify(
+          { ok: false, error: "请先输入文本内容" },
+          null,
+          2
+        );
+        return;
+      }
+      const data = infer(text);
+      renderInference(data);
+      const payload = {
+        ok: true,
+        action: "store_to_library (mock)",
+        saved_to: "Earth_Library/Knowledge_Cards/<timestamp>_<title>.md",
+        ...data
+      };
+      document.getElementById("result").textContent = JSON.stringify(payload, null, 2);
+    });
+  </script>
+</body>
+</html>

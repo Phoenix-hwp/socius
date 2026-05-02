@@ -1,0 +1,8 @@
+{
+  "mode": "read",
+  "interactive": true,
+  "target": "",
+  "output_file": "notion_read.result.json",
+  "dry_run": false,
+  "confirm_execute": false
+}

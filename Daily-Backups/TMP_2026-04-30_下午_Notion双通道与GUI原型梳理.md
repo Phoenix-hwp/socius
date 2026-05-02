@@ -12,7 +12,7 @@ Lifecycle: 临时
 - 确认“最近 Notion 看起来走脚本”的根因：本地存在 MCP 启动脚本路由与预检 Hook，导致体感偏脚本化。
 - 按你的要求落地双通道方案：保留插件通道，同时把本地脚本通道明确命名为 `notion-local`（避免与插件通道混淆）。
 - 评估“脚本图形化”可行性：可行，但建议仅图形化前台操作型脚本，后台守护型脚本保留自动触发。
-- 梳理并产出“前台操作型脚本清单”表格（CloudDrive2 + Notion Drill + Notion Workflow）。
+- 梳理并产出“前台操作型脚本清单”表格（Notion Drill + Notion Workflow）。
 - 已在 Notion 原始需求池下新增条目 `cursor图形界面原型设置`，并写入上述清单详情。
 
 ## 核心结论

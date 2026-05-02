@@ -1,0 +1,27 @@
+﻿[
+    {
+        "id":  "fa9299d0-5ba8-8306-9e6c-81b51483ac08",
+        "type":  "child_database",
+        "title":  "任务筐"
+    },
+    {
+        "id":  "323299d0-5ba8-8380-b7c5-011ed635897a",
+        "type":  "child_database",
+        "title":  "琐事记"
+    },
+    {
+        "id":  "34b299d0-5ba8-80b4-b88d-d78c8b3d865e",
+        "type":  "paragraph",
+        "title":  ""
+    },
+    {
+        "id":  "ff5299d0-5ba8-8225-baee-81d06951d173",
+        "type":  "child_page",
+        "title":  "灵感盒"
+    },
+    {
+        "id":  "240299d0-5ba8-8398-9981-016c95939990",
+        "type":  "child_page",
+        "title":  "回收站"
+    }
+]

@@ -1,0 +1,12 @@
+{
+  "mode": "sync_topic",
+  "interactive": false,
+  "action": "update_page",
+  "target": "https://www.notion.so/34c299d05ba88158aeebc665610762c8?source=copy_link",
+  "content_file": "drill_content.md",
+  "replace": true,
+  "dry_run": true,
+  "confirm_execute": true,
+  "output_file": "notion_drill.result.json"
+}
+

@@ -1,0 +1,11 @@
+---
+description: 会话开端读取档案；收束时分析契合度并写回同一份笔记
+alwaysApply: true
+---
+
+# 个人档案会话工作流
+
+- **档案路径**（与 `session_start_profile_context.py` 一致）：优先 `Cursor_Knowledge/10-Topics/Cursor-usage-profile-and-templates.md`，否则 `10-Topics/Cursor-usage-profile-and-templates.md`；可用 `CURSOR_OBSIDIAN_PROFILE` 覆盖。
+- **开端**：优先依赖**工作区根** `.cursor/hooks.json` 的 `sessionStart` 注入（从 `CURSOR_PROJECT_DIR` 按上条解析）。若用户表示没看到、或你在上下文中未见到「Injected by sessionStart hook」段落，则 **Read** 上述路径之一后再作答。
+- **收束**：当用户发送 `/收束`、以 `会话收束：` 开头、或发送「结束会话」「结束对话」、或单独发送口语「结束」（视同结束对话）时，按该文件 **§0** 清单：概括本轮行为 → 对照 §1–§3 评契合度 → **追加** §6 表格一行 → 必要时更新 §5 与正文 → 写回 UTF-8（无 BOM）。
+- **禁止**：在收束流程中删除 §6 历史行；大段重写档案需用户明确要求。

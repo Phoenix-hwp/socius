@@ -33,8 +33,12 @@ alwaysApply: true
 - `记录备忘`：
   - 将用户本条消息中的备忘信息追加写入 `469_Sports/469_Sports_Project_Memo.md`
   - 若命中待复核事项，更新对应事项状态
-- `继续MVP项目` / `续MVP` / `续跑MVP`：
-  - 遵循 `.cursor/rules/cursor-workspace-mvp-continue.mdc`：先 Read Execution-Spec、Plan、续跑标准话术与模块 README，再从 **当前任务 ID** 续跑
+- `deepseek-pro4配置` / `代理配置备忘` / `换机代理步骤` / `pro4配置`：
+  - 遵循 `.cursor/rules/deepseek-pro4-proxy-setup.mdc`：先 Read `10-Topics/TMP_DeepSeek-Cursor-Proxy-运行步骤.md`，再基于文档作答
+- `改动预告` / `预期先行`（登记见 `Cursor-command-aliases.md`「脚本改动先说明」）：
+  - Read `.cursor/rules/pre-edit-script-change-brief.mdc`，在本轮修改脚本/自动化入口时严格执行「落盘前先简述预期」
+- `提交git` / `Git同步` / `推仓库` / `提交远端`：
+  - Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，遵循 `.cursor/rules/git-workspace-commit.mdc`，在工作区根协助 Git 提交与推送
 
 ## 失败兜底
 
