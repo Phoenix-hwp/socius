@@ -1,5 +1,8 @@
 .cursor/mcp/notion.env
 
+# 本地软删除目录（不进仓库）
+.trash/
+
 # Local installers (do not commit)
 node-v*-x64.msi
 
