@@ -20,7 +20,7 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | **最后更新** | 2026-05-01 |
 | **当前任务 ID** | `T11` |
 | **已完成** | T01–T10（T10：前端 `types/notion.ts` + `api/client.ts` 三类 fetch；`components/RowsTable.tsx`（行内查看/更新）+ `components/Pager.tsx`（page/cursor 双模式）；`pages/sections/NotionList.tsx` 按 `selection.mode` 拉取并防抖标题过滤；`NotionHomeworkPage` DFS 构建 `databaseLabelByID` 并挂载 NotionList；`tsc -b` + `vite build` 通过；联通 3 端点 200，行 0 元数据含 `parent.database_id`） |
-| **阻塞/备注** | 下一步：**T11** — 新增页 + API 创建：database 选中 → `POST /pages` (`parent.database_id` + properties)；page 选中 → 子页（`parent.page_id` + blocks）。需要新增后端写入接口；前端按钮「手动提交」二次确认。**MSI 不进 git**（已加忽略规则）。**Git**：`origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`；**T10 列表页** 已随本轮提交推送至 **`origin/master`**（见修订记录）。 |
+| **阻塞/备注** | 下一步：**T11** — 新增页 + API 创建：database 选中 → `POST /pages` (`parent.database_id` + properties)；page 选中 → 子页（`parent.page_id` + blocks）。需要新增后端写入接口；前端按钮「手动提交」二次确认。**产品微调（backlog，见 §产品微调）**：列表行内 **去掉「查看」**；**「归纳」及相关逻辑不纳入** 当前 Plan。**MSI 不进 git**（已加忽略规则）。**Git**：`origin` → `https://gitee.com/phoenixhwp/cursor_-gui_-mvp.git`；**T10 列表页** 已随本轮提交推送至 **`origin/master`**（见修订记录）。 |
 
 > **约定**：任一对话结束前，可发 **`更新任务进度`**（别名 **`记进度`**、**`更进度`**）由 Agent 半自动回写本表，并 **同步** [`Cursor-Workspace-MVP-Continue-Prompt.md`](./Cursor-Workspace-MVP-Continue-Prompt.md)（标准粘贴块 + 同步元数据）；新会话续跑可发 **`继续MVP项目`**（见 `.cursor/rules/cursor-workspace-mvp-continue.mdc`）。若有未提交代码，在备注里写 **分支名 / 未合并说明**。
 
@@ -93,6 +93,15 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 
 ---
 
+## 产品微调（backlog · 2026-05-01）
+
+| 项 | 说明 |
+|----|------|
+| **去掉「查看」** | 列表表格 **行内操作** 中 **移除「查看」按钮**；保留 **「更新」**（及后续 T11/T12 约定流程）。**不**在本 Plan 中新增任务 ID；实现时并入 **列表相关迭代**（例如小版本改动 `RowsTable` / `NotionList`）。 |
+| **「归纳」** | **不纳入** 当前 Plan：不登记「归纳」按钮、不登记拉取正文/侧栏衔接等实现任务；若后续单独立项，再新增任务与规格。 |
+
+---
+
 ## 与 Execution-Spec §10 检查清单的映射
 
 | Spec §10 项 | 主要对应任务 |
@@ -119,3 +128,5 @@ purpose: 可勾选进度、可跨会话续跑；规格见 Cursor-Workspace-Notio
 | 2026-05-01 | T10 完成：前端列表（all/database/page 三模式）+ 行内查看/更新（更新为 T12 占位）+ 受控分页 + 标题过滤；`tsc -b` 与 `vite build` 通过；进度表推进至 T11 |
 | 2026-05-01 | 「更新任务进度」：确认 **当前任务 ID = T11**、**已完成 T01–T10**；**T10 代码已提交并推送 Gitee**（`origin/master`） |
 | 2026-05-01 | 新增续跑标准话术 `Cursor-Workspace-MVP-Continue-Prompt.md`；指令 **继续MVP项目**（别名续MVP、续跑MVP）；「更新任务进度」流程增加同步该模板 |
+| 2026-05-01 | 曾草案 **「归纳」** + **T16**；按产品决策 **撤回**：**「归纳」不纳入 Plan**；仅保留 **§产品微调** — 列表去掉行内 **「查看」**（backlog，无新任务 ID） |
+| 2026-05-02 | 新增模块级 **`20-Projects/Cursor-Workspace/PROJECT_OVERVIEW.md`**（项目总述与 Gitee 归档说明）；本轮将 GUI 相关代码、规格、Plan、续跑模板、钩子与级联数据等 **整体推送 Gitee**；**本地可移除** `20-Projects/Cursor-Workspace/` 目录以减负，续研前 **`git pull` + `git restore 20-Projects/Cursor-Workspace`**（或等价检出）恢复；**勿提交、勿删除** 本机 `.cursor/mcp/notion.env` |

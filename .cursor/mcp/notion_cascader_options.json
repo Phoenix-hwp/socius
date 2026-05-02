@@ -1,0 +1,326 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-04-30T23:55:00+08:00",
+  "description": "Notion cascader options for root->second-level selection",
+  "fieldGuide": {
+    "label": "显示名称",
+    "value": "稳定唯一值（优先使用 page/database id）",
+    "nodeType": "page | database | root",
+    "notionObjectType": "page | database",
+    "id": "Notion object id (hyphenated)",
+    "url": "Notion page/database url",
+    "children": "二级节点列表",
+    "disabled": "是否禁用（级联组件可直接使用）",
+    "loadChildren": "是否允许后续按需拉取子级（预留扩展位）"
+  },
+  "options": [
+    {
+      "label": "收集器",
+      "value": "500299d0-5ba8-8213-8347-819a6cf33c26",
+      "nodeType": "root",
+      "notionObjectType": "page",
+      "id": "500299d0-5ba8-8213-8347-819a6cf33c26",
+      "url": "https://app.notion.com/p/500299d05ba882138347819a6cf33c26",
+      "disabled": false,
+      "loadChildren": false,
+      "children": [
+        {
+          "label": "任务筐",
+          "value": "fa9299d0-5ba8-8306-9e6c-81b51483ac08",
+          "nodeType": "database",
+          "notionObjectType": "database",
+          "id": "fa9299d0-5ba8-8306-9e6c-81b51483ac08",
+          "url": "https://app.notion.com/p/fa9299d05ba883069e6c81b51483ac08",
+          "disabled": false
+        },
+        {
+          "label": "琐事记",
+          "value": "323299d0-5ba8-8380-b7c5-011ed635897a",
+          "nodeType": "database",
+          "notionObjectType": "database",
+          "id": "323299d0-5ba8-8380-b7c5-011ed635897a",
+          "url": "https://app.notion.com/p/323299d05ba88380b7c5011ed635897a",
+          "disabled": false
+        },
+        {
+          "label": "灵感盒",
+          "value": "ff5299d0-5ba8-8225-baee-81d06951d173",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "ff5299d0-5ba8-8225-baee-81d06951d173",
+          "url": "https://app.notion.com/p/ff5299d05ba88225baee81d06951d173",
+          "disabled": false
+        },
+        {
+          "label": "回收站",
+          "value": "240299d0-5ba8-8398-9981-016c95939990",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "240299d0-5ba8-8398-9981-016c95939990",
+          "url": "https://app.notion.com/p/240299d05ba883989981016c95939990",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "label": "日程清单",
+      "value": "661299d0-5ba8-82ad-b0c2-01f0c3c79903",
+      "nodeType": "root",
+      "notionObjectType": "page",
+      "id": "661299d0-5ba8-82ad-b0c2-01f0c3c79903",
+      "url": "https://app.notion.com/p/661299d05ba882adb0c201f0c3c79903",
+      "disabled": false,
+      "loadChildren": false,
+      "children": [
+        {
+          "label": "日程表",
+          "value": "c80299d0-5ba8-82c6-9850-016b7c20cf5b",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "c80299d0-5ba8-82c6-9850-016b7c20cf5b",
+          "url": "https://app.notion.com/p/c80299d05ba882c69850016b7c20cf5b",
+          "disabled": false
+        },
+        {
+          "label": "回执单",
+          "value": "42d299d0-5ba8-838c-81da-01415fdb6465",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "42d299d0-5ba8-838c-81da-01415fdb6465",
+          "url": "https://app.notion.com/p/42d299d05ba8838c81da01415fdb6465",
+          "disabled": false
+        },
+        {
+          "label": "工作周报",
+          "value": "33a299d0-5ba8-8079-b278-ead6eca70752",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "33a299d0-5ba8-8079-b278-ead6eca70752",
+          "url": "https://app.notion.com/p/33a299d05ba88079b278ead6eca70752",
+          "disabled": false
+        },
+        {
+          "label": "执行项",
+          "value": "0dd299d0-5ba8-8316-8a04-81359bdb93da",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "0dd299d0-5ba8-8316-8a04-81359bdb93da",
+          "url": "https://app.notion.com/p/0dd299d05ba883168a0481359bdb93da",
+          "disabled": false
+        },
+        {
+          "label": "会议纪要",
+          "value": "33a299d0-5ba8-8054-9b61-df54e795ff64",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "33a299d0-5ba8-8054-9b61-df54e795ff64",
+          "url": "https://app.notion.com/p/33a299d05ba880549b61df54e795ff64",
+          "disabled": false
+        },
+        {
+          "label": "工作月报",
+          "value": "33a299d0-5ba8-80c2-87f0-c43be9419643",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "33a299d0-5ba8-80c2-87f0-c43be9419643",
+          "url": "https://app.notion.com/p/33a299d05ba880c287f0c43be9419643",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "label": "产品研发",
+      "value": "eda299d0-5ba8-836f-bc5f-81e02e8abb78",
+      "nodeType": "root",
+      "notionObjectType": "page",
+      "id": "eda299d0-5ba8-836f-bc5f-81e02e8abb78",
+      "url": "https://app.notion.com/p/eda299d05ba8836fbc5f81e02e8abb78",
+      "disabled": false,
+      "loadChildren": false,
+      "children": [
+        {
+          "label": "产品库",
+          "value": "1d0299d0-5ba8-82bc-8610-81a2c0cdc20b",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "1d0299d0-5ba8-82bc-8610-81a2c0cdc20b",
+          "url": "https://app.notion.com/p/1d0299d05ba882bc861081a2c0cdc20b",
+          "disabled": false
+        },
+        {
+          "label": "竞品库",
+          "value": "825299d0-5ba8-82b2-bd12-811ac1624f2d",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "825299d0-5ba8-82b2-bd12-811ac1624f2d",
+          "url": "https://app.notion.com/p/825299d05ba882b2bd12811ac1624f2d",
+          "disabled": false
+        },
+        {
+          "label": "原始需求池",
+          "value": "2c0299d0-5ba8-836a-b078-01c7d1e7672e",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "2c0299d0-5ba8-836a-b078-01c7d1e7672e",
+          "url": "https://app.notion.com/p/2c0299d05ba8836ab07801c7d1e7672e",
+          "disabled": false
+        },
+        {
+          "label": "产品需求池",
+          "value": "c5c299d0-5ba8-82db-a3af-81ab81532b5e",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "c5c299d0-5ba8-82db-a3af-81ab81532b5e",
+          "url": "https://app.notion.com/p/c5c299d05ba882dba3af81ab81532b5e",
+          "disabled": false
+        },
+        {
+          "label": "产品PRD",
+          "value": "339299d0-5ba8-80e5-864f-e3175f92fb79",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "339299d0-5ba8-80e5-864f-e3175f92fb79",
+          "url": "https://app.notion.com/p/339299d05ba880e5864fe3175f92fb79",
+          "disabled": false
+        },
+        {
+          "label": "产品文档",
+          "value": "a53299d0-5ba8-82dc-b68d-01d708cb58ff",
+          "nodeType": "database",
+          "notionObjectType": "database",
+          "id": "a53299d0-5ba8-82dc-b68d-01d708cb58ff",
+          "url": "https://app.notion.com/p/a53299d05ba882dcb68d01d708cb58ff",
+          "disabled": false
+        },
+        {
+          "label": "涉众分析",
+          "value": "94f299d0-5ba8-83bc-b9bb-01d97aa4b0e8",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "94f299d0-5ba8-83bc-b9bb-01d97aa4b0e8",
+          "url": "https://app.notion.com/p/94f299d05ba883bcb9bb01d97aa4b0e8",
+          "disabled": false
+        },
+        {
+          "label": "价值评估",
+          "value": "aae299d0-5ba8-838e-a9fa-015d809ebedf",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "aae299d0-5ba8-838e-a9fa-015d809ebedf",
+          "url": "https://app.notion.com/p/aae299d05ba8838ea9fa015d809ebedf",
+          "disabled": false
+        },
+        {
+          "label": "迭代管理",
+          "value": "4a7299d0-5ba8-83f1-93d1-811feee66b9f",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "4a7299d0-5ba8-83f1-93d1-811feee66b9f",
+          "url": "https://app.notion.com/p/4a7299d05ba883f193d1811feee66b9f",
+          "disabled": false
+        },
+        {
+          "label": "产品说明",
+          "value": "34b299d0-5ba8-8035-b828-dd04df931071",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "34b299d0-5ba8-8035-b828-dd04df931071",
+          "url": "https://app.notion.com/p/34b299d05ba88035b828dd04df931071",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "label": "项目计划",
+      "value": "9a0299d0-5ba8-8286-aea6-81ba3e5ace44",
+      "nodeType": "root",
+      "notionObjectType": "page",
+      "id": "9a0299d0-5ba8-8286-aea6-81ba3e5ace44",
+      "url": "https://app.notion.com/p/9a0299d05ba88286aea681ba3e5ace44",
+      "disabled": false,
+      "loadChildren": false,
+      "children": [
+        {
+          "label": "项目器",
+          "value": "151299d0-5ba8-8257-95f9-019ee91a0b51",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "151299d0-5ba8-8257-95f9-019ee91a0b51",
+          "url": "https://app.notion.com/p/151299d05ba8825795f9019ee91a0b51",
+          "disabled": false
+        },
+        {
+          "label": "问题域",
+          "value": "3c3299d0-5ba8-8250-ad28-01e67ea5615f",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "3c3299d0-5ba8-8250-ad28-01e67ea5615f",
+          "url": "https://app.notion.com/p/3c3299d05ba88250ad2801e67ea5615f",
+          "disabled": false
+        },
+        {
+          "label": "未来仓",
+          "value": "473299d0-5ba8-82f6-91da-8115ba08bf06",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "473299d0-5ba8-82f6-91da-8115ba08bf06",
+          "url": "https://app.notion.com/p/473299d05ba882f691da8115ba08bf06",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "label": "Notion_Knowledge",
+      "value": "349299d0-5ba8-808f-a971-f085bee7f369",
+      "nodeType": "root",
+      "notionObjectType": "page",
+      "id": "349299d0-5ba8-808f-a971-f085bee7f369",
+      "url": "https://app.notion.com/p/349299d05ba8808fa971f085bee7f369",
+      "disabled": false,
+      "loadChildren": false,
+      "children": [
+        {
+          "label": "行为偏好（供 Notion AI 参考）",
+          "value": "4c207a96-1fd6-42d0-8556-cf2e6f565721",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "4c207a96-1fd6-42d0-8556-cf2e6f565721",
+          "url": "https://app.notion.com/p/4c207a961fd642d08556cf2e6f565721",
+          "disabled": false
+        },
+        {
+          "label": "Skill｜执行记录",
+          "value": "6d04d93b-e273-432b-a376-9dbe4adefb23",
+          "nodeType": "page",
+          "notionObjectType": "page",
+          "id": "6d04d93b-e273-432b-a376-9dbe4adefb23",
+          "url": "https://app.notion.com/p/6d04d93be273432ba3769dbe4adefb23",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "label": "悦读笔记",
+      "value": "08f299d0-5ba8-82d5-a54e-0158092dcb25",
+      "nodeType": "root",
+      "notionObjectType": "database",
+      "id": "08f299d0-5ba8-82d5-a54e-0158092dcb25",
+      "url": "https://app.notion.com/p/08f299d05ba882d5a54e0158092dcb25",
+      "disabled": false,
+      "loadChildren": false,
+      "children": []
+    },
+    {
+      "label": "参考文摘",
+      "value": "975299d0-5ba8-83de-b1e8-8102a3139626",
+      "nodeType": "root",
+      "notionObjectType": "database",
+      "id": "975299d0-5ba8-83de-b1e8-8102a3139626",
+      "url": "https://app.notion.com/p/975299d05ba883deb1e88102a3139626",
+      "disabled": false,
+      "loadChildren": false,
+      "children": []
+    }
+  ]
+}
+

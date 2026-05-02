@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "cmd /c .cursor\\tools\\cleanup_temp_backups.cmd --days=15 >nul 2>&1"
+      },
+      {
+        "command": "cmd /c python .cursor/hooks/session_start_profile_launch.py || node .cursor/hooks/session_start_profile_launch.mjs"
+      }
+    ],
+    "postToolUseFailure": [
+      {
+        "command": "cmd /c python .cursor/hooks/error_log_launch.py || node .cursor/hooks/error_log_launch.mjs"
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "cmd /c python .cursor/hooks/error_log_launch.py || node .cursor/hooks/error_log_launch.mjs"
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "cmd /c python .cursor/hooks/notion_daily_precheck_launch.py || node .cursor/hooks/notion_daily_precheck_launch.mjs"
+      }
+    ]
+  }
+}
