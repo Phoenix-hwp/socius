@@ -12,7 +12,13 @@ alwaysApply: true
 
 ## 范围
 
-跨设备与工作区版本同步以 **Git** 为准。**Notion 操作**仍遵循 `notion-unified-crud-workflow.mdc`（创建细则见 `notion-write-workflow-confirmation.mdc`），与 Git 无关。
+跨设备与工作区版本同步以 **Git** 为准。**Notion 操作**仍遵循 `mod-notion-crud-framework.mdc`：
+- 创建细则见 `flow-notion-create.mdc`
+- 更新细则见 `flow-notion-update.mdc`
+- 删除细则见 `flow-notion-delete.mdc`
+- 查询细则见 `flow-notion-query.mdc`
+
+与 Git 无关。
 
 ## 执行动作（强制）
 

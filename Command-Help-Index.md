@@ -90,8 +90,11 @@ help
 
 | 指令 / 主题 | 别名 | 路径或说明 |
 |---|---|---|
-| Notion操作流程 | Notion增删改查 | `.cursor/rules/notion-unified-crud-workflow.mdc`（网络 → 目录 → 分型；**改**：`1`/`2` 策略；优先 MCP） |
-| Notion写入流程 | 写入流程、落点确认 | 创建六步 `.cursor/rules/notion-write-workflow-confirmation.mdc` |
+| Notion操作流程 | Notion增删改查 | `.cursor/rules/mod-notion-crud-framework.mdc`（网络 → 目录 → 分型；**改**：`1`/`2` 策略；优先 MCP） |
+| Notion创建 | 写入流程、落点确认 | 创建六步 `.cursor/rules/flow-notion-create.mdc` |
+| Notion更新 | 更新Notion | 更新策略 `1`/`2` → 预览 → `确认更新` `.cursor/rules/flow-notion-update.mdc` |
+| Notion删除 | 删除Notion | 定位 → 二次确认 → `确认删除` `.cursor/rules/flow-notion-delete.mdc` |
+| Notion查询 | 查询Notion | 关键词 → 定位 → 摘要 `.cursor/rules/flow-notion-query.mdc` |
 | （可选）CRUD 向导 | — | `.cursor/mcp/notion_write_menu.cmd`；GUI `.cursor/tools/notion_gui_menu.ps1` |
 | Notion 统一入口规范 | — | `10-Topics/Notion-统一入口规范.md` |
 | Notion 目录选项 | — | `.cursor/mcp/notion_cascader_directory_choices.json`（见 `10-Topics/script-option-ids.md`） |

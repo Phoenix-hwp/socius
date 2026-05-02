@@ -11,7 +11,10 @@ Use `run_notion_workflow.py` with a JSON config to run repeatable Notion tasks.
 
 ## 0) Unified CRUD workflow (chat default + optional local menu)
 
-**Primary**: In **Cursor chat**, follow `.cursor/rules/notion-unified-crud-workflow.mdc` — network (**`Y`**) → numbered **directory** → branch by operation (**create / read / update / archive**). **Create** detail steps + **`确认写入`** remain in `.cursor/rules/notion-write-workflow-confirmation.mdc`. **Update**: choose **`1` replace-all (clear top-level blocks then write)** vs **`2` merge/diff (fetch + partial patch per anchors / Playbook)** → preview → **`确认更新`**; **prefer Notion MCP**, scripts only as fallback with reason. **Delete** uses Notion archive + **`确认删除`** (see rule).
+**Primary**: In **Cursor chat**, follow the three-layer Notion rules:
+- Layer 2 framework: `.cursor/rules/mod-notion-crud-framework.mdc` — network (**`Y`**) → numbered **directory** → branch by operation (**create / read / update / archive**)
+- Layer 3 workflows:
+  - **Create**: `.cursor/rules/flow-notion-create.mdc` — detail steps + **`确认写入`** **Update**: choose **`1` replace-all (clear top-level blocks then write)** vs **`2` merge/diff (fetch + partial patch per anchors / Playbook)** → preview → **`确认更新`**; **prefer Notion MCP**, scripts only as fallback with reason. **Delete** uses Notion archive + **`确认删除`** (see rule).
 
 **Optional** local CMD wizard: `"<vault>\.cursor\mcp\notion_write_menu.cmd"` or `python notion_write_menu.py` — interactive **CRUD** (create + read summary + update + archive under chosen parent).
 

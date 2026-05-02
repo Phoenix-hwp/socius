@@ -38,7 +38,10 @@ note: 供后续统一抽象各任务工作流；逐项勾选推进。
 
 `command-alias-dispatch.mdc` 会先查别名；下列多为对话内强制流程：
 
-- **Notion**：`notion-unified-crud-workflow.mdc`、`notion-write-workflow-confirmation.mdc`、`notion-directory-option-ids.mdc`、`notion-first-action-network-confirmation.mdc`
+- **Notion（三层架构）**：
+  - 第一层：`gateway-command-router.mdc`
+  - 第二层：`mod-notion-precondition.mdc`、`mod-notion-crud-framework.mdc`
+  - 第三层：`flow-notion-create.mdc`、`flow-notion-update.mdc`、`flow-notion-delete.mdc`、`flow-notion-query.mdc`
 - **Git**：`git-workspace-commit.mdc`
 - **备份**：`conversation-backup-commands.mdc`
 - **项目备忘**：`project-memo-commands.mdc`
@@ -127,7 +130,7 @@ note: 供后续统一抽象各任务工作流；逐项勾选推进。
 
 ### 8.3 对话 UX：减少重复与歧义—— 高收益 / 低成本（部分已落规则）
 
-- 已固化：**同会话复用父级不重复全表；换目录须再贴完整表**（见 `notion-directory-option-ids.mdc`、`Notion-统一入口规范` 4.2.3）。
+- 已固化：**同会话复用父级不重复全表；换目录须再贴完整表**（见 `mod-notion-crud-framework.mdc` 阶段B、`Notion-统一入口规范` 4.2.3）。
 - **可继续明确的边界**：
   - **「换关键词再查」**：建议默认 **不换目录**，仅重走定位子流程。
   - **「换一个库」**：视为 **换目录**，强制重新阶段 B。

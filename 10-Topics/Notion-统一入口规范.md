@@ -81,13 +81,13 @@ python ".cursor/mcp/run_notion_workflow.py" --config ".cursor/mcp/notion_workflo
 
 ## 4.2) 对话内 Notion 统一流程（增删改查 · 强制）
 
-**总览规则**：**`.cursor/rules/notion-unified-crud-workflow.mdc`**。
+**总览规则**：**`.cursor/rules/mod-notion-crud-framework.mdc`**（第二层模块框架）。
 
 **顺序**：**网络（`Y`）** → **目录编号** → **按操作分型**。
 
 | 操作 | 对话内要点 | 执行前口令 / 确认 |
 |:---:|:---|:---|
-| **增** | 标题策略 `1/2` → 标题落地 → **正文完整预览** | **`确认写入`**（细则：**`.cursor/rules/notion-write-workflow-confirmation.mdc`**） |
+| **增** | 标题策略 `1/2` → 标题落地 → **正文完整预览** | **`确认写入`**（细则：**`.cursor/rules/flow-notion-create.mdc`**） |
 | **查** | 父级下 **标题/关键词** 定位 → 多命中则 **编号选择** → 再读取 | 只读仍须首条网络 `Y` |
 | **改** | 定位 → 正文来源 → **策略 `1` 清空后重写 / `2` 局部合并`**（见统一规则 **「改（更新）策略分支」**）→ **预览** → **优先 MCP** 传参，脚本仅兜底并注明原因 | **`确认更新`** |
 | **删** | 定位 → **二次确认**（标题 + id/url） | **`确认删除`**（默认 API **归档**，非本地文件删除） |
@@ -111,7 +111,7 @@ python ".cursor/mcp/run_notion_workflow.py" --config ".cursor/mcp/notion_workflo
 
 ### 4.2.3 目录编号清单（何时贴全表 · 何时不重复）
 
-与 **`.cursor/rules/notion-directory-option-ids.mdc`**、**`.cursor/rules/notion-unified-crud-workflow.mdc`** 阶段 B 对齐，便于人工核对 Agent 行为：
+与 **`.cursor/rules/mod-notion-crud-framework.mdc`** 阶段 B 对齐，便于人工核对 Agent 行为：
 
 - **须一次性贴完整表**：用户 **首次**在本对话中要选择父级，或明确表示 **换目录 / 重新选父级 / 换一个库** 时，应 **`Read`** `.cursor/mcp/notion_cascader_directory_choices.json`，展示 **完整** 编号清单（1～n，`path` + page/database 类型）。**不要**只写「见 JSON」、不要半截表、不要分多条消息零碎「补行」。
 - **同会话不必重复全表**：本对话里阶段 B 已完成、`parent` 已选定，且用户 **未**要求换目录、**未**改成仅 **全局搜索** 或仅 **页面 URL/ID** 时，后续 **查 / 改 / 删 / 增** **不必**再刷整张目录表；只问当前步所需的 **一个**答案（例如 **查** 仅索要关键词，**增** 进入写入规则的标题策略等）。如需消除歧义，可 **一句话** 回显当前父级 `path`。
