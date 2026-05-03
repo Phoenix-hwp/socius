@@ -36,11 +36,17 @@ def load_env_file(env_file: Path) -> None:
 
 
 def parse_notion_id(raw: str) -> str:
-    m = re.search(r"([0-9a-fA-F]{32})", raw)
-    if not m:
-        raise ValueError(f"No 32-hex Notion id in input: {raw}")
-    s = m.group(1).lower()
-    return f"{s[0:8]}-{s[8:12]}-{s[12:16]}-{s[16:20]}-{s[20:32]}"
+    # 支持两种格式：标准 UUID (带连字符) 或 纯32位十六进制
+    # 先尝试匹配标准 UUID 格式
+    m_uuid = re.search(r"([0-9a-fA-F]{8})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{12})", raw)
+    if m_uuid:
+        return raw.lower().strip()
+    # 再尝试匹配纯32位十六进制
+    m_hex = re.search(r"([0-9a-fA-F]{32})", raw)
+    if m_hex:
+        s = m_hex.group(1).lower()
+        return f"{s[0:8]}-{s[8:12]}-{s[12:16]}-{s[16:20]}-{s[20:32]}"
+    raise ValueError(f"No valid Notion id in input: {raw}")
 
 
 def prompt_text(prompt: str, default: str | None = None, required: bool = True) -> str:
@@ -313,10 +319,11 @@ def archive_all_top_blocks(client: NotionClient, page_id: str, workers: int = 6)
     return archived
 
 
-def do_read(client: NotionClient, target: str, target_type: str = "auto") -> dict[str, Any]:
+def do_read(client: NotionClient, target: str, target_type: str = "auto", query: str | None = None) -> dict[str, Any]:
     notion_id = parse_notion_id(target)
     out: dict[str, Any] = {"parsed_id": notion_id}
     ttype = (target_type or "auto").strip().lower()
+    query_text = (query or "").strip()
 
     if ttype in ("database", "auto"):
         ok_db, db_or_err = client.try_get_database(notion_id)
@@ -325,6 +332,35 @@ def do_read(client: NotionClient, target: str, target_type: str = "auto") -> dic
             out["type"] = "database"
             out["title"] = "".join(x.get("plain_text", "") for x in (db.get("title") or []))
             out["url"] = db.get("url", "")
+
+            # 若提供 query 参数，执行标题过滤查询
+            if query_text:
+                title_prop = get_database_title_property_name(db)
+                if not title_prop:
+                    out["error"] = "Database has no title property; cannot filter by query."
+                    return out
+                matched = query_database_rows_title_contains(client, notion_id, title_prop, query_text)
+                out["query"] = query_text
+                out["matched_count"] = len(matched)
+                out["matched"] = matched
+                # 若仅命中一条，自动读取详情
+                if len(matched) == 1:
+                    single = matched[0]
+                    out["selected"] = single
+                    # 追加页面内容预览
+                    page_detail = client.request("GET", f"pages/{single['id']}")
+                    children = client.request("GET", f"blocks/{single['id']}/children?page_size=20")
+                    preview = []
+                    for block in children.get("results", []):
+                        btype = block.get("type")
+                        txt = ""
+                        if btype in ("heading_1", "heading_2", "heading_3", "paragraph", "bulleted_list_item", "numbered_list_item", "quote"):
+                            txt = "".join(x.get("plain_text", "") for x in (block.get(btype, {}).get("rich_text") or []))
+                        preview.append({"type": btype, "text": txt})
+                    out["preview"] = preview
+                return out
+
+            # 无 query 时返回样本（兼容原有行为）
             q = client.request("POST", f"databases/{notion_id}/query", {"page_size": 5})
             sample = []
             for row in q.get("results", []):
@@ -488,6 +524,7 @@ def build_execution_plan(mode: str, cfg: dict[str, Any]) -> dict[str, Any]:
     if mode == "read":
         plan["target"] = cfg.get("target", "")
         plan["target_type"] = cfg.get("target_type", "auto")
+        plan["query"] = cfg.get("query", "")
         return plan
     if mode == "create_page":
         plan.update({"action": "create_page", "parent": cfg.get("parent", ""), "title": cfg.get("title", ""), "content_file": cfg.get("content_file", "")})
@@ -534,7 +571,16 @@ def main() -> int:
         if mode == "read":
             if interactive and not cfg.get("target"):
                 cfg["target"] = prompt_text("Target Notion URL or ID")
-            result = do_read(client, str(cfg.get("target", "")), str(cfg.get("target_type", "auto")))
+            if interactive and not cfg.get("query"):
+                q = input("Query keyword (optional, press Enter to skip): ").strip()
+                if q:
+                    cfg["query"] = q
+            result = do_read(
+                client,
+                str(cfg.get("target", "")),
+                str(cfg.get("target_type", "auto")),
+                cfg.get("query")
+            )
         elif mode == "archive_page":
             if interactive and not cfg.get("target"):
                 cfg["target"] = prompt_text("Target page URL or ID to archive")
