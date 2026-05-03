@@ -1,0 +1,76 @@
+---
+description: Git 提交流程 — 从 add 到 push 的具体步骤
+glossary:
+  layer: 3-工作流执行层
+  module: Git
+  depends: [mod-git-crud-framework]
+---
+
+# Git 提交流程
+
+## 触发词
+
+- 主指令：`提交git`
+- 别名：`Git同步`、`推仓库`、`提交远端`
+
+---
+
+## 执行步骤（固定五步）
+
+### 步骤 1：环境确认
+
+1. 确保工作目录在 **工作区根**
+2. 执行 `git status -sb` 检查变更
+
+### 步骤 2：变更分类展示
+
+回执格式：
+
+```
+已变更文件：
+- 新增：X 个（file1, file2...）
+- 修改：Y 个（file3, file4...）
+- 删除：Z 个（file5...）
+```
+
+### 步骤 3：add 策略确认
+
+**默认**：`git add .`（添加所有变更）
+
+**若用户指定范围**：按用户要求执行 `git add <指定文件>`
+
+### 步骤 4：commit message 拟定与确认
+
+1. Agent 根据变更内容拟定建议的 commit message
+2. 回执给用户确认或修改
+3. 用户确认后执行 `git commit -m "message"`
+
+**commit message 规范**：
+- 简洁描述变更内容
+- 可包含变更类型前缀（add/fix/update/refactor 等）
+
+### 步骤 5：推送前拉取与推送
+
+1. **优先执行**：`git pull --rebase`（或用户约定的合并策略）
+2. 若无冲突：`git push`
+3. 推送成功后回执：远端分支 + 提交摘要
+
+---
+
+## 冲突处理
+
+若 `pull --rebase` 遇到冲突：
+
+1. 暂停推送
+2. 回执冲突文件清单
+3. 询问用户：
+   - `1`：协助解决冲突后继续
+   - `2`：中止 rebase，改用其他策略
+   - `3`：取消本次推送
+
+---
+
+## 参考文档
+
+- 首次绑定远程仓库：`10-Topics/Gitee-Workspace-Git-Workflow.md`
+- 统一框架定义：`mod-git-crud-framework.mdc`

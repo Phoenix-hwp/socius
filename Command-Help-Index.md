@@ -3,13 +3,13 @@
 > 用途：快速查看当前可用指令、别名与用途。
 > 调用方式：`help` 或 `查看帮助`。
 
-## 1) 日常备份相关
+## 1) 日常备份相关（三层架构）
 
-| 指令 | 别名 | 用途 |
-|---|---|---|
-| 备份当前对话 | 备份对话 | 将当前会话写入 `Daily-Backups`（索引+明细）。 |
-| 读取对话 | 查对话 | 按日期+时段读取日常备份（同年可省略年份）。 |
-| 继续备忘对话 | 续聊备忘 | 先调取备份恢复上下文，再继续围绕该内容交流。 |
+| 指令 | 别名 | 用途 | 框架 | 工作流 |
+|---|---|---|---|---|
+| 备份当前对话 | 备份对话 | 将当前会话写入 `Daily-Backups`（索引+明细） | `mod-conversation-framework.mdc` | `flow-conversation-backup.mdc` |
+| 读取对话 | 查对话 | 按日期+时段读取日常备份（同年可省略年份） | `mod-conversation-framework.mdc` | `flow-conversation-read.mdc` |
+| 继续备忘对话 | 续聊备忘 | 先调取备份恢复上下文，再继续围绕该内容交流 | `mod-conversation-framework.mdc` | `flow-conversation-resume.mdc` |
 
 ## 2) 项目与长记忆流程
 
@@ -19,12 +19,42 @@
 | 总结本轮对话 | 本轮总结 | 收束本轮并落盘：已完成/未完成/待确认/下轮起点。 |
 | 确认合并 | 执行合并 | 触发合并闸门，将已确认内容写入主文档并登记合并日志。 |
 
-## 3) 项目备忘录相关（469_Sports）
+## 3) 项目备忘录相关（多项目支持）（三层架构）
 
-| 指令 | 别名 | 用途 |
-|---|---|---|
-| 项目备忘录 | 备忘录 | 读取项目备忘清单与最近一条记录。 |
-| 记录备忘 | 记下 | 将当前备忘信息追加到项目备忘录。 |
+> 设计原则：每个项目的备忘录、背景信息完全独立存储，不混入同一路径。
+
+### 项目文件结构
+
+```
+<Project_Name>/
+├── <Project_Name>_Project_Memo.md          # 项目备忘录（待复核清单 + 记录区）⭐
+├── <Project_Name>_ProjectContext.md        # 项目主背景
+├── <Project_Name>_Background_Pending.md    # 待处理背景
+├── <Project_Name>_对话备份索引.md         # 对话备份索引
+└── 对话备份/                                # 备份明细目录
+```
+
+### 多项目指令格式
+
+| 指令格式 | 示例 | 说明 |
+|:---|:---|:---|
+| `XX项目备忘录` | `469项目备忘录`、`Test项目备忘录` | 显式指定项目名 |
+| `项目备忘录` | `项目备忘录` | 从上下文推断项目名 |
+| `记录XX备忘` | `记录469备忘`、`记录Test备忘` | 显式指定项目名追加 |
+| `记录备忘` | `记录备忘` | 从上下文推断项目名追加 |
+
+### 项目名解析规则
+
+- 数字前缀自动补全：`469` → `469_Sports`
+- 全名直接使用：`TestProject` → `TestProject`
+- 无法推断时询问用户"哪个项目的备忘录？"
+
+### 指令清单
+
+| 指令 | 别名 | 用途 | 框架 | 工作流 |
+|---|---|---|---|---|
+| 项目备忘录 | 备忘录、XX项目备忘录 | 查看指定项目的待复核清单与最近记录 | `mod-project-memo-framework.mdc` | `flow-project-memo-read.mdc` |
+| 记录备忘 | 记下、记录XX备忘 | 追加备忘到指定项目的备忘录 | `mod-project-memo-framework.mdc` | `flow-project-memo-append.mdc` |
 
 ## 4) DeepSeek Cursor 中间件备忘
 
@@ -86,57 +116,87 @@ help
 
 白名单文件：`.cursor/config/stage-delete-whitelist.txt`
 
-## 8) Notion（增删改查）
+## 8) Notion（增删改查）（三层架构）
 
-| 指令 / 主题 | 别名 | 路径或说明 |
-|---|---|---|
-| Notion操作流程 | Notion增删改查 | `.cursor/rules/mod-notion-crud-framework.mdc`（网络 → 目录 → 分型；**改**：`1`/`2` 策略；优先 MCP） |
-| Notion创建 | 写入流程、落点确认 | 创建六步 `.cursor/rules/flow-notion-create.mdc` |
-| Notion更新 | 更新Notion | 更新策略 `1`/`2` → 预览 → `确认更新` `.cursor/rules/flow-notion-update.mdc` |
-| Notion删除 | 删除Notion | 定位 → 二次确认 → `确认删除` `.cursor/rules/flow-notion-delete.mdc` |
-| Notion查询 | 查询Notion | 关键词 → 定位 → 摘要 `.cursor/rules/flow-notion-query.mdc` |
-| （可选）CRUD 向导 | — | `.cursor/mcp/notion_write_menu.cmd`；GUI `.cursor/tools/notion_gui_menu.ps1` |
-| Notion 统一入口规范 | — | `10-Topics/Notion-统一入口规范.md` |
-| Notion 目录选项 | — | `.cursor/mcp/notion_cascader_directory_choices.json`（见 `10-Topics/script-option-ids.md`） |
-| 刷新目录选项 | — | `.cursor/mcp/refresh_notion_directory_choices.cmd` |
+| 指令 / 主题 | 别名 | 说明 | 框架 | 工作流 |
+|---|---|---|---|---|
+| Notion操作流程 | Notion增删改查 | 网络 → 目录 → 分型；**改**：`1`/`2` 策略；优先 MCP | `mod-notion-crud-framework.mdc` | — |
+| Notion创建 | 写入流程、落点确认 | 创建六步（Y → 目录 → 标题 → 预览 → 确认写入） | `mod-notion-crud-framework.mdc` | `flow-notion-create.mdc` |
+| Notion更新 | 更新Notion | 更新策略 `1`/`2` → 预览 → `确认更新` | `mod-notion-crud-framework.mdc` | `flow-notion-update.mdc` |
+| Notion删除 | 删除Notion | 定位 → 二次确认 → `确认删除` | `mod-notion-crud-framework.mdc` | `flow-notion-delete.mdc` |
+| Notion查询 | 查询Notion | 关键词 → 定位 → 摘要 | `mod-notion-crud-framework.mdc` | `flow-notion-query.mdc` |
+| （可选）CRUD 向导 | — | `.cursor/mcp/notion_write_menu.cmd`；GUI `.cursor/tools/notion_gui_menu.ps1` | — | — |
+| Notion 统一入口规范 | — | `10-Topics/Notion-统一入口规范.md` | — | — |
+| Notion 目录选项 | — | `.cursor/mcp/notion_cascader_directory_choices.json`（见 `10-Topics/script-option-ids.md`） | — | — |
+| 刷新目录选项 | — | `.cursor/mcp/refresh_notion_directory_choices.cmd` | — | — |
 
-## 9) Git / Gitee（工作区同步）
+## 9) Git / Gitee（工作区同步）（三层架构）
 
-| 指令 | 别名 | 用途 |
-|---|---|---|
-| 提交git | Git同步、推仓库、提交远端 | 先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根协助 `git status` → `add`/`commit` → `pull`/`push`。强制推送与破坏性操作须确认。规则：`.cursor/rules/git-workspace-commit.mdc`。 |
+| 指令 | 别名 | 用途 | 框架 | 工作流 |
+|---|---|---|---|---|
+| 提交git | Git同步、推仓库、提交远端 | 先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根协助 `git status` → `add`/`commit` → `pull`/`push`。强制推送与破坏性操作须确认。 | `mod-git-crud-framework.mdc` | `flow-git-commit.mdc` |
 
-## 10) Earth Library（地球图书馆）
+## 10) Earth Library（地球图书馆）（三层架构）
 
-| 指令 | 别名 | 用途 |
-|---|---|---|
-| 存入图书馆 | 入馆、存知识 | 将当前对话新增知识入库到 `Earth_Library`，并自动建立关联。 |
-| 启用图书馆 | 开馆、启用库 | 启用图书馆补充参考模式（未停用前持续生效）。 |
-| 停用图书馆 | 闭馆、停用库 | 停用图书馆补充参考模式（未启用前不再参考）。 |
-| 图书馆巡检 | 巡检图书馆、库巡检 | 执行重复与质量巡检，写入待处理队列。 |
-| 图书馆纠错 | 纠错图书馆、库纠错 | 对待处理项执行纠错建议标记（非破坏式）。 |
-| 图书馆优化 | 优化图书馆、库优化 | 追加知识结构优化建议到待处理队列。 |
-| 更新图书馆标签 | 更新标签、标签维护 | 维护标签词典，支持长期迭代。 |
+> 定位：为本工作区所有项目提供**知识参考补充层**，作为网络信息的辅助与沉淀。
 
-常用脚本：
+### 知识优先级
 
-- 入库：`python "Earth_Library/scripts/store_to_library.py" --title "标题" --content "内容" --type "类型" --source "来源" --source_url "链接" --confidence "中" --keywords "关键词1,关键词2"`
-- 一键入库（自然语言）：`python "Earth_Library/scripts/quick_ingest.py" --text "这里直接放一段知识内容"`
-- 启停：`python "Earth_Library/scripts/library_switch.py" --mode enable|disable|status`
-- 检索：`python "Earth_Library/scripts/search_library.py" --q "关键词"`
-- 巡检：`python "Earth_Library/scripts/library_review.py"`
-- 纠错：`python "Earth_Library/scripts/library_fix.py"`
-- 优化：`python "Earth_Library/scripts/library_optimize.py"`
-- 标签词典：`Earth_Library/System/tag_dictionary.json`
-- 标签说明：`Earth_Library/Tag_Guide.md`
+| 层级 | 来源 | 优先级 |
+|:---|:---|:---:|
+| 主层 | 模型知识 + 网络实时信息 | 1 |
+| **补充层** | **Earth Library** | **2** |
+| 档案层 | 项目专属文档 | 3 |
 
-网络关联维度（当前）：
-- 关键词相交
-- 标签相交
-- 冲突关系
-- 巡检近邻（关键词/标签重合度）
+### 指令清单
 
-## 11) Agent 工作约定（脚本修改）
+| 指令 | 别名 | 用途 | 框架 | 工作流 |
+|---|---|---|---|---|
+| 存入图书馆 | 入馆、存知识 | 将当前对话中的新增知识入库到 `Earth_Library`，自动建立关联索引 | `mod-earth-library-framework.mdc` | `flow-library-ingest.mdc` |
+| 启用图书馆 | 开馆、启用库 | 开启 Earth Library 补充参考模式（持续生效，直到停用） | `mod-earth-library-framework.mdc` | — |
+| 停用图书馆 | 闭馆、停用库 | 关闭 Earth Library 补充参考模式（持续生效，直到启用） | `mod-earth-library-framework.mdc` | — |
+| 图书馆巡检 | 巡检图书馆、库巡检 | 执行重复与质量巡检，写入待处理队列 | `mod-earth-library-framework.mdc` | `flow-library-review.mdc` |
+| 图书馆纠错 | 纠错图书馆、库纠错 | 对待处理项执行纠错建议标记（非破坏式） | `mod-earth-library-framework.mdc` | `flow-library-review.mdc` |
+| 图书馆优化 | 优化图书馆、库优化 | 追加知识结构优化建议并进入待处理队列 | `mod-earth-library-framework.mdc` | `flow-library-review.mdc` |
+| 更新图书馆标签 | 更新标签、标签维护 | 维护 Earth Library 标签词典 | `Earth_Library/Tag_Guide.md` | — |
+
+### 常用脚本
+
+```bash
+# 入库
+python "Earth_Library/scripts/store_to_library.py" --title "标题" --content "内容" --type "类型" --source "来源" --confidence "中" --keywords "关键词1,关键词2"
+
+# 一键入库（自然语言）
+python "Earth_Library/scripts/quick_ingest.py" --text "这里直接放一段知识内容"
+
+# 启停状态
+python "Earth_Library/scripts/library_switch.py" --mode enable|disable|status
+
+# 检索
+python "Earth_Library/scripts/search_library.py" --q "关键词"
+
+# 巡检
+python "Earth_Library/scripts/library_review.py"
+
+# 纠错
+python "Earth_Library/scripts/library_fix.py"
+
+# 优化
+python "Earth_Library/scripts/library_optimize.py"
+```
+
+### 核心文件
+
+| 类型 | 路径 | 说明 |
+|:---|:---|:---|
+| 架构设计 | `Earth_Library/Earth_Library_Architecture.md` | 系统架构与定位 |
+| 项目说明 | `Earth_Library/README.md` | 项目简介 |
+| 知识总索引 | `Earth_Library/Library_Index.md` | 检索入口 |
+| 关系网络 | `Earth_Library/Relations/Relations_Index.md` | 知识关联 |
+| 标签维护 | `Earth_Library/Tag_Guide.md` | 标签体系说明 |
+| 启停开关 | `Earth_Library/System/library_switch.json` | 启用状态 |
+
+## 12) Agent 工作约定（脚本修改）
 
 | 主题 | 路径 | 用途 |
 |---|---|---|

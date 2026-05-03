@@ -1,0 +1,135 @@
+---
+description: Earth Library 入库流程 — 知识沉淀的具体步骤
+glossary:
+  layer: 3-工作流执行层
+  module: EarthLibrary
+  depends: [mod-earth-library-framework]
+---
+
+# 入库流程
+
+## 触发词
+
+- 主指令：`存入图书馆`
+- 别名：`入馆`、`存知识`
+
+自然语言一键模式：用户直接提供一段文本，自动推断字段。
+
+---
+
+## 执行步骤（固定六步）
+
+### 步骤 1：内容提取
+
+从用户消息或当前对话中提取可入库的知识内容。
+
+**来源识别**：
+| source_mode | 识别特征 |
+|:---|:---|
+| `对话` | 当前会话中产生的结论 |
+| `网络` | 包含 URL 或搜索引擎结果 |
+| `读书笔记` | 提到书名、章节、阅读 |
+| `Notion` | 来自 Notion 拉取的内容 |
+| `用户输入` | 用户直接提供的文本 |
+
+### 步骤 2：字段填充
+
+**必填字段**：
+
+```yaml
+title: （知识标题，8-30字）
+type: （方法论/概念定义/实操步骤/案例分析/其他）
+source: （来源说明，如"本轮对话"、"网络搜索"、"《XXX》读书笔记"）
+source_mode: （对话/网络/读书笔记/Notion/用户输入）
+confidence: （高/中/低）
+keywords: （3-6个关键词，逗号分隔）
+content: （知识详细内容）
+```
+
+**可选字段**：
+- `source_url`：来源链接
+- `source_path`：来源文件路径
+
+**自动推断**（自然语言模式）：
+- 从内容中提取关键词
+- 根据长度和结构推断 type
+- 根据上下文推断 source_mode
+
+### 步骤 3：标签自动计算
+
+读取 `Earth_Library/System/tag_dictionary.json`，根据触发词自动打标签。
+
+标签数量裁剪：
+- 范围：3-6 个
+- 默认：5 个
+
+### 步骤 4：生成知识卡片
+
+写入 `Earth_Library/Knowledge_Cards/YYYYMMDD-HHMMSS_标题.md`
+
+**卡片模板**：
+```markdown
+---
+title: （标题）
+type: （类型）
+source: （来源）
+source_mode: （来源模式）
+source_url: （链接，可选）
+confidence: （置信度）
+keywords: （关键词）
+tags: （自动标签）
+created: YYYY-MM-DD HH:MM:SS
+---
+
+# （标题）
+
+## 核心内容
+（content）
+
+## 后续可扩展
+（可选：相关问题或行动项）
+```
+
+### 步骤 5：更新索引与关联
+
+1. **追加总索引**：`Earth_Library/Library_Index.md`
+2. **计算关联**：
+   - 关键词相交检测
+   - 标签相交检测
+   - 写入 `Earth_Library/Relations/Relations_Index.md`
+
+### 步骤 6：执行与回执
+
+**调用脚本**（优先 Python，失败回退 Node）：
+```bash
+# 标准入库
+cmd /c "python Earth_Library/scripts/store_to_library.py --title ... --content ... || node Earth_Library/scripts/store_to_library.mjs --title ... --content ..."
+
+# 一键入库（自然语言）
+cmd /c "python Earth_Library/scripts/quick_ingest.py --text \"内容\" || node Earth_Library/scripts/quick_ingest.mjs --text \"内容\""
+```
+
+**成功回执**：
+```
+已存入 Earth Library：
+- 卡片：Knowledge_Cards/20260503-143052_标题.md
+- 索引：Library_Index.md（第 N 条）
+- 标签：[标签1, 标签2, 标签3]
+- 关联：发现 M 条相关知识
+```
+
+---
+
+## 约束
+
+1. **仅入库新增知识**：不把过程噪音、临时草稿写入
+2. **置信度诚实标记**：不确定的知识标记为"中"或"低"
+3. **关键词准确**：便于后续检索与关联
+
+---
+
+## 参考文档
+
+- 统一框架定义：`mod-earth-library-framework.mdc`
+- 架构设计：`Earth_Library/Earth_Library_Architecture.md`
+- 标签体系：`Earth_Library/Tag_Guide.md`

@@ -6,47 +6,26 @@ Modes:
 - create_page: create a page under parent and append markdown content
 - update_page: append or replace page content from markdown
 - archive_page: set archived=true on a page (Notion "delete" / trash)
+
+Refactored to use notion_sdk for shared components.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import re
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
+# Add notion_sdk to path
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR / "notion_sdk") not in sys.path:
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
-def load_env_file(env_file: Path) -> None:
-    if not env_file.exists():
-        return
-    for raw in env_file.read_text(encoding="utf-8").splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        if key and key not in os.environ:
-            os.environ[key] = value
-
-
-def parse_notion_id(raw: str) -> str:
-    # 支持两种格式：标准 UUID (带连字符) 或 纯32位十六进制
-    # 先尝试匹配标准 UUID 格式
-    m_uuid = re.search(r"([0-9a-fA-F]{8})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{12})", raw)
-    if m_uuid:
-        return raw.lower().strip()
-    # 再尝试匹配纯32位十六进制
-    m_hex = re.search(r"([0-9a-fA-F]{32})", raw)
-    if m_hex:
-        s = m_hex.group(1).lower()
-        return f"{s[0:8]}-{s[8:12]}-{s[12:16]}-{s[16:20]}-{s[20:32]}"
-    raise ValueError(f"No valid Notion id in input: {raw}")
+from notion_sdk import NotionClient, load_env_file, parse_notion_id
 
 
 def prompt_text(prompt: str, default: str | None = None, required: bool = True) -> str:
@@ -82,61 +61,8 @@ def prompt_confirm(prompt: str, default_yes: bool = False) -> bool:
     return prompt_choice(prompt, ["yes", "no"], default=default) == "yes"
 
 
-class NotionClient:
-    def __init__(self, token: str) -> None:
-        self.headers = {
-            "Authorization": f"Bearer {token}",
-            "Notion-Version": "2022-06-28",
-            "Content-Type": "application/json",
-        }
-
-    def request(self, method: str, endpoint: str, data: dict[str, Any] | None = None, retries: int = 3) -> dict[str, Any]:
-        body = None if data is None else json.dumps(data, ensure_ascii=False).encode("utf-8")
-        last: Exception | None = None
-        for i in range(retries):
-            try:
-                req = Request(f"https://api.notion.com/v1/{endpoint}", data=body, headers=self.headers, method=method)
-                with urlopen(req, timeout=30) as resp:
-                    payload = resp.read().decode("utf-8")
-                    return json.loads(payload) if payload else {}
-            except HTTPError as exc:
-                last = exc
-                status = int(getattr(exc, "code", 0) or 0)
-                # Retry only for transient server-side/rate-limit failures.
-                if status in (429, 500, 502, 503, 504) and i < retries - 1:
-                    retry_after = exc.headers.get("Retry-After")
-                    try:
-                        wait_s = float(retry_after) if retry_after else (1.0 + i)
-                    except (TypeError, ValueError):
-                        wait_s = 1.0 + i
-                    time.sleep(wait_s)
-                    continue
-                detail = ""
-                try:
-                    detail = exc.read().decode("utf-8", errors="ignore")
-                except Exception:
-                    detail = str(exc)
-                raise RuntimeError(f"Notion API HTTP {status} on {method} {endpoint}: {detail or exc}") from exc
-            except URLError as exc:
-                last = exc
-                if i < retries - 1:
-                    time.sleep(1.0 + i)
-                    continue
-                raise RuntimeError(f"Notion API network error on {method} {endpoint}: {exc}") from exc
-        assert last is not None
-        raise last
-
-    def try_get_database(self, notion_id: str) -> tuple[bool, dict[str, Any] | str]:
-        try:
-            return True, self.request("GET", f"databases/{notion_id}")
-        except Exception as exc:
-            return False, str(exc)
-
-    def try_get_page(self, notion_id: str) -> tuple[bool, dict[str, Any] | str]:
-        try:
-            return True, self.request("GET", f"pages/{notion_id}")
-        except Exception as exc:
-            return False, str(exc)
+# NotionClient now imported from notion_sdk
+# Keep compatibility methods that extend the base client
 
 
 def rich_text(content: str) -> list[dict[str, Any]]:

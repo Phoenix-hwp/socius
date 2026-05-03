@@ -1,0 +1,86 @@
+---
+description: 查看项目备忘录流程 — 读取并展示待复核清单与最近记录
+glossary:
+  layer: 3-工作流执行层
+  module: ProjectMemo
+  depends: [mod-project-memo-framework]
+---
+
+# 查看项目备忘录流程
+
+## 触发词
+
+- 显式格式：`XX项目备忘录`（如 `469项目备忘录`）
+- 隐式格式：`项目备忘录`（从上下文推断项目名）
+- 别名：`备忘录`
+
+---
+
+## 执行步骤（固定四步）
+
+### 步骤 1：解析项目名
+
+从指令中提取项目名：
+
+| 指令 | 解析结果 |
+|:---|:---|
+| `469项目备忘录` | `469_Sports` |
+| `TestProject项目备忘录` | `TestProject` |
+| `项目备忘录` | 从上下文推断，或询问用户 |
+
+### 步骤 2：定位并初始化文件
+
+**文件路径**：`<Project_Name>/<Project_Name>_Project_Memo.md`
+
+**初始化检查**：
+- 若文件不存在，自动创建标准骨架（见 `mod-project-memo-framework.mdc` 阶段B）
+- 若目录 `<Project_Name>/` 不存在，提示用户先执行 `创建XX项目索引`
+
+### 步骤 3：读取主文件
+
+读取 `<Project_Name>_Project_Memo.md`，提取：
+- §1「当前待复核清单」
+- §2「记录备忘（追加区）」最近一条
+
+### 步骤 4：展示结果
+
+**回执格式**：
+
+```
+=== <Project_Name> 项目备忘录 ===
+
+【当前待复核清单】
+| 编号 | 主题 | 当前暂定口径 | 优先级 | 状态 |
+|---|---|---|---|---|
+| MEMO-001 | ... | ... | 高 | 待确认 |
+
+【最近记录】
+日期：YYYY-MM-DD
+内容：...
+关联：MXX
+```
+
+---
+
+## 补全联动（可选）
+
+若用户要求"补全"或"看详情"，联动读取同项目下的：
+- `<Project_Name>_ProjectContext.md`（项目主背景）
+- `<Project_Name>_Background_Pending.md`（待处理背景）
+
+---
+
+## 无备忘录文件时的处理
+
+当 `<Project_Name>_Project_Memo.md` 不存在：
+
+1. 检查 `<Project_Name>/` 目录是否存在：
+   - **存在**：自动创建备忘录文件，回执"已为 <Project_Name> 初始化项目备忘录"
+   - **不存在**：提示"项目目录 <Project_Name>/ 不存在，请先执行「创建XX项目索引」"
+
+---
+
+## 参考文档
+
+- 统一框架定义：`mod-project-memo-framework.mdc`
+- 项目索引初始化：`project-index-bootstrap-commands.mdc`
