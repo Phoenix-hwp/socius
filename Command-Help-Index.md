@@ -56,20 +56,11 @@
 | 项目备忘录 | 备忘录、XX项目备忘录 | 查看指定项目的待复核清单与最近记录 | `mod-project-memo-framework.mdc` | `flow-project-memo-read.mdc` |
 | 记录备忘 | 记下、记录XX备忘 | 追加备忘到指定项目的备忘录 | `mod-project-memo-framework.mdc` | `flow-project-memo-append.mdc` |
 
-## 4) DeepSeek Cursor 中间件备忘
-
-| 指令 | 别名 | 用途 |
-|---|---|---|
-| deepseek-pro4配置 | 代理配置备忘、换机代理步骤、pro4配置 | 调取 `10-Topics/TMP_DeepSeek-Cursor-Proxy-运行步骤.md`（换机须重做步骤、每次使用步骤）。 |
-
-## 5) 常用示例
+## 4) 常用示例
 
 ```text
 help
 查看帮助
-deepseek-pro4配置
-代理配置备忘
-pro4配置
 读取4月23日下午的对话
 创建469_Sports项目索引
 总结本轮对话
@@ -135,6 +126,7 @@ help
 | 指令 | 别名 | 用途 | 框架 | 工作流 |
 |---|---|---|---|---|
 | 提交git | Git同步、推仓库、提交远端 | 先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根协助 `git status` → `add`/`commit` → `pull`/`push`。强制推送与破坏性操作须确认。 | `mod-git-crud-framework.mdc` | `flow-git-commit.mdc` |
+| git到新设备 | 克隆到新路径、同步到新位置 | 确认后，将 Git 仓库拉取到用户指定的自定义路径（支持新设备初始化）。包含路径选择、冲突处理、失败兜底。 | `flow-git-clone-to-custom-path.mdc` | `flow-git-clone-to-custom-path.mdc` |
 
 ## 10) Earth Library（地球图书馆）（三层架构）
 

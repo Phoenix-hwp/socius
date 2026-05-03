@@ -167,7 +167,7 @@ def step_markdown_path() -> Path:
     print()
     print("Markdown 正文文件")
     print(f"知识库根: {_VAULT_ROOT}")
-    print("示例: 10-Topics/TMP_DeepSeek-Cursor-Proxy-运行步骤.md")
+    print("示例: 10-Topics/Gitee-Workspace-Git-Workflow.md")
     print()
     while True:
         raw = _prompt("路径: ")

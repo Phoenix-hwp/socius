@@ -26,7 +26,6 @@ note: 供后续统一抽象各任务工作流；逐项勾选推进。
 | 执行策略 | `执行策略`/`策略`/`风险策略`，`快速模式`，`谨慎模式` |
 | Git | `提交git`、`Git同步`、`推仓库`、`提交远端` |
 | Earth Library | `存入图书馆`/`入馆`/`存知识`，`启用图书馆`/`开馆`，`停用图书馆`/`闭馆`，`图书馆巡检`，`图书馆纠错`，`图书馆优化`，`更新图书馆标签` |
-| DeepSeek 代理备忘 | `deepseek-pro4配置`、`代理配置备忘`、`换机代理步骤`、`pro4配置` |
 | Notion | `Notion操作流程`/`Notion增删改查`，`Notion写入流程`/`写入流程`/`落点确认`，`Notion写入菜单`/`Notion菜单写入` |
 | 脚本改动约定 | `改动预告`、`预期先行`（走规则，非菜单口令） |
 
@@ -49,7 +48,6 @@ note: 供后续统一抽象各任务工作流；逐项勾选推进。
 - **长记忆**：`long-memory-round-workflow.mdc`、`round-start-checkpoint-confirmation.mdc`
 - **个人档案 / 知识库**：`session-profile-workflow.mdc`、`long-memory-knowledge-base.mdc`
 - **图书馆**：`earth-library-commands.mdc`
-- **代理备忘**：`deepseek-pro4-proxy-setup.mdc`
 - **脚本修改前说明**：`pre-edit-script-change-brief.mdc`
 - **生命周期**：`lifecycle-storage-and-cleanup.mdc`
 - **钩子双运行时**：`hooks-dual-runtime.mdc`
@@ -82,7 +80,6 @@ note: 供后续统一抽象各任务工作流；逐项勾选推进。
 | `notion_gui_menu.ps1` | Notion GUI 面板 |
 | `cleanup_temp_backups.cmd` / `.py` / `.mjs` | 临时备份清理 |
 | `delete_stage_files.cmd` / `.py` / `.mjs` | 阶段文件清理（白名单） |
-| `fix_deepseek_proxy_config_permissions.ps1` | DeepSeek 代理配置权限 |
 
 ---
 

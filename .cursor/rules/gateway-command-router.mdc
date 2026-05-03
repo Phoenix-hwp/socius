@@ -45,9 +45,9 @@ alwaysApply: true
 | `help` / `查看帮助` | `Command-Help-Index.md` | 返回"指令 + 别名 + 用途"清单 |
 | `项目备忘录` / `XX项目备忘录` | `mod-project-memo-framework.mdc` | 查看指定项目的待复核清单与备忘（支持多项目） |
 | `记录备忘` / `记录XX备忘` | `mod-project-memo-framework.mdc` | 追加备忘到指定项目（支持多项目） |
-| `deepseek-pro4配置` / `代理配置备忘` / `换机代理步骤` / `pro4配置` | `mod-deepseek-proxy.mdc` | Read `10-Topics/TMP_DeepSeek-Cursor-Proxy-运行步骤.md` 并作答 |
 | `改动预告` / `预期先行` | `pre-edit-script-change-brief.mdc` | 修改脚本前简述预期 |
 | `提交git` / `Git同步` / `推仓库` / `提交远端` | `mod-git-commit.mdc` | Read `10-Topics/Gitee-Workspace-Git-Workflow.md` 并执行 Git 流程 |
+| `git到新设备` / `克隆到新路径` / `同步到新位置` | `flow-git-clone-to-custom-path.mdc` | 确认后拉取 Git 到用户指定的自定义路径 |
 | **Notion 相关**：| | |
 | `Notion操作流程` / `Notion增删改查` | `mod-notion-crud-framework.mdc` | Read 统一 CRUD 框架 |
 | `Notion创建` / `写入Notion` | `flow-notion-create.mdc` | 进入创建页面六步流程 |
