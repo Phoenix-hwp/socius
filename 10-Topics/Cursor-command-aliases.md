@@ -2,7 +2,7 @@
 title: Cursor 指令别名清单
 type: cursor-command-aliases
 created: 2026-04-21
-updated: 2026-05-03 (三层架构扩展 + 项目备忘录多项目支持 + Git新设备克隆)
+updated: 2026-05-04 (新设备初始化别名补「初始化」)
 tags:
   - cursor
   - aliases
@@ -46,7 +46,7 @@ tags:
 | Notion写入菜单 | Notion菜单写入 | **可选本机**：`.cursor/mcp/notion_write_menu.cmd`（**CRUD 向导**）或 `.cursor/tools/notion_gui_menu.ps1`；对话内仍以统一 CRUD 规则为准 | `.cursor/rules/mod-notion-crud-framework.mdc` |
 | （会话约定）脚本改动先说明 | 改动预告、预期先行 | **非口令菜单**：Agent 在实质性修改脚本/自动化入口并落盘前，须先简述改后行为与验收；降低预期偏差导致的反复修改。全文见规则文件 | `.cursor/rules/pre-edit-script-change-brief.mdc` |
 | git到新设备 | 克隆到新路径、同步到新位置、拉取git到新目录 | 将远程仓库拉取到用户指定的新路径，包含确认步骤、路径选择、冲突处理 | `.cursor/rules/flow-git-clone-to-custom-path.mdc` |
-| 新设备初始化 | 初始化设备、换机设置、设备初始化 | **换设备后自动初始化**：提醒先 `git clone/pull`，然后在仓库根运行 `bootstrap-on-pull.cmd`（占位文件、环境检测、依赖安装）；完成后告知需手动编辑的文件清单 | `.cursor/rules/git-cross-device-and-secrets.mdc`、`模型配置说明.md` |
+| 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | **换设备后由 Agent 执行初始化链路**：提醒先 `git clone/pull`（若用户未做）；在**工作区根**用工具或等价方式运行 `bootstrap-on-pull.cmd`（占位、环境、Shim 依赖、ngrok 检测、API Key 占位）；回执须含脚本摘要与**仍需手动**项（见 `模型配置说明.md`）。用户仅说「初始化」且无他义时，视同本指令 | `.cursor/rules/git-cross-device-and-secrets.mdc`、`模型配置说明.md` |
 
 ## 2. 维护约定
 

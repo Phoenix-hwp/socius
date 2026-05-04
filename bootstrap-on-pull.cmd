@@ -1,205 +1,227 @@
 @echo off
-REM ============================================================
-REM  换设备 / 新路径 一键初始化
-REM  git clone/pull 后在仓库根目录运行本脚本
-REM  自动：占位文件、依赖安装、环境检测
-REM  手动提示：需编辑哪些文件
-REM ============================================================
+chcp 65001 >nul
 setlocal enabledelayedexpansion
-set ERRORS=0
+
+REM ============================================================
+REM  bootstrap-on-pull: new machine setup, two phases
+REM  Phase 1 scans and pauses; Phase 2 does config after user OK
+REM ============================================================
+
+REM --- pick the best Node (full install with npm) from common paths ---
+set NODE_EXE=node
+set NPM_EXE=npm
+
+REM priority 1: C:\Install\nodejs (common custom install)
+if not "%NODE_EXE%"=="node" goto :NODE_CHOSEN
+if exist "C:\Install\nodejs\node.exe" set NODE_EXE=C:\Install\nodejs\node.exe
+if exist "C:\Install\nodejs\npm.cmd"   set NPM_EXE=C:\Install\nodejs\npm.cmd
+
+REM priority 1b: D:\Install\nodejs (common custom install)
+if not "%NODE_EXE%"=="node" goto :NODE_CHOSEN
+if exist "D:\Install\nodejs\node.exe" set NODE_EXE=D:\Install\nodejs\node.exe
+if exist "D:\Install\nodejs\npm.cmd"   set NPM_EXE=D:\Install\nodejs\npm.cmd
+
+REM priority 2: standard Program Files
+if not "%NODE_EXE%"=="node" goto :NODE_CHOSEN
+if exist "%ProgramFiles%\nodejs\node.exe" set NODE_EXE=%ProgramFiles%\nodejs\node.exe
+if exist "%ProgramFiles%\nodejs\npm.cmd"   set NPM_EXE=%ProgramFiles%\nodejs\npm.cmd
+
+REM priority 3: 32-bit on 64-bit
+if not "%NODE_EXE%"=="node" goto :NODE_CHOSEN
+if exist "%ProgramFiles(x86)%\nodejs\node.exe" set NODE_EXE=%ProgramFiles(x86)%\nodejs\node.exe
+if exist "%ProgramFiles(x86)%\nodejs\npm.cmd"   set NPM_EXE=%ProgramFiles(x86)%\nodejs\npm.cmd
+
+REM priority 4: fnm (Fast Node Manager) default install
+if not "%NODE_EXE%"=="node" goto :NODE_CHOSEN
+if exist "%LOCALAPPDATA%\fnm\fnm.exe" (
+    for /f "tokens=*" %%i in ('%LOCALAPPDATA%\fnm\fnm.exe env --shell cmd 2^>nul ^| findstr "PATH="') do %%i
+    where node >nul 2>&1 && set NODE_EXE=node && set NPM_EXE=npm
+)
+
+REM priority 5: nvm-windows current version
+if not "%NODE_EXE%"=="node" goto :NODE_CHOSEN
+if exist "%APPDATA%\nvm\settings.txt" (
+    for /f "tokens=*" %%i in ('type "%APPDATA%\nvm\settings.txt" 2^>nul ^| findstr /r "^root:"') do set NVMDIR=%%i
+    if defined NVMDIR (
+        for /f "tokens=2 delims=:" %%d in ("!NVMDIR!") do set NVMDIR=%%d
+        set NVMDIR=!NVMDIR: =!
+        if exist "!NVMDIR!\node.exe" set NODE_EXE=!NVMDIR!\node.exe
+        if exist "!NVMDIR!\npm.cmd"   set NPM_EXE=!NVMDIR!\npm.cmd
+    )
+)
+
+REM priority 6: nvm (unix-style) under user home
+if not "%NODE_EXE%"=="node" goto :NODE_CHOSEN
+if exist "%USERPROFILE%\.nvm\versions\node" (
+    for /f "tokens=*" %%i in ('dir /b /o-n "%USERPROFILE%\.nvm\versions\node" 2^>nul') do (
+        if exist "%USERPROFILE%\.nvm\versions\node\%%i\node.exe" set NODE_EXE=%USERPROFILE%\.nvm\versions\node\%%i\node.exe
+        if exist "%USERPROFILE%\.nvm\versions\node\%%i\npm.cmd"  set NPM_EXE=%USERPROFILE%\.nvm\versions\node\%%i\npm.cmd
+        goto :NODE_CHOSEN
+    )
+)
+
+:NODE_CHOSEN
+REM fallback: default PATH-based node/npm (may be Cursor-bundled without npm)
+
 
 cd /d "%~dp0"
 set "REPO_ROOT=%CD%"
 
 echo.
 echo ============================================================
-echo   Cursor 工作区 - 新设备初始化
+echo   Cursor workspace - New device setup
 echo ============================================================
 echo.
-echo   仓库路径: %REPO_ROOT%
+echo   Repo: %REPO_ROOT%
+echo   Node: %NODE_EXE%
 echo.
 
-REM ============================================================
-REM  1. 占位文件（从模板复制，不存在时才生成）
-REM ============================================================
-echo [1/5] 生成本地占位配置...
+REM ========== run check script, capture to temp file ==========
+set KIMI_VALID=0
+set DEEPSEEK_VALID=0
+if exist ".cursor\ai-model-shim\config.json" (
+    call %NODE_EXE% "%REPO_ROOT%\bootstrap-check-shim-config.mjs" "%REPO_ROOT%" > "%TEMP%\bc-keys.txt" 2>nul
+    for /f "tokens=1,2" %%a in (%TEMP%\bc-keys.txt) do set KIMI_VALID=%%a& set DEEPSEEK_VALID=%%b
+    del "%TEMP%\bc-keys.txt" >nul 2>&1
+)
 
-REM --- config.json (AI Model Shim) ---
+REM ========== PHASE 1: PRE-CHECK ==========
+echo ============================================================
+echo   Phase 1/2 - Pre-check
+echo ============================================================
+echo.
+
+echo [1/4] ngrok.exe...
+if exist ".cursor\ai-model-shim\ngrok.exe" (
+    echo   [OK] ngrok.exe found
+) else (
+    echo   [MISS] ngrok.exe not found
+)
+
+echo.
+echo [2/4] Node and npm...
+call %NODE_EXE% --version >nul 2>&1
+if !errorlevel!==0 (echo   [OK] Node available) else (echo   [MISS] Node unavailable)
+call %NPM_EXE% --version >nul 2>&1
+if !errorlevel!==0 (echo   [OK] npm available) else (echo   [MISS] npm unavailable)
+
+echo.
+echo [3/4] AI model API Keys...
+if "!KIMI_VALID!"=="1" (echo   [OK] Kimi Key) else (echo   [TODO] Kimi Key)
+if "!DEEPSEEK_VALID!"=="1" (echo   [OK] DeepSeek Key) else (echo   [TODO] DeepSeek Key)
+
+echo.
+echo [4/4] Notion Token...
+if not exist ".cursor\mcp\notion.env" (
+    echo   [MISS] notion.env missing
+) else (
+    findstr /r /c:"^NOTION_TOKEN=." ".cursor\mcp\notion.env" >nul 2>&1
+    if !errorlevel!==0 (echo   [OK] Notion Token configured) else (echo   [TODO] Notion Token not set)
+)
+
+echo.
+echo ============================================================
+echo   Checklist before proceeding:
+echo     1. If ngrok.exe missing, place it in ai-model-shim
+echo     2. If npm missing, install Node LTS from nodejs.org
+echo     3. Edit config.json for Kimi / DeepSeek Keys
+echo     4. Edit notion.env for Notion Token, optionally
+echo.
+echo   ngrok authtoken prompt will appear in Phase 2
+echo   ============================================================
+echo   Press any key to start Phase 2, automatic setup
+echo   ============================================================
+pause >nul
+
+REM ========== PHASE 2: SETUP ==========
+cls
+echo.
+echo ============================================================
+echo   Phase 2/2 - Automatic setup
+echo ============================================================
+echo.
+
+REM --- placeholders from templates ---
+echo [2a/3] Config placeholders...
 if exist ".cursor\ai-model-shim\config.example.json" (
     if not exist ".cursor\ai-model-shim\config.json" (
         copy /y ".cursor\ai-model-shim\config.example.json" ".cursor\ai-model-shim\config.json" >nul
-        echo   [OK] .cursor\ai-model-shim\config.json 已从模板创建
+        echo   [OK] config.json created from template
     ) else (
-        echo   [SKIP] .cursor\ai-model-shim\config.json 已存在
+        if "!KIMI_VALID!"=="1" (
+            echo   [SKIP] config.json exists with real keys, not overwriting
+        ) else (
+            echo   [SKIP] config.json exists but keys still placeholder
+        )
     )
-) else (
-    echo   [WARN] 模板 .cursor\ai-model-shim\config.example.json 缺失
-    set /a ERRORS+=1
 )
-
-REM --- notion.env ---
 if exist ".cursor\mcp\notion.env.example" (
     if not exist ".cursor\mcp\notion.env" (
         copy /y ".cursor\mcp\notion.env.example" ".cursor\mcp\notion.env" >nul
-        echo   [OK] .cursor\mcp\notion.env 已从模板创建
+        echo   [OK] notion.env created from template
     ) else (
-        echo   [SKIP] .cursor\mcp\notion.env 已存在
+        echo   [SKIP] notion.env exists, not overwriting
     )
-) else (
-    echo   [WARN] 模板 .cursor\mcp\notion.env.example 缺失
-    set /a ERRORS+=1
 )
 
 echo.
-
-REM ============================================================
-REM  2. 环境检测（Node.js / npm）
-REM ============================================================
-echo [2/5] 检测运行环境...
-
-REM Node.js
-node --version >nul 2>&1
+echo [2b/3] Shim dependencies + undici...
+call %NPM_EXE% --version >nul 2>&1
 if !errorlevel!==0 (
-    for /f "tokens=*" %%i in ('node --version 2^>^&1') do echo   [OK] Node.js: %%i
-) else (
-    echo   [MISS] Node.js 未安装
-    echo          请从 https://nodejs.org 下载安装 (LTS 版本)
-    set /a ERRORS+=1
-)
-
-REM npm
-npm --version >nul 2>&1
-if !errorlevel!==0 (
-    for /f "tokens=*" %%i in ('npm --version 2^>^&1') do echo   [OK] npm: %%i
-) else (
-    echo   [MISS] npm 不可用
-    set /a ERRORS+=1
-)
-
-echo.
-
-REM ============================================================
-REM  3. 安装 Node.js 依赖
-REM ============================================================
-echo [3/5] 安装 Shim 依赖...
-
-if exist ".cursor\ai-model-shim\package.json" (
-    if not exist ".cursor\ai-model-shim\node_modules\undici\package.json" (
-        echo   正在安装 (约需 30 秒)...
-        pushd ".cursor\ai-model-shim"
-        call npm install >nul 2>&1
-        popd
-        if !errorlevel!==0 (
-            echo   [OK] 依赖安装完成
+    if exist ".cursor\ai-model-shim\package.json" (
+        if exist ".cursor\ai-model-shim\node_modules\undici\package.json" (
+            echo   [OK] undici present, skipping install
         ) else (
-            echo   [WARN] npm install 失败，请手动运行:
-            echo          cd .cursor\ai-model-shim ^&^& npm install
-            set /a ERRORS+=1
+            echo   Installing, about 30 seconds...
+            pushd ".cursor\ai-model-shim"
+            call %NPM_EXE% install >nul 2>&1
+            popd
+            if !errorlevel!==0 (
+                if exist ".cursor\ai-model-shim\node_modules\undici\package.json" (
+                    echo   [OK] Installed
+                ) else (
+                    echo   [WARN] Install completed but undici still missing
+                )
+            ) else (
+                echo   [WARN] npm install failed, run manually in ai-model-shim
+            )
         )
     ) else (
-        echo   [SKIP] 依赖已安装
+        echo   [SKIP] package.json not found
     )
 ) else (
-    echo   [SKIP] 无 package.json
+    echo   [SKIP] npm unavailable, install manually in ai-model-shim
 )
 
 echo.
-
-REM ============================================================
-REM  4. 二进制文件检测（ngrok）
-REM ============================================================
-echo [4/5] 检测 ngrok...
-
+echo [2c/3] ngrok authtoken...
 if exist ".cursor\ai-model-shim\ngrok.exe" (
-    echo   [OK] ngrok.exe 已存在
-) else (
-    echo   [WARN] ngrok.exe 未找到
-    echo.
-    echo   ngrok.exe 不上传 Git，请通过以下方式获取：
-    echo     [方式1] 从 U盘/网盘复制到：
-    echo             .cursor\ai-model-shim\ngrok.exe
-    echo     [方式2] 从 https://ngrok.com/download 下载
-    echo             下载后运行一次：ngrok authtoken YOUR_TOKEN
-    echo             获取 token: https://dashboard.ngrok.com/get-started/your-authtoken
-    echo.
-)
-
-echo.
-
-REM ============================================================
-REM  5. API Key 检测
-REM ============================================================
-echo [5/5] 检测 API Key...
-
-set KIMI_VALID=0
-set DEEPSEEK_VALID=0
-
-if exist ".cursor\ai-model-shim\config.json" (
-    for /f %%i in ('powershell -NoProfile -Command "try { $c = Get-Content '.cursor\ai-model-shim\config.json' -Raw | ConvertFrom-Json; if($c.keys.kimi -notlike 'YOUR_*') { Write-Host 'valid' } } catch {}" 2^>nul') do set KIMI_VALID=1
-    if "!KIMI_VALID!"=="1" (
-        echo   [OK] Kimi Key 已配置
+    pushd ".cursor\ai-model-shim"
+    ngrok.exe config check >nul 2>&1
+    if errorlevel 1 (
+        echo   [TODO] authtoken not configured
+        echo.
+        echo   Run: cd /d "%REPO_ROOT%\.cursor\ai-model-shim"
+        echo        ngrok.exe config add-authtoken ^<token^>
+        echo   Sign up: https://dashboard.ngrok.com/signup
+        echo   Token:  https://dashboard.ngrok.com/get-started/your-authtoken
+        echo.
     ) else (
-        echo   [TODO] Kimi Key 未配置
+        echo   [OK] authtoken configured
     )
-
-    for /f %%i in ('powershell -NoProfile -Command "try { $c = Get-Content '.cursor\ai-model-shim\config.json' -Raw | ConvertFrom-Json; if($c.keys.deepseek -notlike 'YOUR_*') { Write-Host 'valid' } } catch {}" 2^>nul') do set DEEPSEEK_VALID=1
-    if "!DEEPSEEK_VALID!"=="1" (
-        echo   [OK] DeepSeek Key 已配置
-    ) else (
-        echo   [TODO] DeepSeek Key 未配置
-    )
+    popd
 ) else (
-    echo   [WARN] config.json 不存在
+    echo   [SKIP] ngrok.exe not present
 )
 
 echo.
-
-REM ============================================================
-REM  6. 汇总 & 手动步骤提示
-REM ============================================================
-echo [6/6] ============ 汇总报告 ============
+echo ============================================================
+echo   Done.
 echo.
-
-if !ERRORS! gtr 0 (
-    echo   ! 存在 !ERRORS! 项警告，请检查上述输出。
-    echo.
-)
-
-set /a KEY_MISSING=0
-if not "!KIMI_VALID!"=="1" set /a KEY_MISSING+=1
-if not "!DEEPSEEK_VALID!"=="1" set /a KEY_MISSING+=1
-
-if !KEY_MISSING! gtr 0 (
-    echo   [!] API Key 需要手动配置（!KEY_MISSING! 项待完成）
-    echo.
-)
-
-echo   ========================================
-echo   你需要手动完成以下配置：
-echo   ========================================
-echo.
-echo   [文件1] %REPO_ROOT%\.cursor\ai-model-shim\config.json
-echo           ^> 填入 Kimi 和 DeepSeek 的 API Key
-echo           ^> Kimi 获取: https://platform.moonshot.cn
-echo           ^> DeepSeek 获取: https://platform.deepseek.com
-echo.
-echo   [文件2] %REPO_ROOT%\.cursor\mcp\notion.env
-echo           ^> 如果使用 Notion 功能，填入 NOTION_TOKEN
-echo           ^> 从 Notion "我的集成" 获取 Internal Integration Secret
-echo.
-echo   [文件3] %REPO_ROOT%\.cursor\ai-model-shim\ngrok.exe
-echo           ^> 如未检测到，从 U盘/网盘/官网获取
-echo           ^> 放到上述路径
-echo.
-echo   ========================================
-echo   配置完成后，启动模型：
-echo     cd /d "%REPO_ROOT%\.cursor\ai-model-shim"
-echo     auto-switch.cmd          (选择 Kimi/DeepSeek)
-echo     ^> 复制 Ngrok URL 到 Cursor Settings
-echo   ========================================
-echo.
-echo   详细文档: 模型配置说明.md
-echo   规则约束: .cursor/rules/git-cross-device-and-secrets.mdc
+echo   Start model: cd /d "%REPO_ROOT%\.cursor\ai-model-shim"
+echo                auto-switch.cmd
+echo   Copy Ngrok URL into Cursor Models - Override Base URL
+echo ============================================================
 echo.
 
 pause

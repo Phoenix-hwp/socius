@@ -126,6 +126,7 @@ help
 | 指令 | 别名 | 用途 | 框架 | 工作流 |
 |---|---|---|---|---|
 | 提交git | Git同步、推仓库、提交远端 | 先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根协助 `git status` → `add`/`commit` → `pull`/`push`。强制推送与破坏性操作须确认。 | `mod-git-crud-framework.mdc` | `flow-git-commit.mdc` |
+| 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | 工作区根运行 `bootstrap-on-pull.cmd`；占位、环境、Shim、ngrok、API Key 检测与汇总；详见 `模型配置说明.md` | `git-cross-device-and-secrets.mdc` | — |
 | git到新设备 | 克隆到新路径、同步到新位置 | 确认后，将 Git 仓库拉取到用户指定的自定义路径（支持新设备初始化）。包含路径选择、冲突处理、失败兜底。 | `flow-git-clone-to-custom-path.mdc` | `flow-git-clone-to-custom-path.mdc` |
 
 ## 10) Earth Library（地球图书馆）（三层架构）

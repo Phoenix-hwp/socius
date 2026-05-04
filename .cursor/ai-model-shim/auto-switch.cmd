@@ -5,13 +5,18 @@ setlocal enabledelayedexpansion
 cd /d "%~dp0"
 set "SHIM_DIR=%CD%"
 
-REM Check config
+REM Check config (must sit next to this .cmd; double-check path below if you see this screen)
 if not exist "config.json" (
-    echo ERROR: config.json not found!
+    echo ============================================
+    echo   ERROR: config.json not found
+    echo ============================================
     echo.
-    echo Please run one of these from repo root:
-    echo   - bootstrap-on-pull.cmd     (new device / first setup)
-    echo   - cd .cursor\ai-model-shim ^&^& auto-switch.cmd
+    echo This script only looks HERE:
+    echo   %CD%
+    echo.
+    echo Fix: copy config.example.json to config.json in this folder,
+    echo   or run repo root bootstrap-on-pull.cmd to generate placeholders.
+    echo   Then double-click auto-switch.cmd again from THIS folder.
     echo.
     pause
     exit /b 1
@@ -45,7 +50,7 @@ if /i "%CHOICE%"=="Q" goto EXIT
 goto MENU
 
 :LAUNCH_KIMI
-echo kimini>.current_model
+echo kimi>.current_model
 echo.
 echo ============================================
 echo   Launching Kimi K2.6
@@ -72,6 +77,21 @@ echo API: !API_URL!
 echo Port: 8787
 echo.
 
+REM Resolve node.exe — prefer full installs over Cursor-bundled node
+set "NODE_EXE="
+if exist "C:\Install\nodejs\node.exe" set "NODE_EXE=C:\Install\nodejs\node.exe"
+if not defined NODE_EXE if exist "%ProgramFiles%\nodejs\node.exe" set "NODE_EXE=%ProgramFiles%\nodejs\node.exe"
+if not defined NODE_EXE if exist "%ProgramFiles(x86)%\nodejs\node.exe" set "NODE_EXE=%ProgramFiles(x86)%\nodejs\node.exe"
+if not defined NODE_EXE for /f "delims=" %%i in ('where node 2^>nul') do if not defined NODE_EXE set "NODE_EXE=%%i"
+if not defined NODE_EXE (
+    echo ERROR: node.exe not found in PATH or standard install paths.
+    echo Install Node.js LTS from https://nodejs.org and re-run this script,
+    echo or add node.exe to PATH, then try again.
+    echo.
+    pause
+    exit /b 1
+)
+
 REM Check ngrok
 if not exist "ngrok.exe" (
     echo ERROR: ngrok.exe not found!
@@ -80,15 +100,16 @@ if not exist "ngrok.exe" (
     exit /b 1
 )
 
-REM Kill old node processes (optional, ignore errors)
-taskkill /f /im node.exe >nul 2>&1
+REM Free port 8787 only (avoid taskkill /im node.exe which can kill Cursor/IDE)
+echo Stopping any process listening on port 8787...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-NetTCPConnection -LocalPort 8787 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }" >nul 2>&1
 timeout /t 1 /nobreak >nul
 
-REM Start Shim in background
+REM Start Shim in background (working dir + explicit node path)
 echo Starting Shim proxy...
-set CURRENT_MODEL=!MODEL_ID!
-set SHIM_TARGET=!API_URL!
-start /min "Shim-!MODEL_ID!" cmd /c "node server.js"
+set "CURRENT_MODEL=!MODEL_ID!"
+set "SHIM_TARGET=!API_URL!"
+start /min "Shim-!MODEL_ID!" /D "!SHIM_DIR!" "!NODE_EXE!" server.js
 
 echo Waiting 3 seconds...
 timeout /t 3 /nobreak >nul
@@ -117,6 +138,31 @@ echo   Model: !MODEL_ID!
 echo.
 echo ============================================
 echo.
+REM ngrok v3 requires a dashboard authtoken once per machine (ERR_NGROK_4018 if missing)
+echo Checking ngrok configuration...
+ngrok.exe config check >nul 2>&1
+if errorlevel 1 (
+    echo.
+    echo ============================================
+    echo   ngrok: authtoken not configured
+    echo ============================================
+    echo.
+    echo Ngrok needs a free account and a one-time authtoken on this PC.
+    echo.
+    echo Step 1 - Sign up:
+    echo   https://dashboard.ngrok.com/signup
+    echo Step 2 - Copy your authtoken:
+    echo   https://dashboard.ngrok.com/get-started/your-authtoken
+    echo Step 3 - Run in THIS folder ^(replace YOUR_TOKEN^):
+    echo   ngrok.exe config add-authtoken YOUR_TOKEN
+    echo.
+    echo Then run auto-switch.cmd again.
+    echo Docs: https://ngrok.com/docs/errors/err_ngrok_4018
+    echo.
+    pause
+    goto EXIT
+)
+
 ngrok.exe http 8787
 
 echo.

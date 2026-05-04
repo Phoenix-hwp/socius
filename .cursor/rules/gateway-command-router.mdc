@@ -47,6 +47,7 @@ alwaysApply: true
 | `记录备忘` / `记录XX备忘` | `mod-project-memo-framework.mdc` | 追加备忘到指定项目（支持多项目） |
 | `改动预告` / `预期先行` | `pre-edit-script-change-brief.mdc` | 修改脚本前简述预期 |
 | `提交git` / `Git同步` / `推仓库` / `提交远端` | `flow-git-commit.mdc`（框架：`mod-git-crud-framework.mdc`） | Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，按第三层五步执行（含 pull --rebase + push）；**不**另拆 `flow-git-pull` / `flow-git-push` |
+| `新设备初始化` / `初始化` / `初始化设备` / `换机设置` / `设备初始化` | `10-Topics/Cursor-command-aliases.md`（细则：`git-cross-device-and-secrets.mdc`、`模型配置说明.md`） | 在**工作区根**执行 `bootstrap-on-pull.cmd`（或由 Agent 等价调用），回执脚本摘要与仍须手动的配置项 |
 | `git到新设备` / `克隆到新路径` / `同步到新位置` | `flow-git-clone-to-custom-path.mdc` | 确认后拉取 Git 到用户指定的自定义路径 |
 | **Notion 相关**：| | |
 | `Notion操作流程` / `Notion增删改查` | `mod-notion-crud-framework.mdc` | Read 统一 CRUD 框架 |
