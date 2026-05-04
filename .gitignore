@@ -1,15 +1,27 @@
+# ============================================
+# AI Model Shim - 密钥与运行时
+# ============================================
+.cursor/ai-model-shim/config.json
+.cursor/ai-model-shim/*.log
+.cursor/ai-model-shim/.current_model
+
+# ============================================
+# 大型二进制文件（通过网盘/U盘分发，不提交 Git）
+# ============================================
+.cursor/ai-model-shim/node_modules/
+.cursor/ai-model-shim/ngrok.exe
+.cursor/ai-model-shim/*_bundle.zip
+.cursor/ai-model-shim/local-tools/
+
+# ============================================
+# 本地密钥（勿提交）
+# ============================================
 .cursor/mcp/notion.env
 
-# 本地软删除目录（不进仓库）
+# ============================================
+# 项目运行时
+# ============================================
+Daily-Backups/
 .trash/
-
-# Local installers (do not commit)
-node-v*-x64.msi
-
-# Python 通用产物
-__pycache__/
 *.pyc
-*.pyo
-
-# 通用本地 .env（防止误提交，notion.env 已显式忽略）
-.env
+__pycache__/

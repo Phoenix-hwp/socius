@@ -1,0 +1,33 @@
+{
+  "models": {
+    "kimi": {
+      "name": "Kimi K2.6",
+      "model_id": "kimi-k2.6",
+      "api_url": "https://api.moonshot.cn/v1",
+      "thinking_model": true,
+      "filter_images": false,
+      "description": "Moonshot Kimi K2.6 - 256K 上下文"
+    },
+    "deepseek": {
+      "name": "DeepSeek V4 Pro",
+      "model_id": "deepseek-v4-pro",
+      "api_url": "https://api.deepseek.com",
+      "thinking_model": true,
+      "filter_images": true,
+      "description": "DeepSeek V4 Pro - 1M 上下文，不支持图片输入"
+    }
+  },
+  "keys": {
+    "kimi": "YOUR_KIMI_API_KEY_HERE",
+    "deepseek": "YOUR_DEEPSEEK_API_KEY_HERE"
+  },
+  "shim": {
+    "port": 8787,
+    "host": "127.0.0.1",
+    "debug": false
+  },
+  "tunnel": {
+    "provider": "ngrok",
+    "ngrok_executable": "ngrok.exe"
+  }
+}
