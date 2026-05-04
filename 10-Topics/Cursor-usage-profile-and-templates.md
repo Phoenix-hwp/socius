@@ -2,7 +2,7 @@
 title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 created: 2026-04-18
-updated: 2026-05-04 (会话收束追加 §6)
+updated: 2026-05-04 (会话收束：§3 Notion 通道约定 + §6)
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
@@ -160,6 +160,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
   - 删除策略：优先从数据库移除（移出父级）；彻底删除按你确认后再执行或引导 UI 操作。
   - 入口切换阈值：同类写入 >=5 条、或涉及 >=2 个数据库/数据源、或要求 dry-run/审计留痕时，默认改用脚本；其余单条/少量交互优先插件。
   - 首条 Notion 指令确认：每个对话中，执行第一条 Notion 操作指令前，先询问“是否开启网络环境（Y/N）”；你回复 `Y` 才继续执行，回复 `N` 则不执行该任务。
+- **Notion 写入通道（约定）**：**大段**正文、操作说明、配置留底优先 **本地 Markdown + 仓库脚本**（如 `run_notion_workflow.py`）；**小条、随手测试**优先 **MCP**（先 `notion-fetch` 取数据源与属性名，再 `notion-create-pages` 等）。
 
 ### 7. 决策与待确认
 
@@ -242,6 +243,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-02 | Notion「改」分支：`1`/`2` 更新策略、执行通道 MCP 优先；统一入口 §4.2.2 与索引同步 | 落盘 `notion-unified-crud-workflow.mdc`、`Notion-统一入口规范.md`、`Cursor-command-aliases.md`、`Command-Help-Index.md`、`NOTION_WORKFLOW_README.md` | 本次收束记入 §6 |
 | 2026-05-04 | 跨设备 AI Shim、换机 bootstrap、Git 密钥基线与别名「新设备初始化」 | 见 §6 同日行；工具链与仓库基线改造；§6 修正 2026-05-03 两行表首列 `||` 为 `|` | 已写入 §6 |
 | 2026-05-04 | 三层架构 Git 对齐、横切说明、换机脚本与规则跨路径自检 | 收敛 gateway/mod-git/git-workspace/flow-git-commit；删 `bootstrap.cmd`；`bootstrap-on-pull` 绝对路径与 Key 检测；收束后执行 `提交git` | 已写入 §6；Git 由 Agent 提交 |
+| 2026-05-04 | Notion 通道策略口头确认落库 | 用户确认「大段留底走脚本+md、小条测试走 MCP」；收束写入 §3.6 与 §6 | 已写入 §3 / §6 |
 
 ## 6. 会话契合度分析日志（追加写入，勿删历史）
 
@@ -281,5 +283,6 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-03 | 三层架构扩展；脚本重构整合；Notion MCP 调通测试；结束对话 | 完成 Git/对话备份/项目备忘录/Earth Library 模块的三层架构化；提取公共模块 notion_sdk/lifecycle_manager/hook_framework，重构业务脚本消除重复代码；调通 MCP notion-update-page 工具调用（需 page_id + command + content_updates[] 格式）；验证行为偏好更新；全程中文、直接落盘、用户「结束对话」触发收束+Git同步 | 高 | 无显著偏差；与 §3「高内聚松耦合」「规则落盘」偏好一致 | 可选：§1 增补「三层架构扩展与脚本重构」用途；§3 增补「MCP 工具参数需严格匹配 schema」注意 | 无 |
 | 2026-05-04 | Cursor AI 模型 Shim（Kimi/DeepSeek）与 ngrok；跨设备可运行基线与换机流程；结束对话 | 维护 `.cursor/ai-model-shim`（转发、`reasoning_content`、DeepSeek 图过滤、Moonshot 上游域名等）、简化 `auto-switch.cmd` 与 shim 侧 `bootstrap.cmd`；根目录 `bootstrap-on-pull.cmd` 从模板生成 `config.json`/`notion.env`；弃用 cloudflared 并清理冗余脚本；更新 `.gitignore`、`git-cross-device-and-secrets.mdc`、`模型配置说明.md`、Gitee 流程与 README；别名登记「新设备初始化」；约定密钥不入库、对话不校验 Token；批处理避免 CMD 中文编码问题 | 高 | §1–§2 仍为占位；隧道与 Cursor Key 开关依赖本机网络与环境 | 可选：`Command-Help-Index.md` 补「新设备初始化」；§1 补「多设备 API 代理与换机初始化」 | 待定 |
 | 2026-05-04 | 三层架构 Git 对齐、横切说明、换机脚本与规则自检；结束对话并提交 Git | 修正网关 `提交git`→`flow-git-commit`；合并 Git 阶段 C 去掉虚构 flow；精简 `git-workspace-commit`；`flow-git-commit` 增变体说明；`bootstrap-on-pull`/`auto-switch` 路径与格式修复；`hooks-dual-runtime`/`pre-edit-script-change-brief`/`git-cross-device` 补跨路径；文档同步；收束写 §5/§6 并执行 add/commit/pull/push | 高 | 无显著偏差 | 无 | 已写入 §6；已 push `main`（bd2f251） |
-|| 2026-05-04 | bootstrap-on-pull 冗余清理与 Install 路径确认；结束对话 | 讲解密钥保护两层机制（.gitignore + ootstrap-on-pull.cmd 脚本级检测）；确认 D 盘 Install\nodejs 探测已就绪（priority 1b）；审查并清理 ootstrap-on-pull.cmd 4 处冗余（死变量 ERRORS=0、Notion Token 空值误报、[2c/5] Undici 与 [2b/5] 重复、[2e/5] Final Key Check 与 Phase 1 重复），Phase 2 从 5 步缩为 3 步；两轮全量测试通过；用户「结束对话」收束 | 高 | 无显著偏差；与 §3「先改动说明再落盘」「测试验收」一致 | 可选：§1 补「换机初始化脚本维护与冗余清理」用途 | 待定 |
+| 2026-05-04 | bootstrap-on-pull 冗余清理与 Install 路径确认；结束对话 | 讲解密钥保护两层机制（.gitignore + ootstrap-on-pull.cmd 脚本级检测）；确认 D 盘 Install\nodejs 探测已就绪（priority 1b）；审查并清理 ootstrap-on-pull.cmd 4 处冗余（死变量 ERRORS=0、Notion Token 空值误报、[2c/5] Undici 与 [2b/5] 重复、[2e/5] Final Key Check 与 Phase 1 重复），Phase 2 从 5 步缩为 3 步；两轮全量测试通过；用户「结束对话」收束 | 高 | 无显著偏差；与 §3「先改动说明再落盘」「测试验收」一致 | 可选：§1 补「换机初始化脚本维护与冗余清理」用途 | 待定 |
+| 2026-05-04 | 换机初始化、生活向问答、Notion 行为偏好局部合并、任务筐测试、MCP 读写测通与通道效率；结束对话 | 执行 `bootstrap-on-pull`；说明 example 模板用途；厦门 SM/日料闲聊；行为偏好 `Y`+策略2+`确认更新` 后脚本局部替换同步区并保留增量补丁；`run_notion_workflow` 在任务筐建「测试测试」行；解释未走 MCP 原因；确认「大段脚本、小条 MCP」效率策略后口头 OK；`notion-search` 与 `notion-fetch`+`notion-create-pages` 测通 MCP；中文回复 | 高 | §1–§2 仍为占位；生活类话题与知识库主线无关 | §3.6 增补 Notion 写入通道约定 | 已采纳（本次写入） |
 > 说明：每次收束 **新增一行**；档案正文的小幅优化写在 §5 并改对应章节。

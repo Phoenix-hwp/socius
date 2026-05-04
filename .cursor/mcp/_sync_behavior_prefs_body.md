@@ -2,7 +2,7 @@
 sync_source: 10-Topics/Cursor-usage-profile-and-templates.md
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 sync_scope: §2 错别字表 + §3 第 1–9 节与「其他」；不含 §4 话术模板、§5 迭代、§6 契合度日志
-synced_at: 2026-05-02
+synced_at: 2026-05-04
 target_notion_page: 行为偏好（供 Notion AI 参考）
 ---
 
