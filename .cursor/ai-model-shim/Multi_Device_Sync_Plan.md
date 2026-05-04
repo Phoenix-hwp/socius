@@ -9,7 +9,8 @@
 | 组件 | 分发方式 | 说明 |
 |------|---------|------|
 | **代码**（`.cmd`, `.js`, `.json`, `.md`）| Git 同步（Gitee）| 所有脚本和配置文件模板 |
-| **密钥**（`config.json`）| ❌ 不提交 Git | `.gitignore` 已排除，通过 `bootstrap.cmd` 初始化 |
+| **密钥**（`config.json`）| ❌ 不提交 Git | `.gitignore` 已排除；**仓库根** `bootstrap-on-pull.cmd` 从 `config.example.json` 生成占位，再按需填 Key |
+| **密钥**（`notion.env`）| ❌ 不提交 Git | `.gitignore` 已排除；`bootstrap-on-pull.cmd` 从 `notion.env.example` 生成占位，本机填 `NOTION_TOKEN` |
 | **二进制**（`ngrok.exe`）| U盘/网盘 | 不上传 Git（约 20MB），需要时从外部介质获取 |
 | **依赖**（`node_modules/`）| 本地安装 | `npm install` 在本机生成（约 50MB）|
 | **会话状态**（`.current_model`）| ❌ 不提交 Git | 仅记录当前设备选择的模型 |
@@ -20,23 +21,37 @@
 
 ### 目标
 
-让你在任何设备、任何路径上 **只跑一条命令** 就能完成初始化。
+让你在任何设备、任何路径上 **先跑仓库根一条命令**，再进目录完成 Shim 初始化。
 
-### 场景一：新设备 / 新路径首次初始化
+### 场景零：刚拉取代码（仓库根，推荐最先执行）
 
 ```cmd
-cd /d "<你的ai-model-shim目录>"
-bootstrap.cmd
+cd /d "<你的仓库根目录>"
+bootstrap-on-pull.cmd
+```
+
+从模板生成 `config.json`、`notion.env` 等本地占位，避免脚本因缺文件无法启动。
+
+### 场景一：新设备 / 新路径
+
+```cmd
+# 方式1：直接 cd 到仓库根目录（支持任意盘符和路径）
+cd /d "D:\Any\Folder\Cursor_Knowledge"
+bootstrap-on-pull.cmd
+
+# 方式2：在资源管理器地址栏直接输入 cmd，然后运行
+bootstrap-on-pull.cmd
 ```
 
 自动完成：
-1. 环境检测（Node.js / npm）
-2. 引导获取二进制文件（ngrok.exe）
-3. 安装 Node.js 依赖（`npm install`）
-4. 配置 API Keys
-5. 给出下一句指令
+1. 从模板生成占位配置文件
+2. 环境检测（Node.js / npm）
+3. 引导获取二进制文件（ngrok.exe）
+4. 安装 Node.js 依赖（`npm install`）
+5. 检测 API Keys（需手动填入 config.json）
+6. 显示**绝对路径**，方便你定位文件位置
 
-**路径无关**：`bootstrap.cmd` 基于自身所在目录运行，不依赖固定盘符。
+**路径无关**：无论仓库在哪个盘符或路径（含空格），`bootstrap-on-pull.cmd` 都能自适应。
 
 ---
 
@@ -46,14 +61,12 @@ bootstrap.cmd
 
 ```
 .cursor/ai-model-shim/
-├── bootstrap.cmd           ← 新设备通用引导（v2.0）
 ├── auto-switch.cmd         ← 日常切换启动
 ├── server.js               ← 核心代理
 ├── package.json            ← 依赖声明
 ├── config.example.json     ← 配置模板（不含真实 Key）
-├── multi-device-help.cmd   ← 多设备帮助
 ├── README.md               ← 完整文档
-└── setup-first-time.cmd    ← 旧版初始化（保留兼容）
+└── Multi_Device_Sync_Plan.md  ← 多设备同步方案
 ```
 
 ### U盘/网盘分发（不提交 Git）
@@ -83,24 +96,29 @@ bootstrap.cmd
 
 ```bash
 git clone <你的Gitee仓库地址> "<你想要的任意路径>"
-cd "<你想要的任意路径>/.cursor/ai-model-shim"
+cd "<你想要的任意路径>"
 ```
 
 ### 第 2 步：运行引导脚本
 
 ```cmd
-bootstrap.cmd
+bootstrap-on-pull.cmd
 ```
 
 按提示完成：
+- 从模板生成占位配置文件
 - 检查 Node.js（缺失则引导安装）
 - 部署 ngrok.exe（选择从 U盘/网盘拷贝或在线下载）
 - 安装 npm 依赖
-- 配置 API Keys
+- 检测 API Keys（需手动填入 config.json）
 
 ### 第 3 步：启动使用
 
 ```cmd
+# 切换到 shim 目录（使用 /d 支持跨盘符）
+cd /d "<仓库根目录>\.cursor\ai-model-shim"
+
+# 启动
 auto-switch.cmd
 ```
 
@@ -179,26 +197,29 @@ How to use:
 |------|---------|
 | 401 Unauthorized | 检查 API Key 是否正确、账户余额 |
 | 400 invalid_request_error（image_url）| DeepSeek 不支持图片，Shim 应自动过滤；若仍有问题，重启 Shim |
-| Node.js 未找到 | 安装 Node.js LTS → 重启终端 → 重新运行 bootstrap.cmd |
+| Node.js 未找到 | 安装 Node.js LTS → 重启终端 → 重新运行 bootstrap-on-pull.cmd |
 | Ngrok 启动失败 | 检查 authtoken 配置：`ngrok authtoken YOUR_TOKEN` |
-| 路径切换后脚本报错 | 重新运行 `bootstrap.cmd`（基于新路径自动适应）|
+| 路径切换后脚本报错 | 重新运行 `bootstrap-on-pull.cmd`（基于新路径自动适应）|
 
 ---
 
 ## 日常操作速查
 
 ```bash
-# 启动/切换模型
+# 新设备初始化（在仓库根目录运行）
+cd /d "<仓库根目录>"
+bootstrap-on-pull.cmd
+
+# 启动/切换模型（在 shim 目录运行）
+cd /d "<仓库根目录>\.cursor\ai-model-shim"
 auto-switch.cmd
 
-# 新设备初始化
-bootstrap.cmd
-
 # 配置 API Keys
-编辑 config.json（或运行 setup-first-time.cmd）
+编辑 <仓库根目录>\.cursor\ai-model-shim\config.json
+（或运行 bootstrap-on-pull.cmd 重新生成模板）
 
 # 查看帮助
-multi-device-help.cmd
+type README.md
 
 # 查看运行状态
 curl http://127.0.0.1:8787/healthz

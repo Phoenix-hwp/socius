@@ -3,11 +3,16 @@ REM AI Model Shim - Auto Switcher (Simplified)
 setlocal enabledelayedexpansion
 
 cd /d "%~dp0"
+set "SHIM_DIR=%CD%"
 
 REM Check config
 if not exist "config.json" (
     echo ERROR: config.json not found!
-    echo Please run: setup-first-time.cmd
+    echo.
+    echo Please run one of these from repo root:
+    echo   - bootstrap-on-pull.cmd     (new device / first setup)
+    echo   - cd .cursor\ai-model-shim ^&^& auto-switch.cmd
+    echo.
     pause
     exit /b 1
 )
@@ -24,6 +29,7 @@ echo ============================================
 echo   AI Model Shim - Switcher v2.0
 echo ============================================
 echo.
+echo Path: %SHIM_DIR%
 echo Current: [!CURRENT!]
 echo.
 echo [1] Kimi K2.6 (256K context) - https://api.moonshot.cn/v1
@@ -91,7 +97,7 @@ REM Quick health check with curl
 curl -s http://127.0.0.1:8787/healthz >nul 2>&1
 if !errorlevel!==0 (
     echo [OK] Shim is running
-echo.
+    echo.
     goto START_NGROK
 ) else (
     echo [WARN] Shim may not be ready yet, continuing anyway...
@@ -120,8 +126,9 @@ echo ============================================
 echo.
 echo To switch model:
 echo   1. Close this window
-echo   2. Run auto-switch.cmd again
-echo   3. Select another model
+echo   2. cd /d "%SHIM_DIR%"
+echo   3. Run auto-switch.cmd again
+echo   4. Select another model
 echo.
 pause
 goto EXIT

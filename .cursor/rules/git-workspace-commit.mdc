@@ -5,6 +5,8 @@ alwaysApply: true
 
 # 提交 Git（工作区 → Gitee）
 
+> **三层对齐**：本文件为 **alwaysApply** 的触发摘要；**具体步骤**以第三层 `flow-git-commit.mdc` 为准，**阶段分型**以第二层 `mod-git-crud-framework.mdc` 为准，避免与上述文件重复维护。
+
 ## 触发词
 
 - 主指令：`提交git`
@@ -23,13 +25,10 @@ alwaysApply: true
 ## 执行动作（强制）
 
 1. **Read** `10-Topics/Gitee-Workspace-Git-Workflow.md`（若缺失则提示用户恢复该文件或改用通用 Git 说明）。
-2. 将 **当前工作目录** 落在 **工作区根**（与 `CURSOR_PROJECT_DIR` / 打开的 Cursor 仓库根一致），再执行或指导：
-   - `git status -sb`
-   - 按用户意图：`git add`、`git commit`（消息由用户确认或共同拟定）
-   - 推送前优先：`git pull --rebase`（或与用户约定的合并策略）
-   - `git push`
+2. **Read** `flow-git-commit.mdc`，按其中五步执行；将 **当前工作目录** 落在 **工作区根**（与 `CURSOR_PROJECT_DIR` 一致）。
 3. **高风险须确认**：`push --force`、`push --force-with-lease`、`reset --hard`、跳过 hook、批量变更 `.gitignore` 导致误提交密钥路径等 — **须用户明确同意后再执行**。
+
 ## 输出约定
 
-- 简报：`status` 要点、拟提交文件类别、建议的 `commit message`；推送成功后注明远端分支与摘要。
+- 与 `flow-git-commit.mdc` 一致：简报含 `status`、拟提交范围、建议 `commit message`；推送成功后注明远端分支与摘要。
 - 若未配置 `remote` 或认证失败，给出 **Read 备忘文档 §首次绑定** 中的命令模板（不替用户保管 Token/密码）。

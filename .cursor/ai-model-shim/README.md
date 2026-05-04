@@ -6,10 +6,25 @@
 
 ## 快速开始（30 秒）
 
+**刚 `git clone` / `git pull` 后（仓库根目录）：**
+
 ```cmd
-cd <.cursor/ai-model-shim>     # 进入本目录
-bootstrap.cmd                  # 首次使用
-auto-switch.cmd                # 日常启动
+bootstrap-on-pull.cmd
+```
+
+**配置完成后，进入本目录启动：**
+
+```cmd
+cd /d "<仓库根目录>\.cursor\ai-model-shim"
+auto-switch.cmd          # 选模型 → 复制 URL → 在 Cursor 中填入
+```
+
+或从仓库根目录：
+
+```cmd
+cd /d "<仓库根目录>"
+cd .cursor\ai-model-shim
+auto-switch.cmd
 ```
 
 ---
@@ -17,10 +32,12 @@ auto-switch.cmd                # 日常启动
 ## 新设备完整流程
 
 ```
-Git clone 仓库
-→ cd .cursor/ai-model-shim
-→ bootstrap.cmd        # 引导：检测环境 → 部署 ngrok → 安装依赖 → 配置 Key
-→ auto-switch.cmd      # 选模型 → 复制 URL → 在 Cursor 中填入
+Git clone 仓库到任意路径 (如 D:\Work\Cursor_Knowledge)
+→ cd /d "D:\Work\Cursor_Knowledge"              # 切换到仓库根（/d 支持跨盘符）
+→ bootstrap-on-pull.cmd                        # 生成占位文件、检测环境等
+→ 手动编辑 .cursor\ai-model-shim\config.json 填入 API Keys
+→ cd /d "D:\Work\Cursor_Knowledge\.cursor\ai-model-shim"
+→ auto-switch.cmd                              # 选模型 → 复制 URL → 在 Cursor 中填入
 ```
 
 **U盘/网盘二进制包**：`ngrok.exe` 不上传 Git，从外部介质获取。详见 `README_BINARIES.txt`。
@@ -31,7 +48,6 @@ Git clone 仓库
 
 | 文件 | 用途 | Git |
 |------|------|:---:|
-| `bootstrap.cmd` | 跨路径通用引导（新设备 or 新路径）| ✅ |
 | `auto-switch.cmd` | 日常启动/切换 Kimi ↔ DeepSeek | ✅ |
 | `server.js` | 核心代理（修复 reasoning_content）| ✅ |
 | `config.example.json` | 配置模板 | ✅ |
@@ -60,7 +76,7 @@ auto-switch.cmd
 
 ## 路径适配
 
-所有脚本基于自身所在目录运行，**不依赖固定盘符**。复制到任意路径后运行 `bootstrap.cmd` 即可适配。
+所有脚本基于自身所在目录运行，**不依赖固定盘符**。`bootstrap-on-pull.cmd` 在仓库根目录运行一次即可完成跨路径适配。
 
 ---
 

@@ -20,7 +20,7 @@ Get token from: https://dashboard.ngrok.com/get-started/your-authtoken
 ## How to Deploy
 
 1. Copy `ngrok.exe` to your repo: `<repo>\.cursor\ai-model-shim\`
-2. Run `bootstrap.cmd` to complete setup
+2. Run `bootstrap-on-pull.cmd` from repo root to complete setup
 3. Ready!
 
 ---

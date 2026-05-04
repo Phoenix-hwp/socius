@@ -2,7 +2,7 @@
 title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 created: 2026-04-18
-updated: 2026-05-02 (会话收束追加 §6)
+updated: 2026-05-04 (会话收束追加 §6)
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
@@ -240,6 +240,8 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-04-25 | 增补 Notion 首条指令前置确认：每个对话首个 Notion 操作前先问是否开启网络环境；Y 执行，N 不执行 |
 | 2026-05-02 | Notion 写入六步流程规则化；澄清 Notion 仍以对话为主并恢复 GUI 钩子 | 更新 `notion-write-workflow-confirmation`、`script-option-ids`、别名与帮助索引；恢复 `notion_gui_menu.ps1` 与 `notion_gui_popup`；§3「工具与环境」明确 Git 与 Notion 写入相互独立 | 已写入 §6 / §3 |
 | 2026-05-02 | Notion「改」分支：`1`/`2` 更新策略、执行通道 MCP 优先；统一入口 §4.2.2 与索引同步 | 落盘 `notion-unified-crud-workflow.mdc`、`Notion-统一入口规范.md`、`Cursor-command-aliases.md`、`Command-Help-Index.md`、`NOTION_WORKFLOW_README.md` | 本次收束记入 §6 |
+| 2026-05-04 | 跨设备 AI Shim、换机 bootstrap、Git 密钥基线与别名「新设备初始化」 | 见 §6 同日行；工具链与仓库基线改造；§6 修正 2026-05-03 两行表首列 `||` 为 `|` | 已写入 §6 |
+| 2026-05-04 | 三层架构 Git 对齐、横切说明、换机脚本与规则跨路径自检 | 收敛 gateway/mod-git/git-workspace/flow-git-commit；删 `bootstrap.cmd`；`bootstrap-on-pull` 绝对路径与 Key 检测；收束后执行 `提交git` | 已写入 §6；Git 由 Agent 提交 |
 
 ## 6. 会话契合度分析日志（追加写入，勿删历史）
 
@@ -275,7 +277,8 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-02 | 会话收束：对齐 §5 迭代说明与 §6「采纳」列 | 用户再次触发「结束对话」；将 §5 当日迭代注明 §3 增补；§6 同日行「建议微调」改为已完成 §3、「采纳」改为已采纳 | 高 | 无新增偏差 | 无 | 已写入 §5 / §6 |
 | 2026-05-02 | Notion 统一流程：「改」双策略（清空重写/局部合并）、MCP 优先与脚本兜底落盘；目录 JSON 条数核对；Shell 任务复盘；结束对话 | 扩展 `notion-unified-crud-workflow.mdc` 与 `Notion-统一入口规范` §4.2.2；同步别名与帮助索引、`NOTION_WORKFLOW_README`； Ask 模式对齐插件优先思路；Agent 模式执行 Write/StrReplace；用户「结束对话」收束 | 高 | §3 仍有一处「对话内六步」口径与统一 CRUD「改」分型并存，可按需改为互链说明 | 可选：§3 §6 一行改为「写入见创建六步；更新见统一规则改分支」 | 待定 |
 | 2026-05-02 | Notion 规则三层架构重构整理；结束对话 | 分析现有规则问题→设计三层架构（网关/模块框架/工作流）→创建7新文件、删5旧文件、同步8引用→测试发现脚本缺陷→按用户要求转存日常备份；全程中文、直接落盘、用户「结束对话」收束 | 高 | 无显著偏差；系统性重构与 §3「规则落盘」偏好一致 | 可选：§1 增补「规则架构设计与重构」用途 | 待定 |
-
-|| 2026-05-03 | Notion 查询脚本缺陷修复；方案分析；Git 同步；结束对话 | 恢复 5月2日备份上下文；方案1/方案2对比分析（成本/效率/效果）→选定方案1；增强 `run_notion_workflow.py` 支持 `query` 参数、修复 `parse_notion_id()` 标准UUID；测试验证命中「双钻模型」；提交并推送到 Gitee；全程中文、先给方案再改代码、用户「结束对话」收束 | 高 | 无显著偏差；与 §3「先方案再改代码」「工具自跑」「Git 提交走工作流」一致 | 无 | 无 |
-|| 2026-05-03 | 三层架构扩展；脚本重构整合；Notion MCP 调通测试；结束对话 | 完成 Git/对话备份/项目备忘录/Earth Library 模块的三层架构化；提取公共模块 notion_sdk/lifecycle_manager/hook_framework，重构业务脚本消除重复代码；调通 MCP notion-update-page 工具调用（需 page_id + command + content_updates[] 格式）；验证行为偏好更新；全程中文、直接落盘、用户「结束对话」触发收束+Git同步 | 高 | 无显著偏差；与 §3「高内聚松耦合」「规则落盘」偏好一致 | 可选：§1 增补「三层架构扩展与脚本重构」用途；§3 增补「MCP 工具参数需严格匹配 schema」注意 | 无 |
+| 2026-05-03 | Notion 查询脚本缺陷修复；方案分析；Git 同步；结束对话 | 恢复 5月2日备份上下文；方案1/方案2对比分析（成本/效率/效果）→选定方案1；增强 `run_notion_workflow.py` 支持 `query` 参数、修复 `parse_notion_id()` 标准UUID；测试验证命中「双钻模型」；提交并推送到 Gitee；全程中文、先给方案再改代码、用户「结束对话」收束 | 高 | 无显著偏差；与 §3「先方案再改代码」「工具自跑」「Git 提交走工作流」一致 | 无 | 无 |
+| 2026-05-03 | 三层架构扩展；脚本重构整合；Notion MCP 调通测试；结束对话 | 完成 Git/对话备份/项目备忘录/Earth Library 模块的三层架构化；提取公共模块 notion_sdk/lifecycle_manager/hook_framework，重构业务脚本消除重复代码；调通 MCP notion-update-page 工具调用（需 page_id + command + content_updates[] 格式）；验证行为偏好更新；全程中文、直接落盘、用户「结束对话」触发收束+Git同步 | 高 | 无显著偏差；与 §3「高内聚松耦合」「规则落盘」偏好一致 | 可选：§1 增补「三层架构扩展与脚本重构」用途；§3 增补「MCP 工具参数需严格匹配 schema」注意 | 无 |
+| 2026-05-04 | Cursor AI 模型 Shim（Kimi/DeepSeek）与 ngrok；跨设备可运行基线与换机流程；结束对话 | 维护 `.cursor/ai-model-shim`（转发、`reasoning_content`、DeepSeek 图过滤、Moonshot 上游域名等）、简化 `auto-switch.cmd` 与 shim 侧 `bootstrap.cmd`；根目录 `bootstrap-on-pull.cmd` 从模板生成 `config.json`/`notion.env`；弃用 cloudflared 并清理冗余脚本；更新 `.gitignore`、`git-cross-device-and-secrets.mdc`、`模型配置说明.md`、Gitee 流程与 README；别名登记「新设备初始化」；约定密钥不入库、对话不校验 Token；批处理避免 CMD 中文编码问题 | 高 | §1–§2 仍为占位；隧道与 Cursor Key 开关依赖本机网络与环境 | 可选：`Command-Help-Index.md` 补「新设备初始化」；§1 补「多设备 API 代理与换机初始化」 | 待定 |
+| 2026-05-04 | 三层架构 Git 对齐、横切说明、换机脚本与规则自检；结束对话并提交 Git | 修正网关 `提交git`→`flow-git-commit`；合并 Git 阶段 C 去掉虚构 flow；精简 `git-workspace-commit`；`flow-git-commit` 增变体说明；`bootstrap-on-pull`/`auto-switch` 路径与格式修复；`hooks-dual-runtime`/`pre-edit-script-change-brief`/`git-cross-device` 补跨路径；文档同步；收束写 §5/§6 并执行 add/commit/pull/push | 高 | 无显著偏差 | 无 | 已写入 §6；Git 已提交则采纳 |
 > 说明：每次收束 **新增一行**；档案正文的小幅优化写在 §5 并改对应章节。

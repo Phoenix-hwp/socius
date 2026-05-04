@@ -7,6 +7,7 @@ alwaysApply: true
 
 在本工作区**新建或实质修改** `.cursor/hooks` 下的**命令型钩子**及为其服务的**启动/垫片脚本**时，默认须**同时支持 Python 与 Node.js**，除非用户明确只要其中一种。
 
-- **做法**：互备的 `.py` 与 `.mjs`（或等价），或单一逻辑两份实现；或采用与本库 `session_start_profile_launch` 相同思路的**外层入口**（Windows 为主要环境时：`cmd /c python … || node …`）。
+- **双运行时**：互备的 `.py` 与 `.mjs`（或等价），或单一逻辑两份实现；或采用与本库 `session_start_profile_launch` 相同思路的**外层入口**（Windows 为主要环境时：`cmd /c python … || node …`）。
+- **跨设备路径**：钩子与脚本须适配**不同盘符**和**不同上级目录结构**（如 `C:\Users\Alice\Repo` vs `D:\Work\Tools\Repo`）。使用相对路径或运行时获取自身位置（如 `%~dp0`、`__dirname`），禁止硬编码绝对路径。
 - **行为与输出**：与现有 profile 类钩子对齐时，向 stdout 写出**一行 UTF-8 JSON**（Windows 下避免依赖默认代码页）。
 - **个人偏好原文**：`10-Topics/Cursor-usage-profile-and-templates.md` 第 3 节「钩子 / 脚本」行。

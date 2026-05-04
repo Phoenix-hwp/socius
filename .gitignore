@@ -14,7 +14,7 @@
 .cursor/ai-model-shim/local-tools/
 
 # ============================================
-# 本地密钥（勿提交）
+# Notion 本地密钥（勿提交；自行从 notion.env.example 复制填写）
 # ============================================
 .cursor/mcp/notion.env
 
