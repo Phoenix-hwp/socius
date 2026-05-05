@@ -2,7 +2,7 @@
 title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 created: 2026-04-18
-updated: 2026-05-05 (会话收束：三层架构整改 + DeepSeek 模型名报错排查与撤回，§5 + §6)
+updated: 2026-05-05 (会话收束：三层架构整改 + DeepSeek 模型名排查 + Notion19篇入库 + 图书馆巡检，§5 + §6)
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
@@ -287,4 +287,5 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-04 | 换机初始化、生活向问答、Notion 行为偏好局部合并、任务筐测试、MCP 读写测通与通道效率；结束对话 | 执行 `bootstrap-on-pull`；说明 example 模板用途；厦门 SM/日料闲聊；行为偏好 `Y`+策略2+`确认更新` 后脚本局部替换同步区并保留增量补丁；`run_notion_workflow` 在任务筐建「测试测试」行；解释未走 MCP 原因；确认「大段脚本、小条 MCP」效率策略后口头 OK；`notion-search` 与 `notion-fetch`+`notion-create-pages` 测通 MCP；中文回复 | 高 | §1–§2 仍为占位；生活类话题与知识库主线无关 | §3.6 增补 Notion 写入通道约定 | 已采纳（本次写入） |
 | 2026-05-05 | 三层架构审计：4 旧版 alwaysApply 存根化 + depends 补全；DeepSeek 模型名排查与撤回（不影响功能）；「运行模型」指令别名登记 | 审查 37 个 .mdc 规则文件，整改 3 个旧版文件为引用存根 + 补 flow-git-clone 的 depends；别名登记 + Git 提交；DeepSeek 子代理恢复报 Model Not Found，经改名/映射/回测后确认 API 正常、仅 Cursor 白名单限制，撤回全部修改；全程中文、测试驱动、接受限制果断撤回 | 高 | 报错不影响实际推理，只影响子代理完成通知 | 无 | 已写入 §6 |
 | 2026-05-05 | Git 拉取；「运行模型」指令别名登记并提交；三层架构审计与整改；DeepSeek 模型名报错排查与三轮回测后撤回 | Git pull --rebase + stash 处理未暂存文件；登记「运行模型/切换模型/启动模型」别名关联 auto-switch.cmd；审查 37 个 .mdc 规则文件，整改 3 个旧版 alwaysApply 文件为引用存根 + 补 depends；DeepSeek 子代理恢复报 AI Model Not Found，经改名→映射→回测后确认 API 调用正常、仅 Cursor 内部白名单校验失败，撤回全部修改；全程中文、直接执行、测试驱动、接受限制果断撤回 | 高 | 深层原因：Cursor 自定义 Provider 模型名白名单不可控；报错不影响实际推理 | 可选：§1 补「规则架构审计与整改」用途 | 待定 |
+| 2026-05-05 | Git 提交 + Notion 悦读笔记 19 篇批量入库 Earth Library + 图书馆巡检 | 三层架构审计整改 4 文件已提交；Notion API 批量读取悦读笔记 19 篇产品思维类文章，生成知识卡片、更新 Library_Index 与 Relations_Index；主动执行图书馆巡检，整理 11 项标签近邻关联入 Review_Queue；验证 19 篇标题全部匹配（PowerShell GBK 编码显示误报） | 高 | PowerShell stdout GBK 编码导致标题显示异常，已用文件写入方式验证全部匹配 | 无 | 已写入 §6 |
 > 说明：每次收束 **新增一行**；档案正文的小幅优化写在 §5 并改对应章节。
