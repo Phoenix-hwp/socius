@@ -57,6 +57,13 @@ glossary:
 2. 若无冲突：`git push`
 3. 推送成功后回执：远端分支 + 提交摘要
 
+### 步骤 5 补充：拉取并入远端更新后的提醒
+
+当本次 **`git pull --rebase`（或等价拉取）实际合并入了远端新提交**（例如出现 fast-forward、merge、rebase 完成且 `HEAD` 相对拉取前前移；而非单纯的 “Already up to date”）时：
+
+1. 在步骤 5 的回执 **末尾** 用一两句话提醒：**后续若要新增或改写 `.cursor` 规则、钩子、或被别名表引用的脚本**，须先遵守 **`post-git-pull-three-layer-awareness.mdc`**（重温网关规则索引、**`Cursor-command-aliases.md`**、**`Command-Help-Index.md`**），避免与远端已有约定重复或冲突。
+2. Agent 在本轮后续对话中若即将做上述新增或改写，须 **先 Read** 该规则所列必读文档。
+
 ---
 
 ## 冲突处理
@@ -76,3 +83,4 @@ glossary:
 
 - 首次绑定远程仓库：`10-Topics/Gitee-Workspace-Git-Workflow.md`
 - 统一框架定义：`mod-git-crud-framework.mdc`
+- 拉取后与三层架构对齐（防重复规则/脚本）：`post-git-pull-three-layer-awareness.mdc`
