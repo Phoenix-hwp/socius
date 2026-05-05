@@ -134,7 +134,7 @@ echo IMPORTANT: Copy the URL below when it appears!
 echo.
 echo Cursor Settings:
 echo   Override Base URL: https://xxx.ngrok-free.app/v1
-echo   Model: !MODEL_ID!
+echo Model: !MODEL_ID!
 echo.
 echo ============================================
 echo.

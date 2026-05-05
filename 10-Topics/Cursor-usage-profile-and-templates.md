@@ -2,7 +2,7 @@
 title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 created: 2026-04-18
-updated: 2026-05-04 (会话收束：§3 Notion 通道约定 + §6)
+updated: 2026-05-05 (会话收束：三层架构整改 + DeepSeek 模型名报错排查与撤回，§5 + §6)
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
@@ -285,4 +285,6 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-04 | 三层架构 Git 对齐、横切说明、换机脚本与规则自检；结束对话并提交 Git | 修正网关 `提交git`→`flow-git-commit`；合并 Git 阶段 C 去掉虚构 flow；精简 `git-workspace-commit`；`flow-git-commit` 增变体说明；`bootstrap-on-pull`/`auto-switch` 路径与格式修复；`hooks-dual-runtime`/`pre-edit-script-change-brief`/`git-cross-device` 补跨路径；文档同步；收束写 §5/§6 并执行 add/commit/pull/push | 高 | 无显著偏差 | 无 | 已写入 §6；已 push `main`（bd2f251） |
 | 2026-05-04 | bootstrap-on-pull 冗余清理与 Install 路径确认；结束对话 | 讲解密钥保护两层机制（.gitignore + ootstrap-on-pull.cmd 脚本级检测）；确认 D 盘 Install\nodejs 探测已就绪（priority 1b）；审查并清理 ootstrap-on-pull.cmd 4 处冗余（死变量 ERRORS=0、Notion Token 空值误报、[2c/5] Undici 与 [2b/5] 重复、[2e/5] Final Key Check 与 Phase 1 重复），Phase 2 从 5 步缩为 3 步；两轮全量测试通过；用户「结束对话」收束 | 高 | 无显著偏差；与 §3「先改动说明再落盘」「测试验收」一致 | 可选：§1 补「换机初始化脚本维护与冗余清理」用途 | 待定 |
 | 2026-05-04 | 换机初始化、生活向问答、Notion 行为偏好局部合并、任务筐测试、MCP 读写测通与通道效率；结束对话 | 执行 `bootstrap-on-pull`；说明 example 模板用途；厦门 SM/日料闲聊；行为偏好 `Y`+策略2+`确认更新` 后脚本局部替换同步区并保留增量补丁；`run_notion_workflow` 在任务筐建「测试测试」行；解释未走 MCP 原因；确认「大段脚本、小条 MCP」效率策略后口头 OK；`notion-search` 与 `notion-fetch`+`notion-create-pages` 测通 MCP；中文回复 | 高 | §1–§2 仍为占位；生活类话题与知识库主线无关 | §3.6 增补 Notion 写入通道约定 | 已采纳（本次写入） |
+| 2026-05-05 | 三层架构审计：4 旧版 alwaysApply 存根化 + depends 补全；DeepSeek 模型名排查与撤回（不影响功能）；「运行模型」指令别名登记 | 审查 37 个 .mdc 规则文件，整改 3 个旧版文件为引用存根 + 补 flow-git-clone 的 depends；别名登记 + Git 提交；DeepSeek 子代理恢复报 Model Not Found，经改名/映射/回测后确认 API 正常、仅 Cursor 白名单限制，撤回全部修改；全程中文、测试驱动、接受限制果断撤回 | 高 | 报错不影响实际推理，只影响子代理完成通知 | 无 | 已写入 §6 |
+| 2026-05-05 | Git 拉取；「运行模型」指令别名登记并提交；三层架构审计与整改；DeepSeek 模型名报错排查与三轮回测后撤回 | Git pull --rebase + stash 处理未暂存文件；登记「运行模型/切换模型/启动模型」别名关联 auto-switch.cmd；审查 37 个 .mdc 规则文件，整改 3 个旧版 alwaysApply 文件为引用存根 + 补 depends；DeepSeek 子代理恢复报 AI Model Not Found，经改名→映射→回测后确认 API 调用正常、仅 Cursor 内部白名单校验失败，撤回全部修改；全程中文、直接执行、测试驱动、接受限制果断撤回 | 高 | 深层原因：Cursor 自定义 Provider 模型名白名单不可控；报错不影响实际推理 | 可选：§1 补「规则架构审计与整改」用途 | 待定 |
 > 说明：每次收束 **新增一行**；档案正文的小幅优化写在 §5 并改对应章节。

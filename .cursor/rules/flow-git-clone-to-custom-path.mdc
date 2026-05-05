@@ -1,9 +1,9 @@
 ---
 description: Git 拉取到指定路径工作流 - 新设备首次初始化或同步
 glossary:
-  layer: 3-流程执行层
-  purpose: 在新设备上将 Git 仓库拉取到用户指定的路径
-  trigger: git到新设备、克隆到新路径、同步到新位置
+  layer: 3-工作流执行层
+  module: Git
+  depends: [mod-git-crud-framework]
 alwaysApply: false
 ---
 

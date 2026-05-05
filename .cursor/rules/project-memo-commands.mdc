@@ -1,32 +1,26 @@
 ---
-description: 项目备忘录相关指令执行规则
+description: 项目备忘录相关指令规则（三层对齐存根）
 alwaysApply: true
 ---
 
 # 项目备忘录指令规则
 
-## 指令 1：项目备忘录
+> **三层对齐**：本文件为 **alwaysApply** 的触发摘要；**阶段分型**以第二层 `mod-project-memo-framework.mdc` 为准，**具体步骤**以第三层 `flow-project-memo-read.mdc`、`flow-project-memo-append.mdc` 为准，避免与上述文件重复维护。
 
-- 当用户输入 `项目备忘录` 或其合规别名时：
-  1. Read `469_Sports/469_Sports_Project_Memo.md`
-  2. 输出“当前待复核清单”与最近一条“记录备忘（追加区）”
-  3. 若用户要求补全，联动 Read：
-     - `469_Sports/469_Sports_ProjectContext.md`
-     - `469_Sports/469_Sports_Background_Pending_and_Progress.md`
+## 触发词
 
-## 指令 2：记录备忘
+- 主指令：`项目备忘录`
+- 别名：`备忘录`、`XX项目备忘录`
+- 记录：`记录备忘`、`记下`、`记录XX备忘`
 
-- 当用户输入 `记录备忘` 或其合规别名，且消息里给出可落盘信息时：
-  1. 将信息追加到 `469_Sports/469_Sports_Project_Memo.md` 的“记录备忘（追加区）”
-  2. 若属于“当前待复核清单”的口径更新，同步更新对应行状态（如：待确认 -> 已确认）
-  3. 若信息同时影响主背景，提示用户是否同步回写 `469_Sports/469_Sports_ProjectContext.md`
+## 执行动作（强制）
 
-## 别名约束
-
-- 别名长度必须为 2-10 个字。
-- 用户提供别名不满足长度时，先提示并给出合规替代后再登记。
+1. **Read** `mod-project-memo-framework.mdc`，解析项目名，完成阶段A/B/C
+2. **Read** 对应第三层文件：
+   - 查看：`flow-project-memo-read.mdc`
+   - 追加：`flow-project-memo-append.mdc`
 
 ## 文件保护（删除防护）
 
-- 当用户要求“删除草稿/临时文件”时，默认**不删除**包含“备忘录”语义的文件（如 `*Memo*`、`*备忘录*`）。
-- 只有在用户**明确点名**要删除该备忘录文件时，才允许执行删除。
+- 当用户要求"删除草稿/临时文件"时，默认**不删除**包含"备忘录"语义的文件（如 `*Memo*`、`*备忘录*`）
+- 只有在用户**明确点名**要删除该备忘录文件时，才允许执行删除
