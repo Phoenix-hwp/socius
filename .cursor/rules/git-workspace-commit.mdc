@@ -31,5 +31,5 @@ alwaysApply: true
 ## 输出约定
 
 - 与 `flow-git-commit.mdc` 一致：简报含 `status`、拟提交范围、建议 `commit message`；推送成功后注明远端分支与摘要。
-- **`git pull` 实际并入远端新提交时**：回执须含 **`flow-git-commit.mdc`**「步骤 5 补充」中的架构对齐提醒；后续若要新增或改写 `.cursor` 规则、钩子或别名相关脚本，须遵守 **`post-git-pull-three-layer-awareness.mdc`**。
+- 拉取并入远端更新后须遵守 `post-git-pull-three-layer-awareness.mdc`。
 - 若未配置 `remote` 或认证失败，给出 **Read 备忘文档 §首次绑定** 中的命令模板（不替用户保管 Token/密码）。

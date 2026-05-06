@@ -86,13 +86,38 @@ git diff --stat HEAD..origin/<BRANCH>
 
 ## 冲突处理
 
-若 merge 遇到冲突：
+合并可能因两种原因失败——Agent 须根据 git 报错自动分流：
 
-1. 回执冲突文件清单
-2. 询问用户：
-   - `1`：协助解决冲突
-   - `2`：中止合并（`git merge --abort`）
-   - `3`：保留本地，不做任何修改
+### 情况 A：本地有未提交修改（merge 被 abort）
+
+回执冲突文件清单后给 4 个选项：
+
+```
+合并被阻止：本地有未提交的修改与远端冲突
+冲突文件：<file1>, <file2>...
+
+  [1] 暂存本地修改后合并并还原（git stash → merge → git stash pop）
+  [2] 先提交本地修改再合并（git add -A → commit → merge）
+  [3] 丢弃本地修改，改用远端（git checkout -- . → git clean -fd → merge）
+      ** 警告：本地未提交的修改将丢失！需二次确认 YES**
+  [4] 取消合并，保留本地内容不变
+```
+
+### 情况 B：真正合并冲突（merge 已开始，有 CONFLICT 标记）
+
+回执冲突文件清单（`git diff --name-only --diff-filter=U`）后给 4 个选项：
+
+```
+合并冲突！以下文件存在冲突：
+  <file1>
+  <file2>
+
+  [1] 全部使用远端版本（git checkout --theirs . → git add -A → git commit）
+      ** 本地对应文件的修改将被丢弃**
+  [2] 全部使用本地版本（git checkout --ours . → git add -A → git commit）
+  [3] 保留冲突标记，手动解决（退出后自行编辑，再 add + commit）
+  [4] 放弃合并，回退到合并前（git merge --abort）
+```
 
 ---
 
@@ -101,3 +126,7 @@ git diff --stat HEAD..origin/<BRANCH>
 - `.git` 不存在 → 提示「当前目录非 Git 仓库」
 - `remote` 未配置 → 提示参考 `10-Topics/Gitee-Workspace-Git-Workflow.md` §首次绑定
 - `git fetch` 失败 → 提示检查网络与远程仓库 URL
+
+## 拉取后对齐
+
+若合并 / 覆盖实际并入远端新提交，回执末尾须指向 `post-git-pull-three-layer-awareness.mdc`，并按其中「拉取完成后的立即动作 A/B」回执新增规则/脚本摘要。

@@ -13,11 +13,11 @@ glossary:
 - 主指令：`提交git`
 - 别名：`Git同步`、`推仓库`、`提交远端`
 
-**变体（仍在本工作流内执行，不另建 flow）**：用户若仅要「拉取远端更新」或「已有 commit 只推送」，可在对应步骤中跳过无变更步骤（如无新 commit 则跳过步骤 3–4，直接进入步骤 5）。
+**多设备**：若变更涉及 `.cursor/rules`、别名表、Help Index，或拉取后即将新增同类对象，须先遵守 `post-git-pull-three-layer-awareness.mdc`。
 
 ---
 
-## 执行步骤（固定五步）
+## 执行步骤
 
 ### 步骤 1：环境确认
 
@@ -26,8 +26,6 @@ glossary:
 
 ### 步骤 2：变更分类展示
 
-回执格式：
-
 ```
 已变更文件：
 - 新增：X 个（file1, file2...）
@@ -35,12 +33,9 @@ glossary:
 - 删除：Z 个（file5...）
 ```
 
-**含指令体系路径时的自检（建议固化为回执一行）**：若本次变更涉及 **`.cursor/rules`**、**`.cursor/hooks`**、**`10-Topics/Cursor-command-aliases.md`**、**`Command-Help-Index.md`**，或被上述文件引用的脚本路径，在步骤 3 之前回执中 **简短确认**：新/改指令是否已在 **`Cursor-command-aliases.md`** 登记（别名 **2–10 字**）、是否与 **`Command-Help-Index.md`** 一致、是否无意重复已有映射；若涉及拉取后首次改动，提醒遵守 **`post-git-pull-three-layer-awareness.mdc`**。
-
 ### 步骤 3：add 策略确认
 
 **默认**：`git add .`（添加所有变更）
-
 **若用户指定范围**：按用户要求执行 `git add <指定文件>`
 
 ### 步骤 4：commit message 拟定与确认
@@ -49,22 +44,15 @@ glossary:
 2. 回执给用户确认或修改
 3. 用户确认后执行 `git commit -m "message"`
 
-**commit message 规范**：
-- 简洁描述变更内容
-- 可包含变更类型前缀（add/fix/update/refactor 等）
-
 ### 步骤 5：推送前拉取与推送
 
-1. **优先执行**：`git pull --rebase`（或用户约定的合并策略）
+1. `git pull --rebase`
 2. 若无冲突：`git push`
 3. 推送成功后回执：远端分支 + 提交摘要
 
-### 步骤 5 补充：拉取并入远端更新后的提醒
+### 步骤 5 补充：拉取并入远端更新
 
-当本次 **`git pull --rebase`（或等价拉取）实际合并入了远端新提交**（例如出现 fast-forward、merge、rebase 完成且 `HEAD` 相对拉取前前移；而非单纯的 “Already up to date”）时：
-
-1. 在步骤 5 的回执 **末尾** 用一两句话提醒：**后续若要新增或改写 `.cursor` 规则、钩子、或被别名表引用的脚本**，须先遵守 **`post-git-pull-three-layer-awareness.mdc`**（重温网关规则索引、**`Cursor-command-aliases.md`**、**`Command-Help-Index.md`**），避免与远端已有约定重复或冲突。
-2. Agent 在本轮后续对话中若即将做上述新增或改写，须 **先 Read** 该规则所列必读文档。
+当本次 git pull 实际合并入了远端新提交时，回执末尾须指向 `post-git-pull-three-layer-awareness.mdc`，并按其中「拉取完成后的立即动作 A/B」回执新增规则/脚本摘要。
 
 ---
 
@@ -76,7 +64,7 @@ glossary:
 2. 回执冲突文件清单
 3. 询问用户：
    - `1`：协助解决冲突后继续
-   - `2`：中止 rebase，改用其他策略
+   - `2`：中止 rebase，改用 merge
    - `3`：取消本次推送
 
 ---
@@ -85,4 +73,6 @@ glossary:
 
 - 首次绑定远程仓库：`10-Topics/Gitee-Workspace-Git-Workflow.md`
 - 统一框架定义：`mod-git-crud-framework.mdc`
-- 拉取后与三层架构对齐（防重复规则/脚本）：`post-git-pull-three-layer-awareness.mdc`
+- 直接拉取（不提交）：`flow-git-pull.mdc`
+- 审查式拉取：`flow-git-safe-pull.mdc`
+- 拉取后三层架构对齐：`post-git-pull-three-layer-awareness.mdc`

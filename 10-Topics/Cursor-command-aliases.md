@@ -30,7 +30,8 @@ tags:
 | 执行策略 | 策略、风险策略 | 返回全局风险分级自动执行策略（balanced）及当前会话执行原则 | `Command-Help-Index.md` |
 | 快速模式 | 自动执行、少确认 | 将当前会话切换到"低/中风险自动执行，高风险确认" | `Command-Help-Index.md` |
 | 谨慎模式 | 全确认、严格确认 | 将当前会话切换到"所有写入动作先确认" | `Command-Help-Index.md` |
-| 提交git | Git同步、推仓库、提交远端 | **Git/Gitee**：先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根执行 `git status`，按意图协助 `add`/`commit`/`pull`/`push`；强制推送与破坏性重置须先确认 | `flow-git-commit.mdc`（框架：`mod-git-crud-framework.mdc`） |
+| 提交git | Git同步、推仓库、提交远端 | **Git 提交推送**：先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根执行 `git status`，按意图协助 `add`/`commit`/`pull`/`push`；强制推送与破坏性重置须先确认 | `flow-git-commit.mdc`（框架：`mod-git-crud-framework.mdc`） |
+| 拉取git | 拉取远端、直接拉取 | **Git 直接拉取**：一句到位 `git pull --rebase`，不做差异审查，对远端无疑虑时用 | `flow-git-pull.mdc`（框架：`mod-git-crud-framework.mdc`） |
 | 安全拉取 | 审查拉取、拉取审查 | **Git 审查式拉取**：`git fetch` 后展示远端新增提交清单与文件变更统计，用户选择 [1]覆盖本地 [2]合并 [3]保留本地 后再执行对应操作 | `flow-git-safe-pull.mdc`（框架：`mod-git-crud-framework.mdc`） |
 | 存入图书馆 | 入馆、存知识 | 将当前对话中的新增知识写入 `Earth_Library`，并自动建立关联索引 | `flow-library-ingest.mdc`（框架：`mod-earth-library-framework.mdc`，架构：`Earth_Library/Earth_Library_Architecture.md`） |
 | 启用图书馆 | 开馆、启用库 | 开启 Earth Library 补充参考模式（持续生效，直到停用） | `mod-earth-library-framework.mdc` |
