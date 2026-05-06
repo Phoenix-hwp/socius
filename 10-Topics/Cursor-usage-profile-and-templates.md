@@ -2,7 +2,7 @@
 title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 created: 2026-04-18
-updated: 2026-05-06 (会话收束：多设备规则、盈钻、Notion 模板、469 M02、Git、§6)
+updated: 2026-05-06 (会话收束：Notion upsert、flow 衔接、Git、架构自检、§6)
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
@@ -246,6 +246,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-04 | Notion 通道策略口头确认落库 | 用户确认「大段留底走脚本+md、小条测试走 MCP」；收束写入 §3.6 与 §6 | 已写入 §3 / §6 |
 | 2026-05-05 | 固化 `post-git-pull-three-layer-awareness.mdc`；Git 备忘与 flow-git-commit / gateway / git-workspace / git-cross-device 衔接 | 拉取并入远端后须重温网关索引、别名表、Help Index，再新增规则/钩子/别名相关脚本，降低跨设备重复与冲突 | 已写入规则与 §6 |
 | 2026-05-06 | 多设备别名边界、盈钻更名、Notion 模板写入与 469 M02 口径；收束写 §6 | 网关/post-git/flow-git 补强；469 与 Earth 术语；Notion 六步与备忘；用户「结束对话」收束 | 已写入 §6 |
+| 2026-05-06 | Notion 幂等 upsert 脚本与 flow 衔接、README 规则配合、Git 推送；收束追加 §6 | 落盘 upsert 工作流与 `flow-notion-create`/`flow-notion-update` 自动通道；用户确认后提交并 push | 已写入 §6 |
 
 ## 6. 会话契合度分析日志（追加写入，勿删历史）
 
@@ -292,4 +293,5 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-05 | Git 提交 + Notion 悦读笔记 19 篇批量入库 Earth Library + 图书馆巡检 | 三层架构审计整改 4 文件已提交；Notion API 批量读取悦读笔记 19 篇产品思维类文章，生成知识卡片、更新 Library_Index 与 Relations_Index；主动执行图书馆巡检，整理 11 项标签近邻关联入 Review_Queue；验证 19 篇标题全部匹配（PowerShell GBK 编码显示误报） | 高 | PowerShell stdout GBK 编码导致标题显示异常，已用文件写入方式验证全部匹配 | 无 | 已写入 §6 |
 | 2026-05-05 | Git 拉取；运行模型与 `auto-switch.cmd` 对齐；三层架构文档重温；pull 后防重复横切规则；Earth Library 检索 5W2H；收束 | 执行 `git pull --rebase`（本地有改动时 stash→pull→pop）；按 `Cursor-command-aliases` 用 `cmd /k` 启动 `auto-switch.cmd`；说明并撤销「绕过脚本直连 node/ngrok」的临时改动；阅读并归纳 gateway / mod / flow 与 `Command-Help-Index`；固化 `post-git-pull-three-layer-awareness.mdc` 并衔接 `flow-git-commit`、Gitee 备忘、gateway、`git-workspace-commit`、`git-cross-device`；grep+Read 核对「运行模型」相关改动已恢复仓库约定；检索 Earth Library 简述 5W2H | 高 | §1–§2 仍为占位，细粒度语义习惯难评 | 可选：§1 补「拉取后先对齐全库规则与别名再扩展本地约定」 | 待定 |
 | 2026-05-06 | 新设备初始化；运行模型与别名对齐反思；多设备/Git 规则补强；盈钻更名；Notion 产品说明书空模板与重复行备忘；469 M02 高手/大咖玩法；厦门天气；Git 提交；结束对话 | 执行 `bootstrap-on-pull`；讨论「运行模型」须先读别名表、勿自建启动链并撤回 `.current_model` 等；落盘 `post-git-pull`/`gateway`/`flow-git-commit`/`git-cross-device` 多设备与别名边界；全库「赢钻→盈钻」与 469 背景/备忘/Earth 示例同步；Notion `Y`+`确认写入` 写入模板、说明 DB 必填属性与分块续传、记入 `TMP_日常备忘`；修正高手三玩法不含让球、大咖可含让球；`提交git` 至 Gitee（pull 无新并入）；收束触发「结束对话」 | 高 | §1–§2 仍为占位；Notion 同名多行需用户晚间自行清理；本次 commit 曾用一次性 `workspace@local` 作者信息 | 可选：§3 增补「Notion 建库行先对齐 schema 必填、POST 慎重重试防重复」 | 待定 |
+| 2026-05-06 | Notion 幂等 upsert、flow 衔接、Git 与架构自检；结束对话 | `拉取git`（脏工作区 stash→pull→pop）、`安全拉取`（fetch 无差）；备忘检索与 Notion 重复条目根因、幂等与 MCP/脚本通道；`运行模型` 按别名 Start-Process `auto-switch.cmd`；新增 `notion_upsert_workflow.py`+`notion_workflow.upsert.json`+README；`flow-notion-create`/`flow-notion-update` 步骤5/6 长文自动通道与中断续传；说明别名表与 `Command-Help-Index` 登记边界；用户确认后 `提交git` 推送 `a6115fd`；三层架构与 upsert 高内聚低耦合自检 | 高 | §1–§2 仍为占位；upsert 与 `run_notion_workflow` 的 `md_to_blocks` 重复、`load_state` 后定义覆盖前定义等技术债 | 可选：Markdown 解析与状态辅助收敛到共享模块 | 待定 |
 > 说明：每次收束 **新增一行**；档案正文的小幅优化写在 §5 并改对应章节。
