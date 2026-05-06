@@ -55,6 +55,7 @@ glossary:
 | 操作分型 | 典型意图 | 第三层工作流 | 说明 |
 |:---:|:---|:---|:---|
 | **工作区同步到远端** | `提交git` / 含 add+commit+pull+push 的同步；**仅拉取**、**仅推送**（无新 commit）等变体 | `flow-git-commit.mdc` | 步骤 5 已含 `pull --rebase` 与 `push`；无新提交时跳过 commit 相关步骤即可 |
+| **审查式拉取** | `安全拉取` / 仅 fetch 不合并，展示远端差异后由用户选择覆盖/合并/保留 | `flow-git-safe-pull.mdc` | 与「提交git」的盲拉互相独立，用户自行选择 |
 | **克隆到新设备路径** | `git到新设备` 等 | `flow-git-clone-to-custom-path.mdc` | 与日常「当前仓库内提交」分流，避免混在一个 flow |
 
 其他 Git 操作（分支、cherry-pick、`reset` 等）：先在本层明确风险与范围，再分步 Shell 执行或按需新增第三层 flow（**避免**为 push/pull 单独复制一套文档）。

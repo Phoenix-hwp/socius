@@ -1,0 +1,103 @@
+---
+description: Git 审查式拉取流程 — fetch 后展示差异，用户确认后再覆盖/合并/保留
+glossary:
+  layer: 3-工作流执行层
+  module: Git
+  depends: [mod-git-crud-framework]
+---
+
+# Git 审查式拉取流程
+
+## 触发词
+
+- 主指令：`安全拉取`
+- 别名：`审查拉取`、`拉取审查`
+
+## 意图
+
+从远端获取最新内容，**先展示差异（提交清单 + 文件变更）再让用户选择**：覆盖本地、合并、或保留本地。适用于对远端内容有疑虑、不想盲拉覆盖的场景。
+
+---
+
+## 执行步骤
+
+### 步骤 1：环境确认
+
+1. 确保工作目录在 **工作区根**
+2. 执行 `git rev-parse --abbrev-ref HEAD` 获取当前分支名（设为 `BRANCH`）
+3. 执行 `git remote get-url origin` 确认远程仓库已配置
+
+### 步骤 2：git fetch（只取不合并）
+
+```bash
+git fetch origin <BRANCH>
+```
+
+若 fetch 失败，提示检查网络或远程仓库配置，结束流程。
+
+### 步骤 3：展示远端与本地差异
+
+#### 3a. 提交数量对比
+
+```bash
+git rev-list --count HEAD..origin/<BRANCH>   # 远端领先数
+git rev-list --count origin/<BRANCH>..HEAD   # 本地领先数
+```
+
+回执格式：
+
+```
+远端领先本地: X 个提交
+本地领先远端: Y 个提交
+```
+
+若远端领先数为 0，提示「本地已是最新，无需拉取」，结束流程。
+
+#### 3b. 远端新增提交日志
+
+```bash
+git log --oneline --decorate HEAD..origin/<BRANCH>
+```
+
+#### 3c. 文件级变更统计
+
+```bash
+git diff --stat HEAD..origin/<BRANCH>
+```
+
+### 步骤 4：用户选择操作
+
+回执三个选项：
+
+```
+请选择操作方式：
+  [1] 覆盖本地 — git reset --hard origin/<BRANCH>
+      ** 警告：本地未推送的提交与修改将被丢弃！**
+  [2] 合并     — git merge origin/<BRANCH>
+      ** 保留本地提交，可能与远端产生冲突**
+  [3] 保留本地 — 不做任何修改
+```
+
+- 选 `1`（覆盖）→ Agent 必须**二次确认**后才执行 `git reset --hard origin/<BRANCH>`
+- 选 `2`（合并）→ 执行 `git merge origin/<BRANCH>`；若有冲突，回执冲突文件清单并暂停
+- 选 `3`（保留）→ 不做任何操作，提示「已保留本地内容」
+
+---
+
+## 冲突处理
+
+若 merge 遇到冲突：
+
+1. 回执冲突文件清单
+2. 询问用户：
+   - `1`：协助解决冲突
+   - `2`：中止合并（`git merge --abort`）
+   - `3`：保留本地，不做任何修改
+
+---
+
+## 失败兜底
+
+- `.git` 不存在 → 提示「当前目录非 Git 仓库」
+- `remote` 未配置 → 提示参考 `10-Topics/Gitee-Workspace-Git-Workflow.md` §首次绑定
+- `git fetch` 失败 → 提示检查网络与远程仓库 URL
