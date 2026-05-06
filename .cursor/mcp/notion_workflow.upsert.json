@@ -1,0 +1,23 @@
+{
+  "_description": "Notion 幂等写入工作流配置模板",
+  "_mode_help": "upsert_page: 查重后智能创建/更新（推荐）; create_page: 强制新建; update_page: 强制更新",
+  "mode": "upsert_page",
+  
+  "_parent_help": "父级页面/数据库 ID 或 notion.dir.xxx 引用",
+  "parent": "notion.dir.product_docs",
+  
+  "_title_help": "页面标题（用于查重）",
+  "title": "产品说明书（空模板）",
+  
+  "_content_file_help": "本地 Markdown 文件路径（相对或绝对）",
+  "content_file": "template.md",
+  
+  "_on_conflict_help": "查重时的处理策略: skip(跳过)/update(替换内容)/append(追加内容)",
+  "on_conflict": "update",
+  
+  "_title_prop_help": "数据库标题属性名（中文库通常是'标题'，英文是'Name'）",
+  "title_prop": "标题",
+  
+  "_output_file_help": "可选：将结果写入指定 JSON 文件",
+  "output_file": "notion_upsert_result.json"
+}
