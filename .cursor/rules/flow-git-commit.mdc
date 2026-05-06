@@ -35,6 +35,8 @@ glossary:
 - 删除：Z 个（file5...）
 ```
 
+**含指令体系路径时的自检（建议固化为回执一行）**：若本次变更涉及 **`.cursor/rules`**、**`.cursor/hooks`**、**`10-Topics/Cursor-command-aliases.md`**、**`Command-Help-Index.md`**，或被上述文件引用的脚本路径，在步骤 3 之前回执中 **简短确认**：新/改指令是否已在 **`Cursor-command-aliases.md`** 登记（别名 **2–10 字**）、是否与 **`Command-Help-Index.md`** 一致、是否无意重复已有映射；若涉及拉取后首次改动，提醒遵守 **`post-git-pull-three-layer-awareness.mdc`**。
+
 ### 步骤 3：add 策略确认
 
 **默认**：`git add .`（添加所有变更）

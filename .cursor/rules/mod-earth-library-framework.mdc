@@ -185,7 +185,7 @@ Earth Library 检索结果（启用状态）：
 # 在项目主控文件中
 earth_library_subscription:
   tags: ["产品设计", "分佣"]
-  keywords: ["赢钻", "订单"]
+  keywords: ["盈钻", "订单"]
 ```
 
 ---
