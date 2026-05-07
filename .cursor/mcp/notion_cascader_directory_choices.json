@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-02T03:13:52+00:00",
+  "generatedAt": "2026-05-07T23:25:00+00:00",
   "sourceFile": "notion_cascader_options.json",
   "description": "Leaf-level Notion directory targets; use id in conversation for disambiguation.",
   "options": [
@@ -246,6 +246,15 @@
       "nodeType": "page",
       "value": "151299d0-5ba8-8257-95f9-019ee91a0b51",
       "url": "https://app.notion.com/p/151299d05ba8825795f9019ee91a0b51"
+    },
+    {
+      "id": "notion.dir.539299d0-5ba8-831c-ba53-818deed69740",
+      "path": "知识库",
+      "label": "知识库",
+      "notionObjectType": "database",
+      "nodeType": "root",
+      "value": "539299d0-5ba8-831c-ba53-818deed69740",
+      "url": "https://www.notion.so/539299d05ba8831cba53818deed69740?v=c8c299d05ba883729b0888fccbb60998"
     }
   ]
 }

@@ -436,6 +436,23 @@ def ensure_sync_inputs(cfg: dict[str, Any], base_dir: Path) -> dict[str, Any]:
     return cfg
 
 
+def _do_drill(client: NotionClient, cfg: dict[str, Any]) -> dict[str, Any]:
+    """Thin wrapper around notion_drill + notion_drill_earth_library."""
+    from notion_drill import NotionDrillIngestor
+    from notion_drill_earth_library import ingest_tree
+
+    ingestor = NotionDrillIngestor(client)
+    page_id = parse_notion_id(str(cfg.get("target", "")))
+    tree = ingestor.drill(
+        page_id,
+        max_depth=int(cfg.get("max_depth", 2)),
+        include_child=bool(cfg.get("include_child", True)),
+        include_relation=bool(cfg.get("include_relation", True)),
+        relation_field=cfg.get("relation_field"),
+    )
+    return ingest_tree(tree, dry_run=bool(cfg.get("dry_run", False)))
+
+
 def do_sync_topic(client: NotionClient, cfg: dict[str, Any], base_dir: Path) -> dict[str, Any]:
     action = str(cfg.get("action", "")).strip().lower()
     if action == "create_page":
@@ -463,6 +480,17 @@ def build_execution_plan(mode: str, cfg: dict[str, Any]) -> dict[str, Any]:
         return plan
     if mode == "archive_page":
         plan.update({"target": cfg.get("target", "")})
+        return plan
+    if mode == "drill":
+        plan.update({
+            "target": cfg.get("target", ""),
+            "max_depth": cfg.get("max_depth", 2),
+            "include_child": bool(cfg.get("include_child", True)),
+            "include_relation": bool(cfg.get("include_relation", True)),
+            "relation_field": cfg.get("relation_field"),
+            "consumer": cfg.get("consumer", "earth_library"),
+            "dry_run": bool(cfg.get("dry_run", False)),
+        })
         return plan
     return plan
 
@@ -522,6 +550,21 @@ def main() -> int:
                         result = do_archive_page(client, str(cfg.get("target", "")))
                 else:
                     result = do_archive_page(client, str(cfg.get("target", "")))
+        elif mode == "drill":
+            if interactive and not cfg.get("target"):
+                cfg["target"] = prompt_text("Target Notion page URL or ID to drill")
+            plan = build_execution_plan(mode, cfg)
+            if dry_run:
+                result = {"dry_run": True, "plan": plan}
+            else:
+                if interactive or confirm_execute:
+                    print(json.dumps({"execution_plan": plan}, ensure_ascii=False, indent=2))
+                    if not prompt_confirm("Execute this drill workflow now?", default_yes=False):
+                        result = {"cancelled": True, "plan": plan}
+                    else:
+                        result = _do_drill(client, cfg)
+                else:
+                    result = _do_drill(client, cfg)
         elif mode in ("create_page", "update_page", "sync_topic"):
             if mode == "create_page" and interactive:
                 if not cfg.get("parent"):
@@ -563,7 +606,7 @@ def main() -> int:
                     else:
                         result = do_sync_topic(client, cfg, base_dir)
         else:
-            raise ValueError("Unsupported mode. Use read | create_page | update_page | sync_topic | archive_page")
+            raise ValueError("Unsupported mode. Use read | create_page | update_page | sync_topic | archive_page | drill")
     except Exception as exc:
         print(json.dumps({"ok": False, "mode": mode, "error": str(exc)}, ensure_ascii=False))
         return 1

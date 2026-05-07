@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-04-30T23:55:00+08:00",
+  "generatedAt": "2026-05-07T23:25:00+08:00",
   "description": "Notion cascader options for root->second-level selection",
   "fieldGuide": {
     "label": "显示名称",
@@ -317,6 +317,17 @@
       "notionObjectType": "database",
       "id": "975299d0-5ba8-83de-b1e8-8102a3139626",
       "url": "https://app.notion.com/p/975299d05ba883deb1e88102a3139626",
+      "disabled": false,
+      "loadChildren": false,
+      "children": []
+    },
+    {
+      "label": "知识库",
+      "value": "539299d0-5ba8-831c-ba53-818deed69740",
+      "nodeType": "root",
+      "notionObjectType": "database",
+      "id": "539299d0-5ba8-831c-ba53-818deed69740",
+      "url": "https://www.notion.so/539299d05ba8831cba53818deed69740?v=c8c299d05ba883729b0888fccbb60998",
       "disabled": false,
       "loadChildren": false,
       "children": []
