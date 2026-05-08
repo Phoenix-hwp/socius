@@ -14,7 +14,15 @@ const args = Object.fromEntries(
   process.argv.slice(2).map((v, i, a) => (v.startsWith("--") ? [v.slice(2), a[i + 1]] : null)).filter(Boolean)
 );
 const title = args.title || "untitled";
-const content = args.content || "";
+let content = "";
+if (args["content-file"]) {
+  content = readFileSync(args["content-file"], "utf8");
+} else if (args.content != null && args.content !== "") {
+  content = String(args.content);
+}
+if (!content) {
+  throw new Error("必须提供 --content 或 --content-file");
+}
 const type = args.type || "知识记录";
 const source = args.source || "对话沉淀";
 const source_mode = args.source_mode || "conversation";
@@ -22,6 +30,11 @@ const source_url = args.source_url || "";
 const source_path = args.source_path || "";
 const confidence = args.confidence || "中";
 const keywords = args.keywords || "";
+if (args["notion-page-id"]) {
+  throw new Error(
+    "store_to_library.mjs 未实现 Notion 页面去重与合并，请使用 Earth_Library/scripts/store_to_library.py 并传入 --notion-page-id"
+  );
+}
 const cfg = JSON.parse(readFileSync(cfgPath, "utf8"));
 const tagCfg = JSON.parse(readFileSync(tagPath, "utf8"));
 if (!cfg.source_modes.includes(source_mode)) {

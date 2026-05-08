@@ -1,23 +1,11 @@
 ---
-description: 对话备份与读取指令规则（三层对齐存根）
-alwaysApply: true
+description: 对话备份指令入口指针（已收敛到网关）
+alwaysApply: false
 ---
 
 # 对话备份与读取指令规则
 
-> **三层对齐**：本文件为 **alwaysApply** 的触发摘要；**阶段分型**以第二层 `mod-conversation-framework.mdc` 为准，**具体步骤**以第三层 `flow-conversation-backup.mdc`、`flow-conversation-read.mdc`、`flow-conversation-resume.mdc` 为准，避免与上述文件重复维护。
-
-## 触发词
-
-- 主指令：`备份当前对话`
-- 别名：`备份对话`、`查对话`、`续聊备忘`
-- 口语兼容：`继续X月X日（上午/下午/晚上）的对话`
-
-## 执行动作（强制）
-
-1. **Read** `mod-conversation-framework.mdc`，按阶段A/B/C确定操作类型
-2. **Read** 对应第三层文件：
-   - 备份：`flow-conversation-backup.mdc`
-   - 读取：`flow-conversation-read.mdc`
-   - 续聊：`flow-conversation-resume.mdc`
-3. 边界时间（14:00/20:00/00:00 前后10分钟）须确认，凌晨（00:00-05:59）须询问归属
+> **已收敛**：触发词与别名映射见 `gateway-command-router.mdc`「当前关键别名」表；
+> 阶段分型见 `mod-conversation-framework.mdc`；
+> 具体步骤见 `flow-conversation-backup.mdc` / `flow-conversation-read.mdc` / `flow-conversation-resume.mdc`。
+> 本文件保留仅作反向索引兼容，不重复写入触发词与执行动作。

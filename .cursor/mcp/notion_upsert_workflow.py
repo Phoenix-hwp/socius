@@ -32,14 +32,7 @@ from notion_sdk import NotionClient, load_env_file, parse_notion_id
 
 
 # ========== 配置常量 ==========
-LONG_CONTENT_THRESHOLD = {
-    "chars": 2000,      # 字符数阈值
-    "blocks": 10,       # Notion blocks 阈值
-    "file_size_kb": 10  # 文件大小阈值（KB）
-}
-
-STATE_DIR_NAME = "Daily-Backups/.notion_state"
-BATCH_SIZE = 50  # 每批写入块数
+from notion_sdk.config import LONG_CONTENT_THRESHOLD, BATCH_SIZE, STATE_DIR_NAME
 
 
 # ========== 工具函数 ==========

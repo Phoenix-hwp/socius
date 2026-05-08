@@ -1,27 +1,11 @@
 ---
-description: 地球图书馆项目指令与启停规则（三层对齐存根）
-alwaysApply: true
+description: Earth Library 指令入口指针（已收敛到网关）
+alwaysApply: false
 ---
 
 # 地球图书馆（Earth Library）指令规则
 
-> **三层对齐**：本文件为 **alwaysApply** 的触发摘要；**阶段分型**以第二层 `mod-earth-library-framework.mdc` 为准，**具体步骤**以第三层 `flow-library-ingest.mdc`、`flow-library-search.mdc`、`flow-library-review.mdc` 为准，避免与上述文件重复维护。
-
-## 触发指令
-
-- `存入图书馆` / `入馆` / `存知识`
-- `启用图书馆` / `开馆` / `启用库`
-- `停用图书馆` / `闭馆` / `停用库`
-- `图书馆巡检` / `巡检图书馆` / `库巡检`
-- `图书馆纠错` / `纠错图书馆` / `库纠错`
-- `图书馆优化` / `优化图书馆` / `库优化`
-- `更新图书馆标签` / `更新标签` / `标签维护`
-
-## 执行动作（强制）
-
-1. **Read** `mod-earth-library-framework.mdc`，按阶段A/B/C确定操作类型
-2. **Read** 对应第三层文件：
-   - 入库：`flow-library-ingest.mdc`
-   - 检索：`flow-library-search.mdc`
-   - 质检：`flow-library-review.mdc`
-3. 回答优先级：模型知识+网络（主）→ Earth Library（补充，仅启用时）
+> **已收敛**：触发词与别名映射见 `gateway-command-router.mdc`「当前关键别名」表；
+> 阶段分型见 `mod-earth-library-framework.mdc`；
+> 具体步骤见 `flow-library-ingest.mdc` / `flow-library-search.mdc` / `flow-library-review.mdc`。
+> 本文件保留仅作反向索引兼容，不重复写入触发词与执行动作。

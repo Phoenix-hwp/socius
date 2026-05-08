@@ -25,16 +25,5 @@ Created: 2026-04-29
 | 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-05_B端产品市场分析与业务调研.md` | `Earth_Library/Knowledge_Cards/20260505-04_B端产品需求管理与迭代.md` | 标签相交 | 市场分析→需求管理流程衔接 |
 | 2026-05-05 | `Earth_Library/Knowledge_Cards/20260429-234248_这是一条关于知识库方法和执行流程的内容-包含步骤.md` | `Earth_Library/Knowledge_Cards/20260429-234644_知识管理方法论与流程复盘-强调步骤和沉淀.md` | 疑似重复 | 关键词重合度 0.74 |
 | 2026-05-05 | `Earth_Library/Knowledge_Cards/20260429-234248_这是一条关于知识库方法和执行流程的内容-包含步骤.md` | `Earth_Library/Knowledge_Cards/20260429-234644_知识管理方法论与流程复盘-强调步骤和沉淀.md` | 标签近邻 | 标签重合度 1.00 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-01_5W2H___.md` | `Earth_Library/Knowledge_Cards/20260505-17_____________.md` | 标签近邻 | 标签重合度 1.00 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-02_KANO__.md` | `Earth_Library/Knowledge_Cards/20260505-13________.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-02_KANO__.md` | `Earth_Library/Knowledge_Cards/20260505-14______.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-03_B________.md` | `Earth_Library/Knowledge_Cards/20260505-05_B____________.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-03_B________.md` | `Earth_Library/Knowledge_Cards/20260505-07_________.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-03_B________.md` | `Earth_Library/Knowledge_Cards/20260505-18_B__________.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-04_B_______.md` | `Earth_Library/Knowledge_Cards/20260505-16_____.md` | 标签近邻 | 标签重合度 1.00 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-05_B____________.md` | `Earth_Library/Knowledge_Cards/20260505-18_B__________.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-06_________.md` | `Earth_Library/Knowledge_Cards/20260505-11_______.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-06_________.md` | `Earth_Library/Knowledge_Cards/20260505-13________.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-09________.md` | `Earth_Library/Knowledge_Cards/20260505-15_5MVVP__.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-11_______.md` | `Earth_Library/Knowledge_Cards/20260505-13________.md` | 标签近邻 | 标签重合度 0.50 |
-| 2026-05-05 | `Earth_Library/Knowledge_Cards/20260505-13________.md` | `Earth_Library/Knowledge_Cards/20260505-14______.md` | 标签近邻 | 标签重合度 0.50 |
+| 2026-05-08 | `Earth_Library/Knowledge_Cards/20260508-105811_商业管理.md` | `Earth_Library/Knowledge_Cards/20260429-234248_这是一条关于知识库方法和执行流程的内容-包含步骤.md` | 标签相交 | 自动关联（共享标签） |
+| 2026-05-08 | `Earth_Library/Knowledge_Cards/20260508-105811_商业管理.md` | `Earth_Library/Knowledge_Cards/20260429-234644_知识管理方法论与流程复盘-强调步骤和沉淀.md` | 标签相交 | 自动关联（共享标签） |

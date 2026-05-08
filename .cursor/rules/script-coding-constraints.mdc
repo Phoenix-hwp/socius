@@ -1,0 +1,64 @@
+---
+description: 脚本与规则编码约束 — 防耦合、防硬编码、保三层架构合规
+alwaysApply: true
+---
+
+# 脚本与规则编码约束
+
+## 适用范围
+
+对**新增或实质修改**以下对象时，须在落盘前完成下方「自检清单」：
+- `.cursor/mcp/*.py`、`.cursor/hooks/*.py`、`.cursor/tools/*.py`
+- `Earth_Library/scripts/*.py`
+- `.cursor/rules/*.mdc`（尤其是 alwaysApply 规则）
+
+## 约束清单（强制自检）
+
+### 1. 共享模块优先（DRY）
+
+- **ID 解析、frontmatter 拆分、card body 拆分**：优先从 `el_parsers`（Earth Library 侧）或 `notion_sdk/parsers`（Notion 侧）导入；禁止在多个脚本间复制粘贴正则与解析逻辑。
+- **阈值、批次大小、路径常量**：优先从 `notion_sdk/config.py` 导入；禁止在脚本内直接写死 `2000`、`10`、`50` 等业务阈值。
+- **Markdown → Notion blocks 转换**：若新增脚本需要该能力，先评估是否可与 `run_notion_workflow.py` 或 `notion_upsert_workflow.py` 共用；差异大时保留独立实现，但须在注释中说明「为何不与现有模块合并」。
+
+### 2. 禁止运行时跨界强耦合
+
+- **禁止**通过 `sys.path.insert(0, "../other_dir")` 在运行时动态修改路径来导入另一脚本的函数。
+- **脚本 A 调用脚本 B 的正确方式**：
+  - 若在同一职责域（如同为 Earth Library 脚本），可提取公共函数到共享模块（如 `el_parsers.py`）后分别导入。
+  - 若在不同职责域（如 Drill 编排层调用 Rollup 去重），**必须**通过 `subprocess.run([sys.executable, "script_b.py", "--arg", ...])` 以 CLI 方式调用，并通过 stdout JSON 交换结果。
+
+### 3. 禁止硬编码业务路径与默认值
+
+- **禁止**在脚本内写死特定页面的相对路径或绝对路径作为默认值（如 `_DEFAULT_ROLLUP_REL = "Knowledge_Cards/20260508_商业管理.md"`）。
+- **禁止**写死目录层级假设（如 `Path(__file__).parents[2]` 作为仓库根）。应优先读取环境变量 `CURSOR_PROJECT_DIR`，其次用运行时推导，并在注释中标注假设。
+- **禁止**写死盘符或固定父目录结构（如 `D:\\Phoenix\\Cursor_Knowledge`）。
+
+### 4. 规则文件须符合三层架构职责边界
+
+| 层级 | 命名前缀 | 允许内容 | 禁止内容 |
+|:---:|:---|:---|:---|
+| 第一层（网关） | `gateway-*.mdc` | 别名映射表、跨模块协调顺序、全局兜底 | 具体步骤、阶段细节、阈值常量 |
+| 第二层（模块框架） | `mod-*-*.mdc` | 阶段结构、抽象分型、自检清单 | 逐步操作流程、具体数值阈值 |
+| 第三层（工作流） | `flow-*-*.mdc` | 逐步步骤、口令确认、通道选择 | 别名映射、跨模块协调原则 |
+| 横切规则 | 无固定前缀 | 原则性约束、边界说明、指针 | 操作细则、步骤流程、阈值 |
+
+- **alwaysApply 规则若仅为「触发摘要」**，必须存根化为指针（如 `git-workspace-commit.mdc`），不得重复罗列触发词与执行动作。
+- **新增指令**须同步登记到 `10-Topics/Cursor-command-aliases.md`，并在 `gateway-command-router.mdc` 中可见。
+
+### 5. 新建文件 frontmatter 规范
+
+- 所有 `.md`（规则、知识库卡片、文档）须在 frontmatter 中声明 `Lifecycle: 长期` / `阶段` / `临时`。
+- 临时文件推荐前缀 `TMP_`，阶段文件推荐前缀 `STAGE_`。
+
+### 6. 改动预告同步
+
+- 对本规则适用范围内的对象做**实质性修改**前，仍须遵守 `pre-edit-script-change-brief.mdc`：简述改什么、改完行为、验收方式、边界风险。
+
+## Agent 自检（落盘前）
+
+- [ ] 是否有可复用的解析/配置函数已存在于 `notion_sdk` 或 `el_parsers`？
+- [ ] 是否有硬编码的阈值、路径、ID、默认值？
+- [ ] 是否跨目录运行时导入？若否，是否改为 CLI/subprocess 或共享模块？
+- [ ] 规则文件是否落在正确的三层层级？alwaysApply 摘要是否已收敛到网关？
+- [ ] 新增文件是否声明了 `Lifecycle`？
+- [ ] 跨设备场景（不同盘符、不同 `CURSOR_PROJECT_DIR`）是否仍能正常工作？

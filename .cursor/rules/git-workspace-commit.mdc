@@ -1,35 +1,10 @@
 ---
-description: 口语「提交git」：在工作区根按 Git/Gitee 流程协助提交与推送
-alwaysApply: true
+description: Git 提交指令入口指针（已收敛到网关）
+alwaysApply: false
 ---
 
 # 提交 Git（工作区 → Gitee）
 
-> **三层对齐**：本文件为 **alwaysApply** 的触发摘要；**具体步骤**以第三层 `flow-git-commit.mdc` 为准，**阶段分型**以第二层 `mod-git-crud-framework.mdc` 为准，避免与上述文件重复维护。
-
-## 触发词
-
-- 主指令：`提交git`
-- 别名：`Git同步`、`推仓库`、`提交远端`
-
-## 范围
-
-跨设备与工作区版本同步以 **Git** 为准。**Notion 操作**仍遵循 `mod-notion-crud-framework.mdc`：
-- 创建细则见 `flow-notion-create.mdc`
-- 更新细则见 `flow-notion-update.mdc`
-- 删除细则见 `flow-notion-delete.mdc`
-- 查询细则见 `flow-notion-query.mdc`
-
-与 Git 无关。
-
-## 执行动作（强制）
-
-1. **Read** `10-Topics/Gitee-Workspace-Git-Workflow.md`（若缺失则提示用户恢复该文件或改用通用 Git 说明）。
-2. **Read** `flow-git-commit.mdc`，按其中五步执行；将 **当前工作目录** 落在 **工作区根**（与 `CURSOR_PROJECT_DIR` 一致）。
-3. **高风险须确认**：`push --force`、`push --force-with-lease`、`reset --hard`、跳过 hook、批量变更 `.gitignore` 导致误提交密钥路径等 — **须用户明确同意后再执行**。
-
-## 输出约定
-
-- 与 `flow-git-commit.mdc` 一致：简报含 `status`、拟提交范围、建议 `commit message`；推送成功后注明远端分支与摘要。
-- 拉取并入远端更新后须遵守 `post-git-pull-three-layer-awareness.mdc`。
-- 若未配置 `remote` 或认证失败，给出 **Read 备忘文档 §首次绑定** 中的命令模板（不替用户保管 Token/密码）。
+> **已收敛**：触发词与别名映射见 `gateway-command-router.mdc`「当前关键别名」表；
+> 具体步骤见 `flow-git-commit.mdc`；阶段分型见 `mod-git-crud-framework.mdc`。
+> 本文件保留仅作反向索引兼容，不重复写入触发词与执行动作。

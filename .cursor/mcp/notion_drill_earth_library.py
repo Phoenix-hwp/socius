@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Earth Library consumer for NotionDrillIngestor.
+"""Earth Library consumer for NotionDrillIngestor（编排层）.
 
-Takes a DrillNode tree produced by notion_drill.py, renders it into an
-Earth Library knowledge-card Markdown, and persists it using the existing
-store_to_library.py pipeline.
+分层：
+- **notion_drill**：遍历 API，产出 DrillNode（与呈现、入库无关）。
+- **notion_drill_markdown**：DrillNode → Markdown 正文片段（纯呈现，可单独复用）。
+- **本脚本**：串联 drill → markdown → ``store_to_library.py`` → 自动执行 ``merge_rollups_redundant_notion_cards``（按归纳树 URL 清理独立重复卡）。
 
 Usage:
     python notion_drill_earth_library.py --page-id <id> --depth 2 [--dry-run]
@@ -16,7 +17,7 @@ import os
 import re
 import subprocess
 import sys
-from datetime import datetime
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -26,7 +27,36 @@ if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
 
 from notion_drill import DrillNode, NotionDrillIngestor
+from notion_drill_markdown import build_details_section
 from notion_sdk import NotionClient, load_env_file, parse_notion_id
+
+
+def _run_rollup_url_dedupe(card_rel_posix: str) -> dict[str, Any]:
+    """入库成功后：以刚写入的归纳卡为 rollup，删除被归纳树 URL 覆盖的独立卡片。
+
+    使用 subprocess 调用 CLI，避免运行时篡改 sys.path 与直接 import。
+    """
+    root = _SCRIPT_DIR.parents[1]
+    dedupe_script = root / "Earth_Library" / "scripts" / "merge_rollups_redundant_notion_cards.py"
+    if not dedupe_script.exists():
+        return {"ok": False, "error": f"dedupe script not found: {dedupe_script}"}
+
+    rollup_path = (root / card_rel_posix).resolve()
+    cmd = [
+        sys.executable,
+        str(dedupe_script),
+        "--rollup",
+        str(rollup_path.relative_to(root).as_posix()),
+    ]
+
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(root), check=False)
+    if proc.returncode != 0:
+        return {"ok": False, "error": proc.stderr.strip() or "dedupe script failed"}
+
+    try:
+        return json.loads(proc.stdout.strip())
+    except json.JSONDecodeError:
+        return {"ok": False, "error": f"invalid JSON from dedupe: {proc.stdout[:200]}"}
 
 
 # ---------------------------------------------------------------------------
@@ -50,36 +80,6 @@ def _build_summary(node: DrillNode) -> str:
         if first_sentence:
             lines.append(first_sentence + "。")
     lines.append(f"共归纳 {len(_flatten_branches(node))} 个子页面/关联内容。")
-    return "\n".join(lines)
-
-
-def _build_details(node: DrillNode) -> str:
-    """Build the Details section from the drill tree."""
-    lines: list[str] = []
-
-    # Root summary
-    if node.summary:
-        lines.append(f"## {node.title}")
-        lines.append(node.summary)
-        lines.append("")
-
-    # Branch summaries
-    for child in node.children:
-        conn_label = child.connection_type
-        if conn_label.startswith("relation:"):
-            conn_label = f"关联: {conn_label.split(':', 1)[1]}"
-        elif conn_label == "child_page":
-            conn_label = "子页面"
-
-        lines.append(f"### {child.title} ({conn_label})")
-        if child.url:
-            lines.append(f"原文: {child.url}")
-        if child.summary:
-            lines.append(child.summary)
-        else:
-            lines.append("（该页面无正文内容）")
-        lines.append("")
-
     return "\n".join(lines)
 
 
@@ -122,6 +122,7 @@ def _store_to_library(
     type_: str,
     confidence: str,
     keywords: str,
+    notion_page_id: str = "",
     dry_run: bool = False,
 ) -> dict[str, Any]:
     """Delegate to Earth_Library/scripts/store_to_library.py."""
@@ -131,44 +132,63 @@ def _store_to_library(
     if not store_script.exists():
         raise FileNotFoundError(f"store_to_library.py not found at {store_script}")
 
-    cmd = [
-        sys.executable,
-        str(store_script),
-        "--title",
-        title,
-        "--content",
-        content,
-        "--type",
-        type_,
-        "--source",
-        "Notion 知识库",
-        "--source_mode",
-        "notion_page",
-        "--source_url",
-        source_url,
-        "--source_path",
-        source_path,
-        "--confidence",
-        confidence,
-        "--keywords",
-        keywords,
-    ]
+    # Windows 命令行长度有限；长正文经临时文件传入，与 store_to_library 的 --content-file 对齐
+    _CONTENT_ARG_THRESHOLD = 6000
+    content_file: Path | None = None
+    try:
+        cmd = [
+            sys.executable,
+            str(store_script),
+            "--title",
+            title,
+            "--type",
+            type_,
+            "--source",
+            "Notion 知识库",
+            "--source_mode",
+            "notion_page",
+            "--source_url",
+            source_url,
+            "--source_path",
+            source_path,
+            "--confidence",
+            confidence,
+            "--keywords",
+            keywords,
+        ]
+        if notion_page_id.strip():
+            cmd.extend(["--notion-page-id", notion_page_id.strip()])
 
-    if dry_run:
-        return {
-            "ok": True,
-            "dry_run": True,
-            "cmd": cmd,
-            "title": title,
-            "type": type_,
-            "keywords": keywords,
-        }
+        use_tempfile = (not dry_run) and len(content) > _CONTENT_ARG_THRESHOLD
+        if use_tempfile:
+            fd, tmp_name = tempfile.mkstemp(suffix=".md", prefix="el-ingest-", text=True)
+            os.close(fd)
+            content_file = Path(tmp_name)
+            content_file.write_text(content, encoding="utf-8")
+            cmd.extend(["--content-file", str(content_file)])
+        elif dry_run and len(content) > _CONTENT_ARG_THRESHOLD:
+            cmd.extend(["--content-file", "<dry-run: 实际运行将写入临时文件>"])
+        else:
+            cmd.extend(["--content", content])
 
-    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(root), check=False)
-    if proc.returncode != 0:
-        raise RuntimeError(proc.stderr.strip() or "store_to_library.py failed")
+        if dry_run:
+            return {
+                "ok": True,
+                "dry_run": True,
+                "cmd": cmd,
+                "title": title,
+                "type": type_,
+                "keywords": keywords,
+            }
 
-    return json.loads(proc.stdout.strip() or "{}")
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(root), check=False)
+        if proc.returncode != 0:
+            raise RuntimeError(proc.stderr.strip() or "store_to_library.py failed")
+
+        return json.loads(proc.stdout.strip() or "{}")
+    finally:
+        if content_file is not None and content_file.exists():
+            content_file.unlink(missing_ok=True)
 
 
 # ---------------------------------------------------------------------------
@@ -193,7 +213,7 @@ def ingest_tree(
     """
     title = tree.title or "未命名归纳"
     summary = _build_summary(tree)
-    details = _build_details(tree)
+    details = build_details_section(tree)
 
     # Compose the content body (Summary + Details as a single string)
     # store_to_library.py puts this into #Details; we already structured it.
@@ -223,10 +243,16 @@ def ingest_tree(
         type_=type_,
         confidence=confidence,
         keywords=keywords,
+        notion_page_id=(tree.page_id or ""),
         dry_run=False,
     )
     result["ingested_title"] = title
     result["keywords"] = keywords
+    if result.get("ok") and result.get("card"):
+        try:
+            result["rollup_dedupe"] = _run_rollup_url_dedupe(result["card"])
+        except Exception as exc:  # noqa: BLE001
+            result["rollup_dedupe"] = {"ok": False, "error": str(exc)}
     return result
 
 
