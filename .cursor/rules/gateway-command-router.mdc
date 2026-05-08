@@ -109,8 +109,7 @@ alwaysApply: true
 
 ## 删除保护（全局）
 
-- 当用户提出"删除临时文件/草稿文件"但未逐个点名时，默认保留备忘录类文件（文件名含 `Memo` 或 `备忘录`）
-- 若用户明确点名删除某个备忘录文件，才执行删除
+> 细则见 `mod-project-memo-framework.mdc` §文件保护。
 
 ---
 
@@ -131,6 +130,8 @@ alwaysApply: true
 - **Notion 模块**：
   - 第二层：`mod-notion-precondition.mdc`（阶段A网络确认）
   - 第二层：`mod-notion-crud-framework.mdc`（统一框架阶段B/C）
+  - 第三层：`flow-notion-select-parent.mdc`（阶段B 目录落点操作细则）
+  - 第三层：`flow-notion-locate-target.mdc`（共享定位子流程操作细则）
   - 第三层：`flow-notion-create.mdc`（增）
   - 第三层：`flow-notion-delete.mdc`（删）
   - 第三层：`flow-notion-update.mdc`（改）

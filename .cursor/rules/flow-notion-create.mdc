@@ -25,7 +25,7 @@ glossary:
 ## 前置要求
 
 - 已完成 **阶段 A**（网络确认 **`Y`**）— 见 `mod-notion-precondition.mdc`
-- 已完成 **阶段 B**（目录落点 parent 已选定）— 见 `mod-notion-crud-framework.mdc` 阶段B
+- 已完成 **阶段 B**（目录落点 parent 已选定）— 见 `flow-notion-select-parent.mdc`
 
 ---
 
@@ -58,9 +58,9 @@ glossary:
 
 ## 目录与标题（摘要）
 
-- **目录**：数据文件 `notion_cascader_directory_choices.json`；缺失或过期时提示刷新 `refresh_notion_directory_choices.cmd`（刷新动作本身遵守网络确认）。详见 `mod-notion-crud-framework.mdc` 阶段B。
-- **标题**：须在步骤1选定 **1 手动** 或 **2 自动**；自动须在落库前展示拟题。
-- **禁止**：未确认目录即写入；未确认标题策略即自拟标题落库；未收到 **`确认写入`**（或等价且无歧义同意）即调用 API。
+- 目录：数据文件 `notion_cascader_directory_choices.json`；缺失或过期时提示刷新 `refresh_notion_directory_choices.cmd`（刷新动作本身遵守网络确认）。详见 `flow-notion-select-parent.mdc`。
+- 标题：须在步骤1选定 **1 手动** 或 **2 自动**；自动须在落库前展示拟题。
+- 禁止：未确认目录即写入；未确认标题策略即自拟标题落库；未收到 **`确认写入`**（或等价且无歧义同意）即调用 API。
 
 ---
 

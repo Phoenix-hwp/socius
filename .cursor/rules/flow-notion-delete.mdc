@@ -21,7 +21,7 @@ glossary:
 ## 前置要求
 
 - 已完成 **阶段 A**（网络确认 **`Y`**）— 见 `mod-notion-precondition.mdc`
-- 已完成 **阶段 B**（目录落点 parent 已选定）— 见 `mod-notion-crud-framework.mdc` 阶段B
+- 已完成 **阶段 B**（目录落点 parent 已选定）— 见 `flow-notion-select-parent.mdc`
 
 ---
 
@@ -40,7 +40,7 @@ glossary:
 
 ## 定位子流程（步骤1）
 
-详见 `mod-notion-crud-framework.mdc`「定位子流程」章节：
+详见 `flow-notion-locate-target.mdc`：
 
 1. 用户提供用于检索的 **标题或关键词**（部分匹配，大小写不敏感）
 2. 在阶段 B 选定的 **parent** 下解析：

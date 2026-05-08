@@ -113,9 +113,9 @@ cmd /c "python Earth_Library/scripts/quick_ingest.py --text \"内容\" || node E
 ```
 已存入 Earth Library：
 - 卡片：Knowledge_Cards/20260503-143052_标题.md
-- 索引：Library_Index.md（第 N 条）
+- 索引：Library_Index.md（已更新）
 - 标签：[标签1, 标签2, 标签3]
-- 关联：发现 M 条相关知识
+- 关联：发现 M 条相关知识（Relations_Index.md 已更新）
 ```
 
 ---

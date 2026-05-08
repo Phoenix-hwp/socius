@@ -36,7 +36,7 @@ def _run_rollup_url_dedupe(card_rel_posix: str) -> dict[str, Any]:
 
     使用 subprocess 调用 CLI，避免运行时篡改 sys.path 与直接 import。
     """
-    root = _SCRIPT_DIR.parents[1]
+    root = Path(os.environ.get("CURSOR_PROJECT_DIR", _SCRIPT_DIR.parents[1]))
     dedupe_script = root / "Earth_Library" / "scripts" / "merge_rollups_redundant_notion_cards.py"
     if not dedupe_script.exists():
         return {"ok": False, "error": f"dedupe script not found: {dedupe_script}"}
@@ -126,7 +126,7 @@ def _store_to_library(
     dry_run: bool = False,
 ) -> dict[str, Any]:
     """Delegate to Earth_Library/scripts/store_to_library.py."""
-    root = _SCRIPT_DIR.parents[1]  # workspace root
+    root = Path(os.environ.get("CURSOR_PROJECT_DIR", _SCRIPT_DIR.parents[1]))  # workspace root
     store_script = root / "Earth_Library" / "scripts" / "store_to_library.py"
 
     if not store_script.exists():

@@ -6,12 +6,13 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 # 工作区根目录
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
 SCRIPT = ROOT / "Earth_Library" / "scripts" / "notion_atomic_ingest.py"
 
 # 需要导入的页面列表 (标题, page_id, 分类)

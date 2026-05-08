@@ -3,6 +3,7 @@
 # ============================================
 .cursor/ai-model-shim/config.json
 .cursor/ai-model-shim/*.log
+.cursor/ai-model-shim/*.log.*
 .cursor/ai-model-shim/.current_model
 
 # ============================================

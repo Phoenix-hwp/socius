@@ -9,8 +9,4 @@ alwaysApply: false
 > 阶段分型见 `mod-project-memo-framework.mdc`；
 > 具体步骤见 `flow-project-memo-read.mdc` / `flow-project-memo-append.mdc`。
 > 本文件保留仅作反向索引兼容，不重复写入触发词与执行动作。
-
-## 删除保护（删除防护）
-
-- 当用户要求"删除草稿/临时文件"时，默认**不删除**包含"备忘录"语义的文件（如 `*Memo*`、`*备忘录*`）
-- 只有在用户**明确点名**要删除该备忘录文件时，才允许执行删除
+> 「删除保护」细则见 `mod-project-memo-framework.mdc` §文件保护。

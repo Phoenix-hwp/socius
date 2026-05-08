@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
 CARDS = ROOT / "Earth_Library" / "Knowledge_Cards"
 
 

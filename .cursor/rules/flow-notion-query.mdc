@@ -23,7 +23,7 @@ glossary:
 ## 前置要求
 
 - 已完成 **阶段 A**（网络确认 **`Y`**）— 见 `mod-notion-precondition.mdc`
-- 已完成 **阶段 B**（目录落点 parent 已选定）— 见 `mod-notion-crud-framework.mdc` 阶段B
+- 已完成 **阶段 B**（目录落点 parent 已选定）— 见 `flow-notion-select-parent.mdc`
   - **例外**：用户明确为 **全局搜索**、**仅按已知页面 URL/ID 操作**、且与「选定父级下的子内容」无关时，可 **跳过** 阶段 B，但阶段 A 仍适用
 
 ---
@@ -42,7 +42,7 @@ glossary:
 
 ## 定位解析（步骤2）
 
-详见 `mod-notion-crud-framework.mdc`「定位子流程」章节：
+详见 `flow-notion-locate-target.mdc`：
 
 ### 匹配逻辑
 

@@ -1,0 +1,25 @@
+---
+description: Notion 共享定位子流程 — 删/改/查共用的目标定位细则
+alwaysApply: false
+glossary:
+  layer: 3-具体工作流
+  module: Notion
+  operation: locate_target
+  depends: [mod-notion-crud-framework, flow-notion-select-parent]
+---
+
+# Notion 定位目标操作流程
+
+> 本文件为删 / 改 / 查共用的定位子流程完整细则；抽象定义见 `mod-notion-crud-framework.mdc` §定位子流程。
+
+## 执行步骤
+
+1. 请用户提供用于检索的 **标题或关键词**（可与页面标题 **部分匹配**，大小写不敏感）
+2. 在阶段 B 选定的 **parent** 下解析：
+   - **parent 为 database**：用数据库 **title 类型属性** 做 `contains` 查询
+   - **parent 为 page**：枚举该页 **直接子页面**（`child_page`），用标题 **包含** 匹配
+3. **零条**：提示收窄关键词或改用 URL/ID；不得臆造 ID
+4. **一条**：进入该操作的后继步骤
+5. **多条**：展示 **编号清单**（标题 + 可选 URL/ID 片段），请用户 **只回复编号** 选定唯一目标
+
+**说明**：复杂嵌套（非直接子级、多库联动）可能无法仅靠「父级 + 标题」唯一定位；应请用户给出 **Notion URL** 或 **32 位 ID**。

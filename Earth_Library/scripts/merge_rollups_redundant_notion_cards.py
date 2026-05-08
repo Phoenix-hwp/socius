@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -23,7 +24,7 @@ from el_parsers import (
     split_frontmatter,
 )
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
 CARDS = ROOT / "Earth_Library" / "Knowledge_Cards"
 INDEX = ROOT / "Earth_Library" / "Library_Index.md"
 REL = ROOT / "Earth_Library" / "Relations" / "Relations_Index.md"

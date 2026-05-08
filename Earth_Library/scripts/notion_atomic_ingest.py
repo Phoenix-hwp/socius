@@ -33,17 +33,29 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-# Ensure notion_sdk / notion_drill are importable
-_SCRIPT_DIR = Path(__file__).resolve().parent
-_MCP_DIR = _SCRIPT_DIR.parents[1] / ".cursor" / "mcp"
-if str(_MCP_DIR) not in sys.path:
-    sys.path.insert(0, str(_MCP_DIR))
+# --------------------------------------------------------------------
+# Cross-domain boundary: Earth Library -> Notion MCP
+#
+# NOTION_DRILL_SCRIPT must exist so that we can drill the Notion page
+# tree via CLI. The script is sourced from the same repository and found
+# relative to CURSOR_PROJECT_DIR (preferred) or to this file's location.
+# We use subprocess instead of direct import to keep the two domains
+# decoupled (per script-coding-constraints.mdc rule 2).
+# --------------------------------------------------------------------
+_REPO_ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
+_NOTION_DRILL_SCRIPT = _REPO_ROOT / ".cursor" / "mcp" / "notion_drill.py"
+_NOTION_ENV = _REPO_ROOT / ".cursor" / "mcp" / "notion.env"
 
-from notion_drill import DrillNode, NotionDrillIngestor
-from notion_sdk import NotionClient, load_env_file, parse_notion_id
+# Shared data model -- kept in a neutral .cursor/_shared/ path reachable
+# from both Earth Library and Notion MCP scripts.
+_SHARED_DIR = _REPO_ROOT / ".cursor" / "_shared"
+if str(_SHARED_DIR) not in sys.path:
+    sys.path.insert(0, str(_SHARED_DIR))
+
+from drill_node import DrillNodeData  # noqa: E402
 
 # Earth Library paths
-ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
+ROOT = _REPO_ROOT
 LIB_ROOT = ROOT / "Earth_Library"
 CARDS = LIB_ROOT / "Knowledge_Cards"
 INDEX = LIB_ROOT / "Library_Index.md"
@@ -74,7 +86,7 @@ def _extract_keywords(text: str, max_kw: int = 6) -> str:
 
 
 def _build_atomic_card_content(
-    node: DrillNode,
+    node: DrillNodeData,
     book_title: str,
     parent_card_path: str | None,
     sibling_info: dict[str, Any],
@@ -121,7 +133,7 @@ def _build_atomic_card_content(
 
 
 def _store_single_card(
-    node: DrillNode,
+    node: DrillNodeData,
     book_title: str,
     parent_card_path: str | None,
     sibling_info: dict[str, Any],
@@ -235,7 +247,7 @@ def _record_structural_relations(
                 f.write(line + "\n")
 
 
-def _flatten_tree(node: DrillNode) -> list[DrillNode]:
+def _flatten_tree(node: DrillNodeData) -> list[DrillNodeData]:
     """Flatten tree to list (root first, then children DFS)."""
     result = [node]
     for child in node.children:
@@ -244,14 +256,14 @@ def _flatten_tree(node: DrillNode) -> list[DrillNode]:
 
 
 def ingest_atomic(
-    tree: DrillNode,
+    tree: DrillNodeData,
     book_title: str,
     dry_run: bool = False,
 ) -> dict[str, Any]:
     """Ingest each page in the tree as an independent atomic card.
 
     Args:
-        tree: DrillNode tree from NotionDrillIngestor
+        tree: DrillNodeData tree from notion_drill.py JSON output
         book_title: Human-readable book/topic name for context
         dry_run: If True, return preview without persisting
 
@@ -302,6 +314,47 @@ def ingest_atomic(
     }
 
 
+def _drill_via_subprocess(page_id: str, depth: int, no_child: bool, no_relation: bool) -> DrillNodeData:
+    """Drill a Notion page tree via subprocess (CLI boundary to notion_drill.py).
+
+    Raises RuntimeError if the drill script is missing or fails.
+    """
+    if not _NOTION_DRILL_SCRIPT.exists():
+        raise RuntimeError(
+            f"notion_drill script not found at {_NOTION_DRILL_SCRIPT}. "
+            "Ensure the repository is fully cloned."
+        )
+    if not _NOTION_ENV.exists():
+        raise RuntimeError(
+            f"notion.env not found at {_NOTION_ENV}. "
+            "Run bootstrap-on-pull.cmd to create the placeholder, then fill in NOTION_TOKEN."
+        )
+
+    cmd = [
+        sys.executable,
+        str(_NOTION_DRILL_SCRIPT),
+        page_id,
+        "--depth", str(depth),
+        "--env", str(_NOTION_ENV),
+    ]
+    if no_child:
+        cmd.append("--no-child")
+    if no_relation:
+        cmd.append("--no-relation")
+
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(_REPO_ROOT), check=False)
+    if proc.returncode != 0:
+        msg = proc.stderr.strip() or "notion_drill subprocess failed"
+        raise RuntimeError(msg)
+
+    try:
+        raw = json.loads(proc.stdout.strip())
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"notion_drill returned invalid JSON: {e}")
+
+    return DrillNodeData.from_dict(raw)
+
+
 def _cli_main() -> int:
     parser = argparse.ArgumentParser(
         description="Ingest Notion pages as atomic cards into Earth Library (one page = one card)."
@@ -313,38 +366,20 @@ def _cli_main() -> int:
     parser.add_argument("--no-relation", action="store_true", help="Skip relation properties")
     parser.add_argument("--confidence", default="高", help="Confidence level for cards")
     parser.add_argument("--dry-run", action="store_true", help="Preview without storing")
-    parser.add_argument("--env", default="notion.env", help="Path to notion.env")
+    parser.add_argument("--env", default=None, help="Path to notion.env (default: repo .cursor/mcp/notion.env)")
     args = parser.parse_args()
 
-    # Load environment
-    env_path = Path(args.env)
-    if not env_path.is_absolute():
-        env_path = _MCP_DIR / env_path
-    load_env_file(env_path)
-
-    token = os.environ.get("NOTION_TOKEN", "").strip()
-    if not token:
-        print("Error: NOTION_TOKEN not found", file=sys.stderr)
-        return 1
-
-    # Parse page ID
+    # Drill the tree via subprocess (CLI boundary, no cross-domain import)
     try:
-        page_id = parse_notion_id(args.page_id)
-    except ValueError as e:
-        print(f"Invalid page ID: {e}", file=sys.stderr)
+        tree = _drill_via_subprocess(
+            page_id=args.page_id,
+            depth=args.depth,
+            no_child=args.no_child,
+            no_relation=args.no_relation,
+        )
+    except RuntimeError as e:
+        print(f"Error: {e}", file=sys.stderr)
         return 1
-
-    # Drill the tree
-    client = NotionClient(token)
-    ingestor = NotionDrillIngestor(client)
-
-    print(f"Drilling Notion page '{page_id}' (depth={args.depth})...", file=sys.stderr)
-    tree = ingestor.drill(
-        page_id,
-        max_depth=args.depth,
-        include_child=not args.no_child,
-        include_relation=not args.no_relation,
-    )
 
     # Ingest atomically
     result = ingest_atomic(tree, book_title=args.book_title, dry_run=args.dry_run)

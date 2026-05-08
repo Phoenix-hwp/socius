@@ -12,7 +12,7 @@ socket.setdefaulttimeout(45)
 
 NOTION_KNOWLEDGE_PAGE = "349299d0-5ba8-808f-a971-f085bee7f369"
 TEMPLATE_MD = (
-    Path(__file__).resolve().parents[2]
+     Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
     / "10-Topics"
     / "TMP_Behavior-Preferences-Unified-Template.md"
 )
