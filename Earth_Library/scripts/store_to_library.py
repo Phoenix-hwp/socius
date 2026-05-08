@@ -23,8 +23,8 @@ from notion_ingest_dedupe import (
 )
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
-# 优先从环境变量获取工作区根（支持跨设备/自定义路径），默认按脚本位置推导
-ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", _SCRIPT_DIR.parents[2]))
+# 优先从环境变量获取工作区根（支持跨设备/自定义路径），默认按脚本文件向上两级（…/Earth_Library/scripts/文件.py → 仓库根）
+ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
 LIB_ROOT = ROOT / "Earth_Library"
 CARDS = LIB_ROOT / "Knowledge_Cards"
 INDEX = LIB_ROOT / "Library_Index.md"

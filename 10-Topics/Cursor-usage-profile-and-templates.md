@@ -2,7 +2,7 @@
 title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 created: 2026-04-18
-updated: 2026-05-08（会话收束：脚本审计与编码约束固化）
+updated: 2026-05-08（会话收束：Earth Library 原子入库与归档 md 补导入）
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
@@ -249,6 +249,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-06 | Notion 幂等 upsert 脚本与 flow 衔接、README 规则配合、Git 推送；收束追加 §6 | 落盘 upsert 工作流与 `flow-notion-create`/`flow-notion-update` 自动通道；用户确认后提交并 push | 已写入 §6 |
 | 2026-05-08 | 收束追加第六节：档案与 Git 提交关系溯源 | 对照 `16c6ce7` 夹带档案全文大 diff 属误伤致乱码，正向修正多在工作区；本轮仅问答与收束落盘 | 已写入 §6 |
 | 2026-05-08 | 全库脚本审计、去耦合优化与编码约束规则固化 | 审计 28 项冗余/耦合/硬编码/三层越界问题，完成 el_parsers/config 提取、4 规则存根化、subprocess 解耦、阈值同源；新增 `script-coding-constraints.mdc` 防复发；全量语法/导入验证通过 | 已写入 §6 |
+| 2026-05-08 | Earth Library 原子入库与迁移收束 | §6 追加一行：Notion 一页一卡迁移、归档汇总卡、relation 链接补导入及 Windows 批量 subprocess 输出解析风险说明 | 已写入 §6 |
 
 ## 6. 会话契合度分析日志（追加写入，勿删历史）
 
@@ -299,4 +300,5 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 | 2026-05-07 | Notion 下钻归纳落地 Earth Library（B 方案三层分离） | 落地 `notion_drill.py`（child_page 与 relation 遍历、DrillNode、防环）、`notion_drill_earth_library.py`（渲染并委托 `store_to_library.py` 入库）、`run_notion_workflow.py` 新增 `drill` mode；本轮另含 relation 类型说明、知识库写入 cascader、「个人素养」下钻查阅归纳 | 高 | 档案第1–3节仍为占位；drill 的 consumer 预留未接线 | 可选：Command-Help-Index 登记 drill；示例 notion_workflow.drill.json | 待定 |
 | 2026-05-08 | 档案改动是否与上午有关：Git 溯源；结束对话 | 用户追问上午修改是否涉及档案正文修正；Agent 用 `git log`/`git show`/`git status` 核对：`16c6ce7`（5/8 00:09）夹带档案全文大 diff 属误伤致乱码，正向语义修正多在后续工作区修复；区分「凌晨提交」与口语「上午」时间语义 | 高 | 档案第1–3节仍为占位；未提交修复若未 push 则远端仍可能为乱码版本 | 可选：大功能提交避免夹带个人档案全文；或档案单独 commit | 待定 |
 | 2026-05-08 | 全库脚本审计、去耦合优化与编码约束规则固化；结束对话 | 审计 28 项并执行 10 项优化：提取 el_parsers/config 共享模块、删除硬编码默认值、subprocess 解耦、规则存根化、阈值同源；新增 `script-coding-constraints.mdc`（alwaysApply）防复发；18 项因「保护功能」约束判定不改；全量语法/导入验证通过；用户「结束对话」收束 | 高 | 无显著偏差；与 §3「先改动说明再落盘」「测试验收」「规则落盘」一致 | 可选：§1 补「代码库审计与持续重构」用途；§3 增补「脚本编码约束自检」偏好 | 已写入 §6 |
+| 2026-05-08 | Earth Library 原子入库改造、汇总卡拆分迁移、归档 md 中 relation 链接补导入；结束对话 | Ask 模式厘清一页一卡与网状边粒度；Agent 落盘 `notion_atomic_ingest.py`、`flow-library-ingest-notion-atomic.mdc`、架构对比说明；用户确认网络后 dry-run 并正式拆分「商业管理」「流程建模」Notion 树，归档原汇总卡并更新 `Library_Index`；解释 child_page 与 relation 差异；按归档 md 链接批量补导入时 PowerShell/subprocess 抓 stdout 致 JSON 解析误报，以文件系统核验卡片已生成；用户「结束对话」收束 | 中高 | §1–§2 仍为占位；批量脚本宜改为写结果文件或强制 UTF-8/分离 stderr，避免误判失败 | 可选：§1 补「Obsidian/Earth Library 知识粒度与迁移」用途 | 待定 |
 > 说明：每次收束 **新增一行**；档案正文的小幅优化写在 §5 并改对应章节。

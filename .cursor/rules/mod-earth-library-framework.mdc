@@ -196,9 +196,10 @@ earth_library_subscription:
 |:---:|:---|:---|
 | 第一层（网关） | `gateway-command-router.mdc` | 指令路由到本框架 |
 | 第二层（框架） | `mod-earth-library-framework.mdc` | 本文件，定义阶段结构 |
-| 第三层（工作流） | `flow-library-ingest.mdc` | 入库流程具体步骤 |
-| 第三层（工作流） | `flow-library-search.mdc` | 检索流程具体步骤 |
-| 第三层（工作流） | `flow-library-review.mdc` | 巡检流程具体步骤 |
+| 第三层（工作流） | `flow-library-ingest.mdc` | 通用入库流程 |
+| 第三层（工作流） | `flow-library-ingest-notion-atomic.mdc` | **Notion 原子入库（一页一卡）** |
+| 第三层（工作流） | `flow-library-search.mdc` | 检索流程 |
+| 第三层（工作流） | `flow-library-review.mdc` | 巡检流程 |
 
 ---
 
