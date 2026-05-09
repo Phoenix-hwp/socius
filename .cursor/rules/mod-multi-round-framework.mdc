@@ -64,7 +64,7 @@ glossary:
 <项目目录>/<项目名>_Master_Control.md
 ```
 
-- 项目名从目录名推导（如 `469_Sports` → 项目名 `469_Sports`）
+- 项目名从目录名推导（如 `DemoProject` → 项目名 `DemoProject`）
 - 若目录名包含空格或特殊字符，取目录名作为项目名
 - 首次创建时使用模板 `Knowledge-Assets/Master-Control-Template.md`
 

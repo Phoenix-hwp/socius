@@ -19,8 +19,8 @@ tags:
 | 指令 | 别名（每项 2-10 个字） | 执行动作 | 关联文件 |
 |------|--------------------------|----------|----------|
 | 指令帮助 | help、查看帮助 | 读取根目录帮助索引并返回当前可用指令、别名与用途 | `Command-Help-Index.md` |
-| 项目备忘录 | 备忘录、XX项目备忘录 | 读取指定项目的待复核清单与最近记录；支持多项目（如`469项目备忘录`、`Test项目备忘录`） | `flow-project-memo-read.mdc`（框架：`mod-project-memo-framework.mdc`） |
-| 记录备忘 | 记下、记录XX备忘 | 将备忘信息追加到指定项目的"记录备忘（追加区）"；支持多项目（如`记录469备忘`） | `flow-project-memo-append.mdc`（框架：`mod-project-memo-framework.mdc`） |
+| 项目备忘录 | 备忘录、XX项目备忘录 | 读取指定项目的待复核清单与最近记录；支持多项目（如`Demo项目备忘录`、`Test项目备忘录`） | `flow-project-memo-read.mdc`（框架：`mod-project-memo-framework.mdc`） |
+| 记录备忘 | 记下、记录XX备忘 | 将备忘信息追加到指定项目的"记录备忘（追加区）"；支持多项目（如`记录Demo备忘`） | `flow-project-memo-append.mdc`（框架：`mod-project-memo-framework.mdc`） |
 | 备份当前对话 | 备份对话 | 按归属落盘：上下文推优先（对话中出现项目文件路径→自动归属）；无归属写入 `Daily-Backups/`（临时），有归属写入 `<P>/对话备份/`（阶段）。时段规则：上午<14:00，下午14:00-20:00，晚上>=20:00 | `flow-conversation-backup.mdc`（框架：`mod-conversation-framework.mdc`；路由：`flow-conversation-routing.mdc`） |
 | 读取对话 | 查对话 | 按日期+时段检索备份（日常索引或项目目录双源），命中多条先展示主题供选择 | `flow-conversation-read.mdc`（框架：`mod-conversation-framework.mdc`） |
 | 继续对话 | 继续XX项目、继续 | 按归属路由：无归属按日常索引检索+恢复上下文；有项目读取 `Master_Control` 轮次日志→轻确认下轮起点→继续推进。无主控时触发升级询问 | `flow-conversation-resume.mdc`（框架：`mod-multi-round-framework.mdc`） |
