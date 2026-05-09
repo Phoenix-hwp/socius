@@ -7,5 +7,15 @@ alwaysApply: true
 
 - **档案路径**（与 `session_start_profile_context.py` 一致）：优先 `Cursor_Knowledge/10-Topics/Cursor-usage-profile-and-templates.md`，否则 `10-Topics/Cursor-usage-profile-and-templates.md`；可用 `CURSOR_OBSIDIAN_PROFILE` 覆盖。
 - **开端**：优先依赖**工作区根** `.cursor/hooks.json` 的 `sessionStart` 注入（从 `CURSOR_PROJECT_DIR` 按上条解析）。若用户表示没看到、或你在上下文中未见到「Injected by sessionStart hook」段落，则 **Read** 上述路径之一后再作答。
-- **收束**：当用户发送 `/收束`、以 `会话收束：` 开头、或发送「结束会话」「结束对话」、或单独发送口语「结束」（视同结束对话）时，按该文件 **§0** 清单：概括本轮行为 → 对照 §1–§3 评契合度 → **追加** §6 表格一行 → 必要时更新 §5 与正文 → 写回 UTF-8（无 BOM）。
+- **开端（续接）**：同时 **Read** `10-Topics/Active-Task-Tracker.md`。若存在活跃任务（进行中/待处理），按策略续接：
+  - 用户开场含项目名/关键词 → 匹配关联项目或描述，自动续接对应任务。
+  - 用户开场为"继续"或无指向 → 展示活跃任务列表（含任务号、状态、依赖标注），默认续接最近活跃任务，一句轻确认。
+  - 用户直接提新需求 → 不展示列表，新建任务或用"其他"归类。
+  - 依赖未满足的任务不推荐但展示，用户仍可手动选择。
+  - 展示格式与依赖标注细节见 `flow-behavior-auto-receipt.mdc`。
+- **收束（规则级）**：每轮对话结尾，Agent 必须按 `flow-behavior-auto-receipt.mdc` 执行：
+  1. 追加轮级行为快照到 `10-Topics/Round-Behavior-Log.md`（六字段格式，维度见 `Behavior-Dimensions-Registry.md`）。
+  2. 检测语义纠偏候选，不在档案 §2 表中则追加到待确认队列。
+  3. 若本轮完成了某个活跃任务（状态 → 已完成），自动合并快照写入 §6 精简行，归档任务。
+- **收束（手动）**：触发语 `/收束`、`会话收束：`、`结束会话`、`结束对话`、`结束` → 执行完整收束（含「建议的档案微调」「采纳情况」列）。若有进行中任务，先询问是否标记为完成。细则见 `flow-behavior-auto-receipt.mdc` 步骤 E。
 - **禁止**：在收束流程中删除 §6 历史行；大段重写档案需用户明确要求。

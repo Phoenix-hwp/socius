@@ -4666,3 +4666,13 @@ Created: 2026-04-29
 | 2026-05-08 | `Earth_Library/Knowledge_Cards/20260508-210606_产品思维.md` | - | 原子入库 | 来自 《支付金融》 |
 
 | 2026-05-09 | `Earth_Library/Knowledge_Cards/20260508-205950_BPMN-业务流程建模符号-入门到掌握-这一篇就够了.md` | `Earth_Library/Knowledge_Cards/20260508-205951_企业业务流程建模-BPMN.md` | 标签近邻（已确认非重复） | 入门教程 vs 符号速查，互补关系 ✅ |
+
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260508-205949_BPMN2-0业务流程建模标准.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260508-205949_UML流程图的绘制与标准.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260508-205951_BPMN流程建模指南-12-数据对象.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260508-205954_UML状态图的绘制与标准.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260508-205954_UML类图的绘制与标准.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260508-210712_如何理性评价产品设计的好坏.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260509_Domain_Overview_产品方法论.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260509_Domain_Overview_流程建模与架构.md` | 关键词相交 | 自动关联（共享关键词） |
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` | `Earth_Library/Knowledge_Cards/20260508-210606_5W2H分析法.md` | 标签相交 | 自动关联（共享标签） |

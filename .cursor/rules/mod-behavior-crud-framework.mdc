@@ -1,0 +1,44 @@
+---
+description: 行为偏好 CRUD 统一框架 — 定义阶段结构（开端续接 / 轮级快照 / 任务收束 / 手动收束），不含具体步骤
+glossary:
+  layer: 2-模块框架层
+  module: BehaviorPreferences
+---
+
+# 行为偏好 CRUD 统一框架
+
+## 适用范围
+
+凡涉及 **任务状态跟踪、跨轮续接、轮级行为快照、自动收束、手动收束** 等行为偏好操作均适用。
+
+---
+
+## 抽象阶段结构
+
+| 阶段 | 名称 | 核心职责 | 下层工作流引用 |
+|:---:|:---|:---|:---|
+| **A** | 开端续接 | 会话开始时读取任务表，按策略续接活跃任务 | `session-profile-workflow.mdc`（门户） |
+| **B** | 轮级快照 | 每轮结尾自动记录六字段行为摘要 | `flow-behavior-auto-receipt.mdc` 步骤 A |
+| **C** | 任务收束 | 任务完成时合并快照写入 §6，归档任务 | `flow-behavior-auto-receipt.mdc` 步骤 C |
+| **D** | 手动收束 | 用户触发 `/收束` 时执行完整版 | `flow-behavior-auto-receipt.mdc` 步骤 E |
+
+---
+
+## 核心文件索引
+
+| 层级 | 文件 | 职责 |
+|:---|:---|:---|
+| 第二层 | `mod-behavior-crud-framework.mdc` | 本文件 — 统一框架、阶段边界 |
+| 第三层 | `flow-behavior-auto-receipt.mdc` | 操作细则 — 步骤 A–E 全链路 |
+| 横切 | `session-profile-workflow.mdc` | 门户 — 委托到本框架与第三层 |
+| 注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度与值域定义 |
+| 跟踪 | `10-Topics/Active-Task-Tracker.md` | 任务状态持久化 |
+| 快照 | `10-Topics/Round-Behavior-Log.md` | 轮级行为快照 |
+
+---
+
+## 跨模块衔接
+
+- **任务跟踪**：独立文件跟踪，跨会话持久化，由阶段 A 读取、阶段 C 更新。
+- **L3 分析**：阶段 C 产出标准化 §6 行 → L3 在满足阈值后触发模式发现与趋势检测。
+- **冲突检测**：B+ 层（即时/记录/统计），不单独成阶段，嵌入阶段 B/C。

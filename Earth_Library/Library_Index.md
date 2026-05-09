@@ -66,3 +66,4 @@ Created: 2026-04-29
 | 2026-05-09 | 用户研究 · 领域概览 | 领域概览（Syntopic） | 本库归纳 | 用户研究,旅程图,同理心地图,域概览 | `Earth_Library/Knowledge_Cards/20260509_Domain_Overview_用户研究.md` |
 | 2026-05-09 | B端产品 · 领域概览 | 领域概览（Syntopic） | 本库归纳 | B端产品,演进路线,整体方案设计,市场分析,需求管理,域概览 | `Earth_Library/Knowledge_Cards/20260509_Domain_Overview_B端产品.md` |
 | 2026-05-09 | 支付金融 · 领域概览 | 领域概览（Syntopic） | 本库归纳 | 支付,金融,交易清算结算,会计基础,域概览,种子域 | `Earth_Library/Knowledge_Cards/20260509_Domain_Overview_支付金融.md` |
+| 2026-05-09 | UML 绘制方式与通用注意点 | 方法论 | 本轮对话归纳 | UML,统一建模语言,类图,序列图,活动图,绘制规范 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` |

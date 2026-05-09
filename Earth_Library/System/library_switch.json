@@ -1,6 +1,6 @@
 {
   "project": "Earth_Library",
-  "enabled": false,
-  "updated_at": "2026-04-29T15:12:32.617Z",
+  "enabled": true,
+  "updated_at": "2026-05-09T19:30:21.738085",
   "note": "disabled means library knowledge is not referenced by default"
 }

@@ -166,3 +166,8 @@ alwaysApply: true
   - 第三层：`flow-library-search.mdc`（检索流程）
   - 第三层：`flow-library-review.mdc`（巡检流程）
   - 架构文档：`Earth_Library/Earth_Library_Architecture.md`
+- **行为偏好模块**：
+  - 第二层：`mod-behavior-crud-framework.mdc`（统一框架：开端续接 / 快照 / 收束 / 手动收束）
+  - 第三层：`flow-behavior-auto-receipt.mdc`（自动收束流程：步骤 A–E 全链路）
+  - 注册表：`10-Topics/Behavior-Dimensions-Registry.md`（行为维度与值域）
+  - 跟踪文件：`10-Topics/Active-Task-Tracker.md`（任务状态跟踪）

@@ -176,6 +176,44 @@ python "Earth_Library/scripts/library_fix.py"
 python "Earth_Library/scripts/library_optimize.py"
 ```
 
+---
+
+## 11) 行为偏好（自动收束与任务跟踪）
+
+> 定位：将行为偏好从「手动指令触发」升级为「自动收束 + 任务状态跟踪 + 跨轮续接 + L3 模式发现」。
+
+### 核心机制
+
+| 机制 | 文件 | 触发 |
+|:---|:---|:---|
+| 任务状态跟踪 | `10-Topics/Active-Task-Tracker.md` | 会话开始/结束 |
+| 轮级行为快照（六字段） | `10-Topics/Round-Behavior-Log.md` | 每轮结尾自动 |
+| 任务完成自动收束 | `flow-behavior-auto-receipt.mdc` | 任务 → 已完成时 |
+| 手动收束（完整版） | `session-profile-workflow.mdc` | `/收束` / `结束对话` |
+| 续接 | `session-profile-workflow.mdc` | 会话开始 |
+| 维度注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 新增/启用/禁用时 |
+
+### 关键文件
+
+| 类型 | 路径 | 说明 |
+|:---|:---|:---|
+| 任务跟踪 | `10-Topics/Active-Task-Tracker.md` | 活跃任务 + 归档，四状态流转 |
+| 行为快照 | `10-Topics/Round-Behavior-Log.md` | 每轮六字段摘要 |
+| 维度定义 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度注册表，支持增/启/禁 |
+| 自动收束规则 | `.cursor/rules/flow-behavior-auto-receipt.mdc` | 双层记录工作流 |
+| 会话规则 | `.cursor/rules/session-profile-workflow.mdc` | 开端续接 + 收束触发 |
+
+### 维度字段
+
+| 维度 | 值域 |
+|:---|:---|
+| 指令风格 | 直接执行 / 方案先于执行 / 问答为主 |
+| 确认模式 | 跳过确认 / 关键确认 / 逐步确认 |
+| 输出结构 | 表格化 / 分段叙述 / 混合 |
+| 用户输入 | 直接文本 / 选项交互 / 混合 |
+| 工具通道 | 文件操作 / Shell / MCP / 脚本直达 / 混合 |
+| 特殊行为 | 自由文本 ≤10 字 |
+
 ### 核心文件
 
 | 类型 | 路径 | 说明 |
