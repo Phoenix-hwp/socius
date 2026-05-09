@@ -3,35 +3,30 @@
 > 用途：快速查看当前可用指令、别名与用途。
 > 调用方式：`help` 或 `查看帮助`。
 
-## 1) 日常备份相关（三层架构）
+## 1) 对话备份与多轮管理（三层架构）
 
 | 指令 | 别名 | 用途 | 框架 | 工作流 |
 |---|---|---|---|---|
-| 备份当前对话 | 备份对话 | 将当前会话写入 `Daily-Backups`（索引+明细） | `mod-conversation-framework.mdc` | `flow-conversation-backup.mdc` |
-| 读取对话 | 查对话 | 按日期+时段读取日常备份（同年可省略年份） | `mod-conversation-framework.mdc` | `flow-conversation-read.mdc` |
-| 继续备忘对话 | 续聊备忘 | 先调取备份恢复上下文，再继续围绕该内容交流 | `mod-conversation-framework.mdc` | `flow-conversation-resume.mdc` |
-
-## 2) 项目与长记忆流程
-
-| 指令 | 别名 | 用途 |
-|---|---|---|
-| 创建XX项目索引 | 创建项目索引 | 为指定项目初始化项目备份索引与备份目录。 |
-| 总结本轮对话 | 本轮总结 | 收束本轮并落盘：已完成/未完成/待确认/下轮起点。 |
-| 确认合并 | 执行合并 | 触发合并闸门，将已确认内容写入主文档并登记合并日志。 |
+| 备份当前对话 | 备份对话 | 按归属落盘：无归属→`Daily-Backups/`（临时），有归属→`<P>/对话备份/`（阶段） | `mod-conversation-framework.mdc` | `flow-conversation-backup.mdc` |
+| 读取对话 | 查对话 | 按日期+时段检索备份（日常索引或项目目录双源） | `mod-conversation-framework.mdc` | `flow-conversation-read.mdc` |
+| 继续对话 | 继续XX项目、继续 | 按归属路由：无归属按索引检索+恢复上下文；有项目读Master_Control→轻确认 | `mod-multi-round-framework.mdc` | `flow-conversation-resume.mdc` |
+| 升级为多轮 | 创建项目主控、转为长记忆 | 创建Master_Control+Project_Memo+备份目录，R0初始化 | `mod-multi-round-framework.mdc` | `flow-multi-round-upgrade.mdc` |
+| 总结本轮对话 | 本轮总结 | 收束本轮并写回轮次日志与看板；开放式模式确认是否采纳 | `long-memory-round-workflow.mdc` | — |
+| 确认合并 | 执行合并 | 一致性快检后将已确认内容写入主文档并登记合并记录 | `long-memory-round-workflow.mdc` | — |
 
 ## 3) 项目备忘录相关（多项目支持）（三层架构）
 
 > 设计原则：每个项目的备忘录、背景信息完全独立存储，不混入同一路径。
 
-### 项目文件结构
+### 项目文件结构（多轮模式）
 
 ```
 <Project_Name>/
-├── <Project_Name>_Project_Memo.md          # 项目备忘录（待复核清单 + 记录区）⭐
+├── <Project_Name>_Master_Control.md        # 多轮主控（跨轮进度+轮次日志）⭐
+├── <Project_Name>_Project_Memo.md          # 项目备忘录（口径/决策/备忘）⭐
 ├── <Project_Name>_ProjectContext.md        # 项目主背景
 ├── <Project_Name>_Background_Pending.md    # 待处理背景
-├── <Project_Name>_对话备份索引.md         # 对话备份索引
-└── 对话备份/                                # 备份明细目录
+└── 对话备份/                                # 备份明细目录（项目归属，阶段清理）
 ```
 
 ### 多项目指令格式
@@ -62,7 +57,8 @@
 help
 查看帮助
 读取4月23日下午的对话
-创建469_Sports项目索引
+继续对话
+升级为多轮
 总结本轮对话
 确认合并
 提交git
@@ -185,7 +181,8 @@ python "Earth_Library/scripts/library_optimize.py"
 | 类型 | 路径 | 说明 |
 |:---|:---|:---|
 | 架构设计 | `Earth_Library/Earth_Library_Architecture.md` | 系统架构与定位 |
-| 项目说明 | `Earth_Library/README.md` | 项目简介 |
+| 多轮主控 | `Earth_Library/Earth_Library_Master_Control.md` | 跨轮进度看板与轮次日志 |
+| 项目备忘录 | `Earth_Library/Earth_Library_Project_Memo.md` | 永久口径/决策/备忘 |
 | 知识总索引 | `Earth_Library/Library_Index.md` | 检索入口 |
 | 关系网络 | `Earth_Library/Relations/Relations_Index.md` | 知识关联 |
 | 标签维护 | `Earth_Library/Tag_Guide.md` | 标签体系说明 |

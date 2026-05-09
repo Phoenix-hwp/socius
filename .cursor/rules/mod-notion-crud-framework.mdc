@@ -83,3 +83,17 @@ glossary:
 - [ ] 若适用阶段 B，是否已 **目录编号** 落点？
 - [ ] **删 / 改 / 查** 是否已完成 **定位**且目标 **唯一**？
 - [ ] 是否已确定进入正确的 **第三层工作流**？
+
+---
+
+## 规则索引
+
+- **Notion 模块**：
+  - 第一层（前置）：`mod-notion-precondition.mdc`（阶段A 网络确认）
+  - 第二层（框架）：`mod-notion-crud-framework.mdc`（本文件，统一框架阶段B/C）
+  - 第三层（目录）：`flow-notion-select-parent.mdc`（阶段B 目录落点操作细则）
+  - 第三层（定位）：`flow-notion-locate-target.mdc`（共享定位子流程操作细则）
+  - 第三层（增）：`flow-notion-create.mdc`
+  - 第三层（删）：`flow-notion-delete.mdc`
+  - 第三层（改）：`flow-notion-update.mdc`
+  - 第三层（查）：`flow-notion-query.mdc`

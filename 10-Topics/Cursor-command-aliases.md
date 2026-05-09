@@ -2,7 +2,7 @@
 title: Cursor 指令别名清单
 type: cursor-command-aliases
 created: 2026-04-21
-updated: 2026-05-06 (新增「安全拉取」指令与别名)
+updated: 2026-05-09 (多轮对话备份架构重构：新增继续对话/升级为多轮，废弃创建项目索引)
 tags:
   - cursor
   - aliases
@@ -21,10 +21,11 @@ tags:
 | 指令帮助 | help、查看帮助 | 读取根目录帮助索引并返回当前可用指令、别名与用途 | `Command-Help-Index.md` |
 | 项目备忘录 | 备忘录、XX项目备忘录 | 读取指定项目的待复核清单与最近记录；支持多项目（如`469项目备忘录`、`Test项目备忘录`） | `flow-project-memo-read.mdc`（框架：`mod-project-memo-framework.mdc`） |
 | 记录备忘 | 记下、记录XX备忘 | 将备忘信息追加到指定项目的"记录备忘（追加区）"；支持多项目（如`记录469备忘`） | `flow-project-memo-append.mdc`（框架：`mod-project-memo-framework.mdc`） |
-| 备份当前对话 | 备份对话 | 将当前会话按"日期+时段+主题"落盘为日常备份；时段规则：上午<14:00，下午14:00-20:00，晚上>=20:00；边界前后10分钟需确认 | `flow-conversation-backup.mdc`（框架：`mod-conversation-framework.mdc`） |
-| 读取对话 | 查对话 | 按"读取 X年X月X日，上午/下午/晚上 的对话"检索日常备份；同年份可省略年份（如"读取4月23日下午的对话"）；若同时段多条，先返回主题供选择 | `flow-conversation-read.mdc`（框架：`mod-conversation-framework.mdc`） |
-| 继续备忘对话 | 续聊备忘 | 先按日期+时段调取日常备份并恢复上下文，再继续围绕该备份内容交流；若多条命中先让用户选主题 | `flow-conversation-resume.mdc`（框架：`mod-conversation-framework.mdc`） |
-| 创建XX项目索引 | 创建项目索引 | 解析项目名XX并初始化 `<XX>/<XX>_对话备份索引.md` 与 `<XX>/对话备份/`，用于长记忆备份检索与续聊 | `.cursor/rules/project-index-bootstrap-commands.mdc` |
+| 备份当前对话 | 备份对话 | 按归属落盘：上下文推优先（对话中出现项目文件路径→自动归属）；无归属写入 `Daily-Backups/`（临时），有归属写入 `<P>/对话备份/`（阶段）。时段规则：上午<14:00，下午14:00-20:00，晚上>=20:00 | `flow-conversation-backup.mdc`（框架：`mod-conversation-framework.mdc`；路由：`flow-conversation-routing.mdc`） |
+| 读取对话 | 查对话 | 按日期+时段检索备份（日常索引或项目目录双源），命中多条先展示主题供选择 | `flow-conversation-read.mdc`（框架：`mod-conversation-framework.mdc`） |
+| 继续对话 | 继续XX项目、继续 | 按归属路由：无归属按日常索引检索+恢复上下文；有项目读取 `Master_Control` 轮次日志→轻确认下轮起点→继续推进。无主控时触发升级询问 | `flow-conversation-resume.mdc`（框架：`mod-multi-round-framework.mdc`） |
+| 升级为多轮 | 创建项目主控、转为长记忆 | 创建 `<P>/<P>_Master_Control.md`（基于模板）+ `<P>/<P>_Project_Memo.md` + `<P>/对话备份/`，R0 初始化，后续备份自动归属项目 | `flow-multi-round-upgrade.mdc`（框架：`mod-multi-round-framework.mdc`） |
+| ⛔ 创建XX项目索引 | 创建项目索引 | ⛔ 废弃于 2026-05-09，由「升级为多轮」替代 | 废弃 |
 | 总结本轮对话 | 本轮总结 | 输出并落盘本轮"已完成/未完成/待确认/下轮起点"；开放式模式下确认是否采纳本轮结论 | `.cursor/rules/long-memory-round-workflow.mdc` |
 | 确认合并 | 执行合并 | 触发合并闸门：一致性快检后将已确认内容写入主文档，并记录合并日志 | `.cursor/rules/long-memory-round-workflow.mdc` |
 | 执行策略 | 策略、风险策略 | 返回全局风险分级自动执行策略（balanced）及当前会话执行原则 | `Command-Help-Index.md` |

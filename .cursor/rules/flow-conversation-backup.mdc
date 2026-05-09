@@ -1,9 +1,9 @@
 ---
-description: 对话备份流程 — 当前会话落盘到日常备份的具体步骤
+description: 对话备份流程 — 按归属落盘到日常备份或项目目录的具体步骤
 glossary:
   layer: 3-工作流执行层
   module: Conversation
-  depends: [mod-conversation-framework]
+  depends: [mod-conversation-framework, flow-conversation-routing]
 ---
 
 # 对话备份流程
@@ -33,13 +33,18 @@ glossary:
 | 下午 | 14:00 - 19:59 |
 | 晚上 | >= 20:00 |
 
-### 步骤 3：主题生成
+### 步骤 3：归属判断 + 主题生成
+
+#### 3a. 归属判断
+
+按 `flow-conversation-routing.mdc` 判定归属：
+- 上下文推优先（对话中出现了项目文件路径 → 直接归属）
+- 无法判定时询问用户
+- 无归属 → `Daily-Backups/`；有归属 → `<P>/对话备份/`
+
+#### 3b. 主题生成
 
 基于本轮主要内容，自动生成简短主题（8-20字）。
-
-主题应概括：
-- 主要讨论领域（如 Notion、Git、项目名）
-- 核心动作（如配置、重构、查询）
 
 ### 步骤 4：内容摘要
 
@@ -49,12 +54,19 @@ glossary:
 - 待确认事项
 - 下轮衔接点（如有）
 
-### 步骤 5：索引落盘
+### 步骤 5：落盘
+
+#### 5a. 项目归属备份
+
+1. **明细文件**：写入 `<P>/对话备份/YYYY-MM-DD_时段_主题.md`
+   - `Lifecycle: 阶段`
+2. **主控日志**：若 `<P>/<P>_Master_Control.md` 存在，追加当轮轮次日志条目
+   - 否则仅落明细文件
+
+#### 5b. 无归属（日常备份）
 
 1. **明细文件**：写入 `Daily-Backups/TMP_YYYY-MM-DD_时段_主题.md`
-   - 必须包含 frontmatter：`Lifecycle: 临时`
-   - 字段：date, time, period, topic
-
+   - `Lifecycle: 临时`
 2. **索引追加**：追加到 `Daily-Backups/日常备份索引.md`
    - 表头：`| 日期 | 时间 | 时段 | 主题 | 明细文件 |`
    - 按时间倒序排列（新的在上）
@@ -65,8 +77,8 @@ glossary:
 
 ```
 备份完成：
-- 索引：Daily-Backups/日常备份索引.md
-- 明细：Daily-Backups/TMP_YYYY-MM-DD_时段_主题.md
+- 归属：<项目名 / 日常>
+- 明细：<路径>
 - 主题：XXX
 - 时段：上午/下午/晚上
 ```
@@ -76,3 +88,4 @@ glossary:
 ## 参考文档
 
 - 统一框架定义：`mod-conversation-framework.mdc`
+- 归属判断：`flow-conversation-routing.mdc`

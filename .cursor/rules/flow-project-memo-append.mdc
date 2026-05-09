@@ -96,4 +96,4 @@ glossary:
 ## 参考文档
 
 - 统一框架定义：`mod-project-memo-framework.mdc`
-- 项目索引初始化：`project-index-bootstrap-commands.mdc`
+- 多轮升级：`flow-multi-round-upgrade.mdc`（项目目录不存在时的兜底入口）

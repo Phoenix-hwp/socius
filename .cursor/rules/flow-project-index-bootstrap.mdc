@@ -1,11 +1,18 @@
 ---
-title: 项目索引初始化流程
-description: 按项目名创建长记忆备份索引（三步）
+title: 项目索引初始化流程（已废弃）
+description: ⛔ 废弃于 2026-05-09，由 mod-multi-round-framework.mdc + flow-multi-round-upgrade.mdc 替代。原功能（创建项目目录+备份索引+主控文件）已收敛为多轮升级流程，不再使用独立的索引初始化入口。
 glossary:
-  layer: 3-工作流执行层
-  module: ProjectIndex
-  depends: []
+  layer: 已废弃
+  deprecated: true
+  replaced_by: [mod-multi-round-framework, flow-multi-round-upgrade]
 alwaysApply: false
+---
+
+# ⛔ 本规则已废弃（2026-05-09）
+
+> **替代**：`mod-multi-round-framework.mdc`（三方独立架构）+ `flow-multi-round-upgrade.mdc`（升级流程）。
+> 原"创建XX项目索引"的初始化功能已收敛为多轮升级流程的一环，不再独立存在。
+
 ---
 
 # 项目索引初始化流程

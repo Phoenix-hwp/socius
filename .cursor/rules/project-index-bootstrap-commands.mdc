@@ -1,10 +1,11 @@
 ---
-description: 项目索引初始化指令入口指针（已收敛到网关）
+description: ⛔ 废弃于 2026-05-09 — 项目索引初始化指令入口指针。已被 mod-multi-round-framework.mdc 替代，不再作为独立指令模块。
 alwaysApply: false
+deprecated: true
+replaced_by: [mod-multi-round-framework, flow-multi-round-upgrade]
 ---
 
-# 创建项目索引
+# ⛔ 本规则已废弃（2026-05-09）
 
-> **已收敛**：触发词与别名映射见 `gateway-command-router.mdc`「当前关键别名」表；
-> 具体步骤见 `flow-project-index-bootstrap.mdc`。
-> 本文件保留仅作反向索引兼容，不重复写入触发词与执行动作。
+> **替代**：`mod-multi-round-framework.mdc` + `flow-multi-round-upgrade.mdc`。
+> 原"创建项目索引"指令已不再独立存在；项目初始化现由多轮升级流程统一管理。

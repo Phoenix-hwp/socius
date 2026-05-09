@@ -1,9 +1,9 @@
 ---
-description: 读取历史对话流程 — 按日期时段检索并展示摘要
+description: 读取历史对话流程 — 按日期时段检索并展示摘要，支持日常与项目双源
 glossary:
   layer: 3-工作流执行层
   module: Conversation
-  depends: [mod-conversation-framework]
+  depends: [mod-conversation-framework, flow-conversation-routing]
 ---
 
 # 读取历史对话流程
@@ -30,9 +30,16 @@ glossary:
    - 晚上：>= 20:00
 3. **缺失追问**：若口语指令缺少时段，先追问"上午、下午还是晚上？"
 
-### 步骤 2：索引检索
+### 步骤 2：索引检索（双源）
 
-在 `Daily-Backups/日常备份索引.md` 中按日期+时段匹配：
+按 `flow-conversation-routing.mdc` 判断归属后，检索对应索引：
+
+| 归属 | 检索来源 | 说明 |
+|:---|:---|:---|
+| 无归属 | `Daily-Backups/日常备份索引.md` | 按日期+时段匹配 |
+| 有项目归属 | `<P>/对话备份/` 目录 Glob | 按文件名日期+时段匹配 |
+
+#### 检索结果处理
 
 - **命中 1 条**：直接进入步骤 3
 - **命中多条**：展示主题列表，请用户回复编号选择
@@ -88,3 +95,4 @@ glossary:
 ## 参考文档
 
 - 统一框架定义：`mod-conversation-framework.mdc`
+- 归属判断：`flow-conversation-routing.mdc`

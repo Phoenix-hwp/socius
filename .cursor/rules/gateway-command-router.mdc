@@ -8,6 +8,7 @@ glossary:
     - mod-git-*
     - mod-project-*
     - mod-conversation-*
+    - mod-multi-round-*
 alwaysApply: true
 ---
 
@@ -56,6 +57,10 @@ alwaysApply: true
 | **Notion 相关**：| | |
 | `Notion操作流程` / `Notion增删改查` | `mod-notion-crud-framework.mdc` | Read 统一 CRUD 框架 |
 | `Notion创建` / `写入Notion` | `flow-notion-create.mdc` | 进入创建页面六步流程 |
+| **长记忆 / 多轮**：| | |
+| `继续对话` / `继续XX项目` / `继续` | `flow-conversation-resume.mdc`（框架：`mod-multi-round-framework.mdc`） | 按归属路由：无归属按日常索引检索，有项目读取 Master_Control 轻确认 |
+| `升级为多轮` / `创建项目主控` / `转为长记忆` | `flow-multi-round-upgrade.mdc`（框架：`mod-multi-round-framework.mdc`） | 创建 Master_Control + Project_Memo + 备份目录，R0 初始化 |
+| `备份对话` / `备份当前对话` | `flow-conversation-backup.mdc`（框架：`mod-conversation-framework.mdc`） | 按归属落盘：无归属 → `Daily-Backups/`，有归属 → `<P>/对话备份/` |
 
 ---
 
@@ -143,10 +148,14 @@ alwaysApply: true
   - 第三层：`flow-git-safe-pull.mdc`（审查式拉取）
   - 第三层：`flow-git-clone-to-custom-path.mdc`（克隆到新路径）
 - **对话备份模块**：
-  - 第二层：`mod-conversation-framework.mdc`（统一框架阶段A/B/C）
+  - 第二层：`mod-conversation-framework.mdc`（统一框架阶段A/B/C，含归属路由）
   - 第三层：`flow-conversation-backup.mdc`（备份流程）
-  - 第三层：`flow-conversation-read.mdc`（读取流程）
+  - 第三层：`flow-conversation-read.mdc`（读取流程，支持双源）
   - 第三层：`flow-conversation-resume.mdc`（续聊流程）
+- **多轮长记忆模块**：
+  - 第二层：`mod-multi-round-framework.mdc`（三方独立架构）
+  - 第三层：`flow-conversation-routing.mdc`（归属判断操作细则）
+  - 第三层：`flow-multi-round-upgrade.mdc`（升级流程）
 - **项目备忘录模块**：
   - 第二层：`mod-project-memo-framework.mdc`（统一框架）
   - 第三层：`flow-project-memo-read.mdc`（查看流程）

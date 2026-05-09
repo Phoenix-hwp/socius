@@ -56,11 +56,11 @@ glossary:
 
 ```
 <Project_Name>/
-├── <Project_Name>_Project_Memo.md          # 项目备忘录（待复核清单 + 记录区）⭐
+├── <Project_Name>_Master_Control.md        # 多轮主控（跨轮进度+轮次日志）⭐
+├── <Project_Name>_Project_Memo.md          # 项目备忘录（口径/决策/备忘）⭐
 ├── <Project_Name>_ProjectContext.md        # 项目主背景
 ├── <Project_Name>_Background_Pending.md    # 待处理背景
-├── <Project_Name>_对话备份索引.md         # 对话备份索引
-└── 对话备份/                                # 备份明细目录
+└── 对话备份/                                # 备份明细目录（项目归属）
 ```
 
 ### 主文件（动态路径）
@@ -120,14 +120,14 @@ glossary:
 
 ---
 
-## 与项目索引初始化的关系
+## 与多轮升级的关系
 
-**创建XX项目索引**指令（`project-index-bootstrap-commands.mdc`）：
-- 初始化：`<XX>/<XX>_对话备份索引.md` + `<XX>/对话备份/`
-- 备忘录文件**：**不自动创建**，首次使用 `XX项目备忘录` 时自动初始化
+**升级为多轮**指令（`flow-multi-round-upgrade.mdc`）：
+- 创建：`<P>/<P>_Master_Control.md` + `<P>/<P>_Project_Memo.md`（如不存在）+ `<P>/对话备份/`
+- 备忘录文件在升级时自动创建
 
 这样设计的原因：
-- 不是所有项目都需要备忘录功能
+- 不是所有项目都需要多轮模式
 - 首次使用时自动创建，保持项目目录整洁
 
 ---
@@ -149,4 +149,4 @@ glossary:
   - 第二层：`mod-project-memo-framework.mdc`（本文件，统一框架）
   - 第三层：`flow-project-memo-read.mdc`（查看流程）
   - 第三层：`flow-project-memo-append.mdc`（追加流程）
-- **项目索引初始化**：`project-index-bootstrap-commands.mdc`（对话备份索引）
+- **多轮升级**：`mod-multi-round-framework.mdc`（三方独立架构）

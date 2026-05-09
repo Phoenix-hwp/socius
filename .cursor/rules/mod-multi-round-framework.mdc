@@ -1,0 +1,134 @@
+---
+description: 多轮长记忆项目统一框架 — 三方独立架构（日常备份/项目备忘/多轮主控）
+glossary:
+  layer: 2-模块执行层
+  module: MultiRound
+---
+
+# 多轮长记忆项目统一框架
+
+## 适用范围
+
+凡涉及 **多轮跨会话推进的项目**（PRD 审阅、方案设计、长期复盘、Earth Library 维护等）均适用。
+
+---
+
+## 三方独立架构（核心）
+
+| 系统 | 文件 | 触发 | 粒度 | 生命周期 |
+|:---|:---|:---|:---|:---|
+| **日常对话备份** | `Daily-Backups/` | `备份对话` | 单轮快照 | 临时（15天自动清理） |
+| **项目备忘录** | `<P>/<P>_Project_Memo.md` | `记录XX备忘` | 单条口径/决策 | 项目存活期 |
+| **多轮主控** | `<P>/<P>_Master_Control.md` | `继续对话`→自动升级 | 跨轮进度/检查点/轮次日志 | 多轮完结后清理 |
+
+**三者互不替代**：日常备份不存口径，备忘录不管轮次，主控不存单条事实。
+
+---
+
+## 抽象阶段结构（强制）
+
+| 阶段 | 名称 | 核心职责 | 下层工作流引用 |
+|:---:|:---|:---|:---|
+| **A** | 归属判断 | 判断当前对话属于日常/项目/多轮 | `flow-conversation-routing.mdc` |
+| **B** | 文件定位 | 定位 Master_Control / Project_Memo / 备份目录 | 见下方「阶段B细则」 |
+| **C** | 操作分型 | 按备份/续聊/升级/备忘录分流 | `flow-multi-round-upgrade.mdc` 等 |
+
+---
+
+## 阶段 A — 归属判断
+
+> 操作细则见 `flow-conversation-routing.mdc`。
+> 本节仅保留原则定义。
+
+### 优先级
+
+1. **上下文推**（优先）：对话中出现了项目目录名、项目文件路径 → 自动归属该项目
+2. **用户问**（兜底）：无法从上下文判定 → 询问用户属于哪个项目 / 是否新建
+3. **无归属**：无法匹配任何项目 → 按日常对话处理（`Daily-Backups/`）
+
+### 归属结果
+
+| 结果 | 备份落点 | 后续流程 |
+|:---|:---|:---|
+| 无归属 | `Daily-Backups/` | 日常备份流程 |
+| 有项目目录、无 `Master_Control` | `<P>/对话备份/` | 备份后可选升级 |
+| 有项目目录、有 `Master_Control` | `<P>/对话备份/` | 多轮流程（开场轻确认 → 轮次日志） |
+
+---
+
+## 阶段 B — 文件定位
+
+### 主控文件路径规则
+
+```
+<项目目录>/<项目名>_Master_Control.md
+```
+
+- 项目名从目录名推导（如 `469_Sports` → 项目名 `469_Sports`）
+- 若目录名包含空格或特殊字符，取目录名作为项目名
+- 首次创建时使用模板 `Knowledge-Assets/Master-Control-Template.md`
+
+### 项目备忘录路径规则
+
+```
+<项目目录>/<项目名>_Project_Memo.md
+```
+
+- 已有文件则追加，无则按 `mod-project-memo-framework.mdc` 创建
+
+### 对话备份路径规则
+
+```
+<项目目录>/对话备份/
+```
+
+- 项目归属备份标记 `Lifecycle: 阶段`（手动清理）
+- 无归属备份标记 `Lifecycle: 临时`（15天自动清理）
+
+---
+
+## 阶段 C — 按操作分型
+
+| 操作 | 触发语 | 核心步骤 | 工作流文件 |
+|:---:|:---|:---|:---|
+| **备份** | `备份对话` | 归属判断→落盘→索引追加 | `flow-conversation-backup.mdc` |
+| **续聊** | `继续对话` / `继续XX项目` | 归属判断→定位主控→轻确认→继续 | `flow-conversation-resume.mdc` |
+| **升级** | `升级为多轮` / 续聊时自动检测 | 创建Master_Control+Project_Memo→迁移备份→R0初始化 | `flow-multi-round-upgrade.mdc` |
+| **备忘录** | `记录XX备忘` | 按 `mod-project-memo-framework.mdc` | `flow-project-memo-append.mdc` |
+
+---
+
+## 与日常备份的边界
+
+| 维度 | 日常备份 | 项目归属备份 |
+|:---|:---|:---|
+| 目录 | `Daily-Backups/` | `<P>/对话备份/` |
+| 索引 | `Daily-Backups/日常备份索引.md` | 无独立索引（由 `Master_Control` 轮次日志替代） |
+| Lifecycle | 临时 | 阶段 |
+| 清理策略 | 15天自动 | 多轮完结后手动 |
+
+---
+
+## Agent 自检（每轮开场）
+
+- [ ] 是否已判定当前对话归属（上下文推 → 无结果则问用户）？
+- [ ] 若为多轮项目：是否已读取 `Master_Control` 的最近轮次日志？
+- [ ] 若为首次多轮：是否已执行升级流程创建主控文件？
+- [ ] 备份时 `Lifecycle` 是否已按归属正确标记？
+
+---
+
+## 规则索引
+
+- **多轮模块**：
+  - 第二层：`mod-multi-round-framework.mdc`（本文件，三方独立架构）
+  - 第三层：`flow-conversation-routing.mdc`（阶段A 归属判断操作细则）
+  - 第三层：`flow-multi-round-upgrade.mdc`（阶段C 升级流程）
+- **对话备份模块**（被本架构引用）：
+  - 第二层：`mod-conversation-framework.mdc`
+  - 第三层：`flow-conversation-backup.mdc`、`flow-conversation-read.mdc`、`flow-conversation-resume.mdc`
+- **项目备忘录模块**（被本架构引用）：
+  - 第二层：`mod-project-memo-framework.mdc`
+  - 第三层：`flow-project-memo-read.mdc`、`flow-project-memo-append.mdc`
+- **模板**：
+  - `Knowledge-Assets/Master-Control-Template.md`

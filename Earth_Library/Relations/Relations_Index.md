@@ -5266,3 +5266,5 @@ Created: 2026-04-29
 | 2026-05-08 | `Earth_Library/Knowledge_Cards/20260508-210606_产品思维.md` | `Earth_Library/Knowledge_Cards/20260508-210751_B端产品需求管理与迭代.md` | 标签相交 | 自动关联（共享标签） |
 | 2026-05-08 | `Earth_Library/Knowledge_Cards/20260508-210606_产品思维.md` | `Earth_Library/Knowledge_Cards/20260508-210759_支付的基础概念与会计基础.md` | 标签相交 | 自动关联（共享标签） |
 | 2026-05-08 | `Earth_Library/Knowledge_Cards/20260508-210606_产品思维.md` | - | 原子入库 | 来自 《支付金融》 |
+
+| 2026-05-09 | `Earth_Library/Knowledge_Cards/20260508-205950_BPMN-业务流程建模符号-入门到掌握-这一篇就够了.md` | `Earth_Library/Knowledge_Cards/20260508-205951_企业业务流程建模-BPMN.md` | 标签近邻（已确认非重复） | 入门教程 vs 符号速查，互补关系 ✅ |

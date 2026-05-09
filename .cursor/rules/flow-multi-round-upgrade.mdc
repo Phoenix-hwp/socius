@@ -1,0 +1,122 @@
+---
+description: 多轮项目升级流程 — 从无主控到有主控的一次性初始化
+glossary:
+  layer: 3-工作流执行层
+  module: MultiRound
+  depends: [mod-multi-round-framework, mod-project-memo-framework]
+---
+
+# 多轮项目升级流程
+
+## 触发条件
+
+任一满足即触发：
+
+1. 用户主动说「升级为多轮」「创建项目主控」「转为长记忆项目」
+2. 归属判断发现 `<P>/` 已有项目文件但无 `Master_Control.md`
+3. 续聊时发现项目已有 >= 2 轮备份但无主控文件
+
+---
+
+## 执行步骤（固定五步）
+
+### 步骤 1：确认升级
+
+向用户确认：
+
+```
+检测到项目「<项目名>」尚未升级为多轮模式。
+升级后将创建：
+- <项目名>_Master_Control.md（跨轮进度看板）
+- <项目名>_Project_Memo.md（永久口径/备忘）
+
+是否升级？（Y/N）
+```
+
+- 用户回复 `Y` → 进入步骤 2
+- 用户回复 `N` → 不升级，备份仍按项目归属处理
+
+### 步骤 2：创建文件
+
+#### 2a. 创建主控文件
+
+1. Read `Knowledge-Assets/Master-Control-Template.md` 获取模板
+2. 写入 `<项目目录>/<项目名>_Master_Control.md`
+3. 填写 §1 项目信息（目录名、推进类型、推进模式）
+4. `Lifecycle` 设为 `阶段`
+5. 写入 R0 初始化日志
+
+#### 2b. 创建项目备忘录（如不存在）
+
+- 按 `mod-project-memo-framework.mdc` 创建 `<项目目录>/<项目名>_Project_Memo.md`
+- 如已存在，跳过此步
+
+### 步骤 3：创建对话备份目录
+
+- 确保 `<项目目录>/对话备份/` 目录存在
+- 如不存在则创建
+
+### 步骤 4：迁移存量备份（如有）
+
+若 `<项目目录>/` 下已有历史备份文件（`.md`），迁移到 `<项目目录>/对话备份/`。
+
+若存在 `Earth_Library/` 对话备份目录（历史遗留），可选择：
+- [1] 保留不动（引用原路径）
+- [2] 迁移到 `<项目目录>/对话备份/`
+
+### 步骤 5：R0 初始化
+
+在 `Master_Control` 写入 R0 轮次日志：
+
+```
+### R0（初始化）
+- 本轮范围：项目升级为多轮模式
+- 问题清单：无
+- 可执行方案：创建主控文件 + 备忘录 + 备份目录
+- 建议改写：无
+- 本轮结论：项目已升级为多轮，后续对话按主控文件推进
+- 下轮起点：用户指定
+- 合并状态：未合并
+```
+
+---
+
+## 升级后即刻行为
+
+升级完成后：
+
+1. **当轮备份**：不再写入 `Daily-Backups/`，改为写入 `<P>/对话备份/`
+2. **下轮开场**：Agent 须先读取 `Master_Control` → 轮次日志 → 轻确认下轮起点
+3. **后续备份**：均按项目归属处理（`Lifecycle: 阶段`）
+
+---
+
+## 示例：Earth Library 升级
+
+```
+项目目录：Earth_Library/
+主控文件：Earth_Library/Earth_Library_Master_Control.md
+备忘录：  Earth_Library/Earth_Library_Project_Memo.md
+备份目录：Earth_Library/对话备份/
+```
+
+---
+
+## 输出回执格式
+
+```
+升级完成：
+- 主控：<P>/<P>_Master_Control.md
+- 备忘：<P>/<P>_Project_Memo.md
+- 备份目录：<P>/对话备份/
+
+从下轮开始，Agent 将按主控文件推进。
+```
+
+---
+
+## 参考文档
+
+- 主控模板：`Knowledge-Assets/Master-Control-Template.md`
+- 统一框架：`mod-multi-round-framework.mdc`
+- 项目备忘录框架：`mod-project-memo-framework.mdc`

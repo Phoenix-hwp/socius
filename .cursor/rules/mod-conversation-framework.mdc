@@ -1,5 +1,5 @@
 ---
-description: 对话备份与恢复统一框架 — 定义阶段结构，不含具体步骤
+description: 对话备份与恢复统一框架 — 定义阶段结构，不含具体步骤。备份落点按归属路由。
 glossary:
   layer: 2-模块执行层
   module: Conversation
@@ -13,6 +13,10 @@ glossary:
 
 **执行通道**：默认使用 **Write** / **Read** 工具操作本地 Markdown 文件；不依赖网络。
 
+**归属路由**：备份落点由 `mod-multi-round-framework.mdc` 的归属判断决定：
+- 无归属 → `Daily-Backups/`（临时，15天自动清理）
+- 有项目归属 → `<P>/对话备份/`（阶段，手动清理）
+
 ---
 
 ## 抽象阶段结构（强制）
@@ -22,7 +26,7 @@ glossary:
 | 阶段 | 名称 | 核心职责 | 下层工作流引用 |
 |:---:|:---|:---|:---|
 | **A** | 时间解析 | 解析日期、时段、年份省略 | 见下方「阶段A细则」 |
-| **B** | 索引检索 | 在索引中查找匹配记录 | 见下方「阶段B细则」 |
+| **B** | 归属判断 | 确定对话归属（项目/日常） | `flow-conversation-routing.mdc` |
 | **C** | 操作分型 | 按备份/读取/续聊分流到具体工作流 | 见下方「阶段C细则」 |
 
 ---
@@ -59,19 +63,14 @@ glossary:
 
 ---
 
-## 阶段 B — 索引检索
+## 阶段 B — 归属判断
 
-### 数据来源
+> 完整操作细则见 `flow-conversation-routing.mdc`。
+> 本节仅保留阶段定义与引用指针。
 
-- 索引文件：`Daily-Backups/日常备份索引.md`
-- 明细文件：`Daily-Backups/TMP_YYYY-MM-DD_时段_主题.md`
-
-### 检索逻辑
-
-1. 按日期 + 时段匹配
-2. **命中 1 条**：直接进入步骤 C
-3. **命中多条**：展示主题列表，请用户选择编号
-4. **未命中**：明确告知，并给出相邻时段建议
+备份落点按归属分流：
+- **无归属**：`Daily-Backups/` → 索引文件 `Daily-Backups/日常备份索引.md`
+- **有项目目录**：`<P>/对话备份/` → 无独立索引，由 `Master_Control` 轮次日志替代
 
 ---
 
@@ -81,19 +80,38 @@ glossary:
 
 | 操作 | 核心步骤 | 执行前必须 | 工作流文件 |
 |:---:|:---|:---|:---|
-| **备份** | 时间获取 → 主题生成 → 内容摘要 → 索引落盘 | 边界时间须确认 | `flow-conversation-backup.mdc` |
+| **备份** | 时间获取 → 归属判断 → 主题生成 → 内容摘要 → 落盘 | 边界时间须确认 | `flow-conversation-backup.mdc` |
 | **读取** | 时间解析 → 索引检索 → 展示摘要 | 多条时须先选择 | `flow-conversation-read.mdc` |
-| **续聊** | 时间解析 → 索引检索 → 恢复上下文 → 继续交流 | 多条时须先选择 | `flow-conversation-resume.mdc` |
+| **续聊** | 时间解析 → 归属判断 → 定位主控 → 恢复上下文 | 多条时须先选择；多轮项目须先读主控 | `flow-conversation-resume.mdc` |
+| **升级** | 归属判断 → 创建主控+备忘 → 迁移备份 → R0 | 用户确认 Y | `flow-multi-round-upgrade.mdc` |
 
 ---
 
 ## 备份文件规范
 
+### 日常备份（无归属）
+
+| 项目 | 规范 |
+|:---|:---|
+| 目录 | `Daily-Backups/` |
+| 文件名 | `TMP_YYYY-MM-DD_时段_主题.md` |
+| Lifecycle | `临时`（15天自动清理） |
+| 索引 | `Daily-Backups/日常备份索引.md` |
+
+### 项目归属备份
+
+| 项目 | 规范 |
+|:---|:---|
+| 目录 | `<P>/对话备份/` |
+| 文件名 | `YYYY-MM-DD_时段_主题.md` |
+| Lifecycle | `阶段`（多轮完结后手动清理） |
+| 索引 | 由 `<P>/<P>_Master_Control.md` 轮次日志替代 |
+
 ### 明细文件 frontmatter（必须）
 
 ```yaml
 ---
-Lifecycle: 临时
+Lifecycle: 临时  # 或 阶段
 date: YYYY-MM-DD
 time: HH:MM
 period: 上午/下午/晚上
@@ -101,15 +119,11 @@ topic: 简短主题
 ---
 ```
 
-### 索引表头（固定）
-
-`| 日期 | 时间 | 时段 | 主题 | 明细文件 |`
-
 ---
 
 ## 输出约定
 
-- **备份成功**：回显索引路径 + 明细路径
+- **备份成功**：回显归属 + 落点路径 + 主题
 - **读取成功**：回显核心结论 + 下轮衔接点（如有）
 - **续聊成功**：输出三段：`已恢复上下文`、`当前可继续事项`、`建议下一步`
 
@@ -121,9 +135,12 @@ topic: 简短主题
 |:---:|:---|:---|
 | 第一层（网关） | `gateway-command-router.mdc` | 指令路由到本框架 |
 | 第二层（框架） | `mod-conversation-framework.mdc` | 本文件，定义阶段结构 |
+| 第二层（框架） | `mod-multi-round-framework.mdc` | 多轮三方架构与归属判断 |
 | 第三层（工作流） | `flow-conversation-backup.mdc` | 备份流程具体步骤 |
 | 第三层（工作流） | `flow-conversation-read.mdc` | 读取流程具体步骤 |
 | 第三层（工作流） | `flow-conversation-resume.mdc` | 续聊流程具体步骤 |
+| 第三层（工作流） | `flow-conversation-routing.mdc` | 归属判断操作细则 |
+| 第三层（工作流） | `flow-multi-round-upgrade.mdc` | 多轮升级流程 |
 
 ---
 
@@ -134,3 +151,7 @@ topic: 简短主题
   - 第三层：`flow-conversation-backup.mdc`（备份流程）
   - 第三层：`flow-conversation-read.mdc`（读取流程）
   - 第三层：`flow-conversation-resume.mdc`（续聊流程）
+- **多轮长记忆模块**：
+  - 第二层：`mod-multi-round-framework.mdc`（三方独立架构）
+  - 第三层：`flow-conversation-routing.mdc`（归属判断）
+  - 第三层：`flow-multi-round-upgrade.mdc`（升级流程）
