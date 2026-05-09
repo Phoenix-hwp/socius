@@ -139,7 +139,7 @@ python Earth_Library/scripts/search_library.py \
 ```python
 # 给定知识卡片，返回关联卡片
 python Earth_Library/scripts/get_related.py \
-  --card_path "Knowledge_Cards/20260429-xxx.md" \
+  --card_path "Knowledge_Cards/20260508-205831_SWOT分析法.md" \
   --relation_types "标签相交,关键词相交"
 ```
 

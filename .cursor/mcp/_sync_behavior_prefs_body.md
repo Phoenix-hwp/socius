@@ -2,7 +2,7 @@
 sync_source: 10-Topics/Cursor-usage-profile-and-templates.md
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 sync_scope: §2 错别字表 + §3 第 1–9 节与「其他」；不含 §4 话术模板、§5 迭代、§6 契合度日志
-synced_at: 2026-05-04
+synced_at: 2026-05-09
 target_notion_page: 行为偏好（供 Notion AI 参考）
 ---
 
@@ -101,6 +101,7 @@ target_notion_page: 行为偏好（供 Notion AI 参考）
   - 删除策略：优先从数据库移除（移出父级）；彻底删除按你确认后再执行或引导 UI 操作。
   - 入口切换阈值：同类写入 >=5 条、或涉及 >=2 个数据库/数据源、或要求 dry-run/审计留痕时，默认改用脚本；其余单条/少量交互优先插件。
   - 首条 Notion 指令确认：每个对话中，执行第一条 Notion 操作指令前，先询问“是否开启网络环境（Y/N）”；你回复 `Y` 才继续执行，回复 `N` 则不执行该任务。
+- **Notion 写入通道（约定）**：**大段**正文、操作说明、配置留底优先 **本地 Markdown + 仓库脚本**（如 `run_notion_workflow.py`）；**小条、随手测试**优先 **MCP**（先 `notion-fetch` 取数据源与属性名，再 `notion-create-pages` 等）。
 
 ## 7. 决策与待确认
 

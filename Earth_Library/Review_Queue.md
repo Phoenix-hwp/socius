@@ -114,3 +114,9 @@ Lifecycle: 阶段
 2. **可选**：归档或删除 5 张旧测试卡，清理 Review_Queue 中的陈旧条目
 3. **可选**：为 3 张旧测试卡补充 Domain 字段或整体归档
 4. **无需动作**：47 原子卡 + 5 域概览卡内容质量已达标
+
+---
+
+## 清理记录 · 2026-05-09（对话执行）
+
+已删除 `Knowledge_Cards` 下 5 张 2026-04-29 早期测试与占位卡片（example 入库、`source_mode` 规则 stub、两条标签测试重复、图书馆构建一句话 stub）；`Library_Index.md` 已去掉对应索引行；`Relations/Relations_Index.md` 已按「路径在磁盘存在」重剪并修复一处缺尾分隔符；`Earth_Library_Architecture.md` 中示例 `--card_path` 已改为现存卡片。

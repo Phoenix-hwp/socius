@@ -25,25 +25,8 @@ append_blocks = _rnw.append_blocks
 PAGE_ID = "4c207a96-1fd6-42d0-8556-cf2e6f565721"
 ANCHOR_SUBSTR = "Cursor / Obsidian 工作区同步"
 
-PRESERVED_PATCH_MD = r"""
-## 增量同步补丁（2026-05-02）
-
-> **合并策略**：局部追加（append）。**不清空**既有正文；与 `10-Topics/Behavior-Preferences-Sync-Playbook.md` 锚点一致。
-
-> **来源**：`Cursor-usage-profile-and-templates.md` §3（工具与环境等）+ 本轮 WebDAV 同步实践沉淀。
-
-### 工具与环境（增补）
-
-- **工作区 Git / Gitee**：口语「提交git」（别名 Git同步 / 推仓库 / 提交远端）走 `10-Topics/Gitee-Workspace-Git-Workflow.md` 与规则 `git-workspace-commit.mdc`；与 Notion 写入流程相互独立。
-- **CloudDrive2 WebDAV + rclone（Cursor_Knowledge）**：入口 `.cursor/tools/cd2_sync_menu.bat`；执行上传/下载脚本前须**二次确认本地盘符**（仅输入 `Y` 继续）；库根使用 `.kb_sync_local_marker.json` 作为本地锚点（脚本侧排除同步，**不上传**远端）；日志与变更清单写入当前库根 `Daily-Backups/TMP_SyncLogs/`（随解析到的库路径自动派生）
-- **同步风险提示**：`rclone sync` 以本地为源；路径误判可能造成远端大规模删除；重要操作前先使用菜单 **6**（上传预览）/ **7**（下载预览）做 dry-run。
-
-### 执行记录（Skill）｜2026-05-02
-
-- **对话概览**：WebDAV 同步链路加固（标识文件、盘符二次确认、日志与清单落盘随库路径、`file:///` 清单链接）。
-- **观察到的偏好**：远端同步须防误删；日志必须与当前本地库同盘；交互路径须可在对话内可靠打开。
-- **置信度**：高（已多轮 dry-run / 正式同步验证）。
-""".strip()
+# 档案正文未收录的 Notion 独有补丁可临时拼在此；默认空（与 `Cursor-usage-profile-and-templates.md` 对齐）
+PRESERVED_PATCH_MD = ""
 
 
 def fetch_all_children(client: NotionClient, page_id: str) -> list[dict]:
@@ -103,14 +86,15 @@ def main() -> int:
     body_path = _SCRIPT_DIR / "_sync_behavior_prefs_body.md"
     body_md = body_path.read_text(encoding="utf-8")
 
-    preamble = f"""## Cursor / Obsidian 工作区同步（2026-05-04）
+    preamble = """## Cursor / Obsidian 工作区同步（2026-05-09）
 
-本块由 Agent 根据工作区档案 `10-Topics/Cursor-usage-profile-and-templates.md` 截取生成（同步文件：`.cursor/mcp/_sync_behavior_prefs_body.md`）。与上文「行为偏好」互补：上文偏 Notion 协作与执行记录；此处偏 Cursor 规则与双端默认值。即时对话指令优先。
+本块由 Agent 根据工作区档案 `10-Topics/Cursor-usage-profile-and-templates.md` 与节选文件 `.cursor/mcp/_sync_behavior_prefs_body.md` 写入。**双端手册**：`10-Topics/Behavior-Preferences-Sync-Playbook.md`。与上文「行为偏好」互补：上文偏 Notion 协作与执行记录；此处偏 Cursor 规则与双端默认值。即时对话指令优先。
 
 ---
 
 """
-    full_md = preamble + "\n" + body_md + "\n\n---\n\n" + PRESERVED_PATCH_MD + "\n"
+    patch = f"\n\n---\n\n{PRESERVED_PATCH_MD}\n" if PRESERVED_PATCH_MD.strip() else "\n"
+    full_md = preamble + "\n" + body_md + patch
     new_blocks = md_to_blocks(full_md)
     append_blocks(client, PAGE_ID, new_blocks)
 
