@@ -21,7 +21,7 @@ alwaysApply: true
 
 ## 主控文件不存在时（升级触发）
 
-若项目目录存在但无 `Master_Control`，按 `flow-multi-round-upgrade.mdc` 询问是否升级为多轮模式。
+若项目目录存在但无 `Master_Control`，通过 AskQuestion `[升级为多轮] [稍后再说]` 询问。
 
 ## 完整询问触发条件（仅在歧义时）
 

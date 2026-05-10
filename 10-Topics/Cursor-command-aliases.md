@@ -51,6 +51,7 @@ tags:
 | git到新设备 | 克隆到新路径、同步到新位置、拉取git到新目录 | 将远程仓库拉取到用户指定的新路径，包含确认步骤、路径选择、冲突处理 | `.cursor/rules/flow-git-clone-to-custom-path.mdc` |
 | 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | **换设备后由 Agent 执行初始化链路**：提醒先 `git clone/pull`（若用户未做）；在**工作区根**用工具或等价方式运行 `bootstrap-on-pull.cmd`（占位、环境、Shim 依赖、ngrok 检测、API Key 占位）；回执须含脚本摘要与**仍需手动**项（见 `模型配置说明.md`）。用户仅说「初始化」且无他义时，视同本指令 | `.cursor/rules/git-cross-device-and-secrets.mdc`、`模型配置说明.md` |
 | 运行模型 | 切换模型、启动模型 | **交互终端**：在 `.cursor/ai-model-shim/` 目录下以可见终端窗口运行 `auto-switch.cmd`，弹出菜单供用户选择 Kimi K2.6 / DeepSeek V4 Pro，后续流程（Shim 代理 + ngrok 隧道）在终端内交互完成 | `.cursor/ai-model-shim/auto-switch.cmd` |
+| 封装能力 | 固化流程、封装指令 | **被动固化（B1）**：提取近期执行的步骤序列 → 按复杂度判定产物（≤3→别名，4-7→flow-*.mdc，8+→Skill）→ 预览 → 等待 `确认封装` 后落盘并登记到 `Capability-Registry.md` | `.cursor/rules/flow-capability-encapsulate.mdc` |
 
 ## 2. 维护约定
 

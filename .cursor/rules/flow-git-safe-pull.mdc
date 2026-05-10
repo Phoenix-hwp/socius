@@ -67,16 +67,11 @@ git diff --stat HEAD..origin/<BRANCH>
 
 ### 步骤 4：用户选择操作
 
-回执三个选项：
+通过 AskQuestion 弹出一组选项：
 
-```
-请选择操作方式：
-  [1] 覆盖本地 — git reset --hard origin/<BRANCH>
-      ** 警告：本地未推送的提交与修改将被丢弃！**
-  [2] 合并     — git merge origin/<BRANCH>
-      ** 保留本地提交，可能与远端产生冲突**
-  [3] 保留本地 — 不做任何修改
-```
+- `[覆盖本地]` — `git reset --hard origin/<BRANCH>`（⚠ 警告：本地未推送的提交与修改将被丢弃）
+- `[合并]` — `git merge origin/<BRANCH>`（保留本地提交，可能与远端产生冲突）
+- `[保留本地]` — 不做任何修改
 
 - 选 `1`（覆盖）→ Agent 必须**二次确认**后才执行 `git reset --hard origin/<BRANCH>`
 - 选 `2`（合并）→ 执行 `git merge origin/<BRANCH>`；若有冲突，回执冲突文件清单并暂停

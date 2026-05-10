@@ -20,6 +20,7 @@ alwaysApply: true
 
 ## 路由流程
 
+0. **方法可靠性预检（强制）**：在执行任何映射动作之前，先 Read `.cursor/method-reliability-registry.md`，筛选「当前任务类型 + 当前设备(hostname)」的记录。若该方法的状态为 ⚠ 降权 或 🚫 禁用，且用户未显式指定该方法 → 跳过，取下一个 ✅ 正常 的方法。若无正常方法可用 → 提示用户所有已知方法均被降权/禁用，请手动指定或等待恢复。
 1. **先在 `10-Topics/Cursor-command-aliases.md` 中查找**完全匹配**与**高相似匹配**（同义词、近义说法）
 2. **若命中映射**：必须先执行映射动作（通常是先 Read 指定文件并基于该文件继续处理），不得跳过到无关检索
 3. **若未命中映射**：才执行常规搜索；并可建议用户把该短指令加入别名清单
@@ -61,6 +62,8 @@ alwaysApply: true
 | `继续对话` / `继续XX项目` / `继续` | `flow-conversation-resume.mdc`（框架：`mod-multi-round-framework.mdc`） | 按归属路由：无归属按日常索引检索，有项目读取 Master_Control 轻确认 |
 | `升级为多轮` / `创建项目主控` / `转为长记忆` | `flow-multi-round-upgrade.mdc`（框架：`mod-multi-round-framework.mdc`） | 创建 Master_Control + Project_Memo + 备份目录，R0 初始化 |
 | `备份对话` / `备份当前对话` | `flow-conversation-backup.mdc`（框架：`mod-conversation-framework.mdc`） | 按归属落盘：无归属 → `Daily-Backups/`，有归属 → `<P>/对话备份/` |
+| **能力固化**：| | |
+| `封装能力` / `固化流程` / `封装指令` | `flow-capability-encapsulate.mdc` | 提取步骤序列 → 复杂度判定产物 → 预览 → AskQuestion `[确认封装] [修改预览]` → 落盘 + 登记 Capability-Registry |
 
 ---
 

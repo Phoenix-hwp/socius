@@ -61,11 +61,11 @@ glossary:
 
 ## 固定口令（默认）
 
-| 操作 | 默认口令 | 说明 |
+| 操作 | 确认方式 | 说明 |
 |:---:|:---:|:---|
-| 创建 | **`确认写入`** | 详见 `flow-notion-create.mdc` |
-| 更新 | **`确认更新`** | 详见 `flow-notion-update.mdc` |
-| 删除/归档 | **`确认删除`** | 须在二次确认后接收 |
+| 创建 | AskQuestion `[确认写入] [修改预览]` | 详见 `flow-notion-create.mdc` |
+| 更新 | AskQuestion `[确认更新] [修改预览]` | 详见 `flow-notion-update.mdc` |
+| 删除/归档 | AskQuestion `[确认删除] [取消]` | 须在二次确认后接收 |
 
 ---
 

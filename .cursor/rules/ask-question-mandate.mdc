@@ -1,0 +1,47 @@
+---
+description: AskQuestion 强制使用横切规则 — 凡等待用户确认/选择的操作必须使用 AskQuestion 工具，禁止纯文本替代
+alwaysApply: true
+Lifecycle: 长期
+Created: 2026-05-10
+---
+
+# AskQuestion 强制使用规则
+
+## 适用范围
+
+所有 `.cursor/rules/*.mdc` 中要求「等待用户发送/回复/确认」或「请用户选择编号」的操作，以及所有后续新增的确认/选择类交互。
+
+---
+
+## 强制约束
+
+### 1. 必须使用 AskQuestion 工具的场景
+
+凡规则要求 Agent 等待用户做出 **确认 / 选择 / 许可** 决策的步骤（包括但不限于以下模式），**必须调用 `AskQuestion` 工具**，**禁止用纯文本 `[1] [2] [3]` 或等待用户手动输入口令**：
+
+| 旧模式 | 改后方式 |
+|:---|:---|
+| 等待用户发送 `确认写入` | AskQuestion `[确认写入] [修改预览]` |
+| 等待用户发送 `确认更新` | AskQuestion `[确认更新] [修改预览]` |
+| 等待用户发送 `确认删除` | AskQuestion `[确认删除] [取消]` |
+| 等待用户发送 `确认封装` | AskQuestion `[确认封装] [修改预览]` |
+| 请用户选择 `1` / `2` / `3` | AskQuestion 可点击选项 |
+| 询问「是否继续」/「是否确认」 | AskQuestion 选项 |
+| 网络前置确认 Y/N | AskQuestion `[Y 已开启] [N 未开启]` |
+
+### 2. 例外（可不使用 AskQuestion）
+
+- 终端内交互（如 `auto-switch.cmd` 菜单、Shell 命令行）— 这些发生在终端窗口内，不经过 Cursor 对话 UI
+- 已通过 `hooks.json` / `sessionStart` 自动化注入的步骤
+- 用户一次性口头授权（如说「直接做不用问」）— 此时按口头指令跳过对应步骤即可
+
+### 3. AskQuestion 参数规范
+
+- `title`：简明标题，如「执行确认」「策略选择」
+- `questions[].prompt`：一句话说明当前步骤要做什么
+- `questions[].options[]`：每个选项含 `id`（英文简写）和 `label`（中文可点击文本）
+- 单选择场景用默认 `allow_multiple: false`；需要 Fork 路径时可用 `allow_multiple: true`
+
+### 4. 新增交互规则约束
+
+后续所有新增 `.cursor/rules/*.mdc` 文件，凡涉及用户确认/选择步骤，**必须**在本规则约束下设计为 AskQuestion 交互，**不得**引入新的「等待用户打字口令」或「纯文本编号选择」模式。已在 `flow-behavior-auto-receipt.mdc` 步骤 E 中验证有效。

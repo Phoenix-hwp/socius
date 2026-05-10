@@ -71,7 +71,7 @@ glossary:
 
 > "该备忘是否同步回写 `<Project_Name>_ProjectContext.md`？"
 
-等待用户确认后再执行。
+通过 AskQuestion `[同步回写] [仅备忘即可]` 弹出确认。
 
 ---
 
