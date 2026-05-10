@@ -67,3 +67,7 @@ Created: 2026-04-29
 | 2026-05-09 | B端产品 · 领域概览 | 领域概览（Syntopic） | 本库归纳 | B端产品,演进路线,整体方案设计,市场分析,需求管理,域概览 | `Earth_Library/Knowledge_Cards/20260509_Domain_Overview_B端产品.md` |
 | 2026-05-09 | 支付金融 · 领域概览 | 领域概览（Syntopic） | 本库归纳 | 支付,金融,交易清算结算,会计基础,域概览,种子域 | `Earth_Library/Knowledge_Cards/20260509_Domain_Overview_支付金融.md` |
 | 2026-05-09 | UML 绘制方式与通用注意点 | 方法论 | 本轮对话归纳 | UML,统一建模语言,类图,序列图,活动图,绘制规范 | `Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md` |
+| 2026-05-10 | 三层架构：编排调度—能力—执行 | 概念定义 | 本轮对话（2026-05-10） | 三层架构,编排调度,能力层,执行层,关注点分离,软件架构 | `Earth_Library/Knowledge_Cards/20260510-142226_三层架构-编排调度-能力-执行.md` |
+| 2026-05-10 | MVC架构：表现层内三分 | 概念定义 | 本轮对话（2026-05-10） | MVC,Model,View,Controller,表现层,用户界面,三层架构 | `Earth_Library/Knowledge_Cards/20260510-145411_MVC架构-表现层内三分.md` |
+| 2026-05-10 | 整洁架构：依赖倒置的四层洋葱模型 | 概念定义 | 本轮对话（2026-05-10） | 整洁架构,Clean Architecture,依赖倒置,洋葱模型,Entities,Use Cases,Adapter | `Earth_Library/Knowledge_Cards/20260510-145416_整洁架构-依赖倒置的四层洋葱模型.md` |
+| 2026-05-10 | DDD领域驱动设计：战略与战术建模 | 概念定义 | 本轮对话（2026-05-10） | DDD,领域驱动设计,聚合,限界上下文,通用语言,实体,值对象,战术设计 | `Earth_Library/Knowledge_Cards/20260510-145422_DDD领域驱动设计-战略与战术建模.md` |
