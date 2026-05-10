@@ -136,6 +136,7 @@ aliases:
 | 日期 | 任务主题 | 行为摘要（六字段） | 契合度 |
 |------|---------|------------------|--------|
 | 2026-05-10 | 行为偏好系统改造 | 直接执行 \| 跳过确认 \| 表格化 \| 直接文本 \| 文件操作 + Shell \| 方案落地; L3+阈值; 冲突/趋势检测; 三层架构修复; StepE AskQuestion阻断修复 | 高 |
+| 2026-05-11 | 自学习体系落地（T002） | 直接执行 \| 跳过确认 \| 分段叙述 \| 直接文本 \| 文件操作 \| Notion二期;A+B1注册表封装;AskQuestion横切;续接清理;B2待二期 | 高 |
 
 六字段值域见 `10-Topics/Behavior-Dimensions-Registry.md`，快照存于 `10-Topics/Round-Behavior-Log.md`。自动收束流程见 `.cursor/rules/flow-behavior-auto-receipt.mdc`。
 
