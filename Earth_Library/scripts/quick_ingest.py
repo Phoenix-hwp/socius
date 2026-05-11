@@ -5,6 +5,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
@@ -29,8 +30,7 @@ def extract_url(text: str) -> str:
 
 def build_keywords(text: str) -> str:
     tokens = re.findall(r"[\u4e00-\u9fffA-Za-z0-9_]{2,}", text)
-    # Keep order, dedupe
-    seen = []
+    seen: list[str] = []
     for t in tokens:
         if t not in seen:
             seen.append(t)
@@ -53,24 +53,16 @@ def main() -> None:
     keywords = build_keywords(text)
 
     cmd = [
-        "python",
+        sys.executable,
         str(STORE),
-        "--title",
-        title,
-        "--content",
-        text,
-        "--type",
-        args.type,
-        "--source",
-        args.source,
-        "--source_mode",
-        source_mode,
-        "--source_url",
-        source_url,
-        "--confidence",
-        args.confidence,
-        "--keywords",
-        keywords,
+        "--title", title,
+        "--content", text,
+        "--type", args.type,
+        "--source", args.source,
+        "--source_mode", source_mode,
+        "--source_url", source_url,
+        "--confidence", args.confidence,
+        "--keywords", keywords,
     ]
     proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ROOT), check=False)
     if proc.returncode != 0:

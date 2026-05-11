@@ -1,10 +1,11 @@
-"""Earth Library shared parsers — ID normalization, frontmatter, card body splitting.
+"""Earth Library shared parsers — ID normalization, frontmatter, card body splitting, JSONL helpers.
 
 Extracted from notion_ingest_dedupe.py and merge_rollups_redundant_notion_cards.py
 to eliminate duplication and provide a single source of truth for card parsing.
 """
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -66,3 +67,43 @@ def split_card_body(body: str) -> tuple[str, str, str] | None:
 norm_id = normalize_notion_page_id
 format_notion_id_display = format_notion_page_id_display
 parse_frontmatter = split_frontmatter
+
+
+# ---------------------------------------------------------------------------
+# JSONL / tags helpers (shared across search / review / ingest / relate)
+# ---------------------------------------------------------------------------
+
+def parse_tags(raw_tags) -> list[str]:
+    """将 cards.jsonl 中的 tags 字段标准化为标签列表。
+
+    支持三种输入：
+    - 逗号分隔字符串："tag1, tag2, tag3"
+    - 中文逗号分隔字符串："tag1，tag2，tag3"
+    - 已拆分的 list[str]
+    - 单元素 list 内含逗号字符串（cards.jsonl 常见模式）
+    """
+    if isinstance(raw_tags, str):
+        return [x.strip() for x in raw_tags.replace("，", ",").split(",") if x.strip()]
+    if isinstance(raw_tags, list):
+        result: list[str] = []
+        for item in raw_tags:
+            result.extend(parse_tags(item))
+        return result
+    return []
+
+
+def load_jsonl(path: Path) -> list[dict]:
+    """读取 JSONL 文件，返回字典列表。跳过空行和解析失败行。"""
+    rows: list[dict] = []
+    if not path.exists():
+        return rows
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    return rows

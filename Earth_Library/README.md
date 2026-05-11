@@ -12,11 +12,12 @@ Earth Library 是本工作区的知识库项目，用于沉淀读书笔记、外
 
 - `Earth_Library/Earth_Library_对话备份索引.md`：项目对话备份索引。
 - `Earth_Library/对话备份/`：项目对话备份明细目录。
-- `Earth_Library/Library_Index.md`：知识条目总索引。
-- `Earth_Library/Knowledge_Cards/`：知识卡片（原子知识单元）。
-- `Earth_Library/Relations/Relations_Index.md`：知识关系索引（主题关联、引用关联）。
+- `Earth_Library/cards.jsonl`：知识卡片（JSONL 格式，域概览卡 + 原子知识卡统一存储）。
+- `Earth_Library/library_index.json`：知识总索引（JSON 格式）。
+- `Earth_Library/relations.jsonl`：知识关系索引（JSONL 格式，主题关联、引用关联）。
 - `Earth_Library/System/library_switch.json`：图书馆启停状态。
-- `Earth_Library/scripts/`：入库与状态切换脚本（Python + Node）。
+- `Earth_Library/scripts/`：入库、检索、关联、巡检脚本（Python + Node）。
+- `Earth_Library/Templates/`：问答模板（`.md` 格式）。
 
 ## 启停策略
 

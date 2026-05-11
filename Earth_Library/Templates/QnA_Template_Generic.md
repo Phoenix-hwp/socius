@@ -17,7 +17,8 @@ AppliesTo: 任意问题类型的基础执行框架
 
 ## 第二步A：Library 知识抽取（命中域时）
 1. 读域概览卡 → 获取场景→工具速查表 + 常见组合路径 + 域内缺口
-2. 按路径读取原子卡片 → 提取方法论/框架/边界
+2. 通过 `search_library` 检索 `cards.jsonl` → 提取方法论/框架/边界。执行：
+   `python Earth_Library/scripts/search_library.py --q <域关键词> --max_results 5`
 3. 确认域内缺口 → 缺口维度标记为「需网络补充」
 
 ## 第二步B：模型+网络（未命中域时）

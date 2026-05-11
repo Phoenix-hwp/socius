@@ -48,7 +48,7 @@ cmd /c "python Earth_Library/scripts/search_library.py --q \"关键词\" --max_r
 
 若检索结果较少，执行关联推荐：
 ```bash
-cmd /c "python Earth_Library/scripts/get_related.py --card_path \"xxx.md\" || node ..."
+cmd /c "python Earth_Library/scripts/get_related.py --card_id \"xxx\" || node ..."
 ```
 
 **关联类型**：

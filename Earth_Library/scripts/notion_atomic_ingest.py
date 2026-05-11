@@ -62,9 +62,9 @@ from drill_node import DrillNodeData  # noqa: E402
 # Earth Library paths
 ROOT = _REPO_ROOT
 LIB_ROOT = ROOT / "Earth_Library"
-CARDS = LIB_ROOT / "Knowledge_Cards"
-INDEX = LIB_ROOT / "Library_Index.md"
-REL = LIB_ROOT / "Relations" / "Relations_Index.md"
+CARDS_JSONL = LIB_ROOT / "cards.jsonl"  # JSONL 单文件存储（替代 Knowledge_Cards/ 目录）
+INDEX = LIB_ROOT / "library_index.json"
+REL = LIB_ROOT / "relations.jsonl"
 CFG = LIB_ROOT / "System" / "ingest_config.json"
 TAG_DICT = LIB_ROOT / "System" / "tag_dictionary.json"
 STORE_SCRIPT = LIB_ROOT / "scripts" / "store_to_library.py"

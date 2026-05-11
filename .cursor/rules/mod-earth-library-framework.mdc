@@ -11,7 +11,17 @@ glossary:
 
 凡涉及 **知识入库、检索、启停控制、质量巡检** 等 Earth Library 操作均适用。
 
-**角色定位**：为本工作区所有项目提供**专业知识层**。当 Library 覆盖到问题域时，提供方法论、框架与专业定义（主）；未覆盖时作为补充参考。
+## 存储约定
+
+| 内容类型 | 存储位置 | 格式 |
+|:---|:---|:---|
+| 域概览卡 / 原子知识卡 | `Earth_Library/cards.jsonl` | JSONL |
+| 问答模板 | `Earth_Library/Templates/` | `.md` |
+| 卡片字段规范 | `Earth_Library/README_Card_Spec.md` | `.md` |
+| 索引 | `Earth_Library/library_index.json` | JSON |
+| 关联 | `Earth_Library/relations.jsonl` | JSONL |
+
+## 角色与优先级
 
 **回答优先级（域路由）**：
 
@@ -149,8 +159,9 @@ Agent 回答用户问题前，先判断问题域：
 当图书馆**启用**时，回答用户问题分两条路径：
 
 **路径 A：问题域命中 Library 域卡**
-1. 匹配域概览卡 → 确定 Library 覆盖该域
-2. 按域卡路径读取原子卡片 → 获取方法论/框架/边界
+1. 匹配域概览卡（`cards.jsonl` 中 `type: 领域概览`）→ 确定 Library 覆盖该域
+2. 通过 `search_library` 检索 `cards.jsonl` 中该域原子卡片 → 获取方法论/框架/边界。执行：
+   `python Earth_Library/scripts/search_library.py --q <域关键词> --max_results 5`
 3. 按域卡「域内缺口」标注，针对缺口维度进行网络搜索
 4. 网络搜索补充实时数据/案例/最新研究
 5. 融合：Library 框架 × 网络数据 = 回答

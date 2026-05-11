@@ -6,7 +6,7 @@
 
 CLI 示例::
 
-    python merge_rollups_redundant_notion_cards.py --rollup Earth_Library/Knowledge_Cards/20260508-105811_商业管理.md
+    python merge_rollups_redundant_notion_cards.py --rollup Earth_Library/cards.jsonl
 """
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from el_parsers import (
 )
 
 ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
-CARDS = ROOT / "Earth_Library" / "Knowledge_Cards"
+CARDS_JSONL = ROOT / "Earth_Library" / "cards.jsonl"  # TODO: 脚本已废弃，需适配 JSONL 格式
 INDEX = ROOT / "Earth_Library" / "Library_Index.md"
 REL = ROOT / "Earth_Library" / "Relations" / "Relations_Index.md"
 

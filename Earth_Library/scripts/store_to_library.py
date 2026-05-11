@@ -9,13 +9,12 @@ from pathlib import Path
 
 from el_parsers import (
     format_notion_page_id_display,
+    load_jsonl,
     normalize_notion_page_id,
-    split_card_body,
-    split_frontmatter,
+    parse_tags,
 )
 from notion_ingest_dedupe import (
-    find_card_by_notion_id,
-    frontmatter_lines,
+    find_card_by_notion_id_jsonl,
     local_supplement_is_non_empty,
     merge_details_inner,
     replace_details_inner,
@@ -23,12 +22,11 @@ from notion_ingest_dedupe import (
 )
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
-# 优先从环境变量获取工作区根（支持跨设备/自定义路径），默认按脚本文件向上两级（…/Earth_Library/scripts/文件.py → 仓库根）
-ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().parents[2]))
+ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", _SCRIPT_DIR.parents[2]))
 LIB_ROOT = ROOT / "Earth_Library"
-CARDS = LIB_ROOT / "Knowledge_Cards"
-INDEX = LIB_ROOT / "Library_Index.md"
-REL = LIB_ROOT / "Relations" / "Relations_Index.md"
+CARDS_JSONL = LIB_ROOT / "cards.jsonl"
+INDEX_JSON = LIB_ROOT / "library_index.json"
+RELATIONS_JSONL = LIB_ROOT / "relations.jsonl"
 QUEUE = LIB_ROOT / "Review_Queue.md"
 CFG = LIB_ROOT / "System" / "ingest_config.json"
 TAG_DICT = LIB_ROOT / "System" / "tag_dictionary.json"
@@ -39,20 +37,13 @@ def slugify(text: str) -> str:
     return re.sub(r"-{2,}", "-", s).strip("-") or "untitled"
 
 
-def read_keywords(text: str) -> set[str]:
+def tokenize(text: str) -> set[str]:
     return {x.strip().lower() for x in re.split(r"[,，\s]+", text) if x.strip()}
-
-
-def read_tags_from_card(text: str) -> set[str]:
-    m = re.search(r"^Tags:\s*(.+)$", text, flags=re.MULTILINE)
-    if not m:
-        return set()
-    return {x.strip().lower() for x in re.split(r"[,，\s]+", m.group(1)) if x.strip()}
 
 
 def infer_tags(payload: str, max_tags: int) -> list[str]:
     data = json.loads(TAG_DICT.read_text(encoding="utf-8"))
-    tags = []
+    tags: list[str] = []
     text = payload.lower()
     for item in data.get("tags", []):
         name = item.get("name")
@@ -61,102 +52,88 @@ def infer_tags(payload: str, max_tags: int) -> list[str]:
             continue
         if any(t.lower() in text for t in triggers):
             tags.append(name)
-    out = []
+    out: list[str] = []
     for t in tags:
         if t not in out:
             out.append(t)
     return out[:max_tags]
 
 
-def collect_related(
+def load_index() -> list[dict]:
+    """读取 library_index.json，返回 cards 数组。不存在则返回空列表。"""
+    if not INDEX_JSON.exists():
+        return []
+    data = json.loads(INDEX_JSON.read_text(encoding="utf-8"))
+    return data.get("cards", [])
+
+
+def save_index(cards: list[dict]) -> None:
+    """覆盖写入 library_index.json。"""
+    INDEX_JSON.parent.mkdir(parents=True, exist_ok=True)
+    INDEX_JSON.write_text(json.dumps({"cards": cards}, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def compute_relations(
     *,
-    exclude: Path | None,
-    keywords_csv: str,
-    inferred_tags: list[str],
-    title: str,
-    content: str,
-) -> tuple[list[str], list[str], list[str]]:
-    new_kw = read_keywords(keywords_csv)
-    new_tags = {t.lower() for t in inferred_tags}
-    related: list[str] = []
-    tag_related: list[str] = []
-    conflicts: list[str] = []
-    for f in CARDS.glob("*.md"):
-        if exclude is not None and f.resolve() == exclude.resolve():
-            continue
-        text = f.read_text(encoding="utf-8", errors="ignore")
-        existing = read_keywords(text)
-        existing_tags = read_tags_from_card(text)
-        if new_kw and (new_kw & existing):
-            related.append(f.relative_to(ROOT).as_posix())
-        if new_tags and (new_tags & existing_tags):
-            tag_related.append(f.relative_to(ROOT).as_posix())
-        if ("# Summary" in text and title in text) and ("冲突" in content or "相反" in content):
-            conflicts.append(f.relative_to(ROOT).as_posix())
-    return related, tag_related, conflicts
-
-
-def render_card_file(
-    fm_block: list[str],
-    summary_title: str,
-    details_inner: str,
-    related: list[str],
-) -> str:
-    rel_lines = [f"- {p}" for p in related] if related else ["- (none)"]
-    parts = [
-        "\n".join(fm_block),
-        "",
-        "# Summary",
-        summary_title,
-        "",
-        "# Details",
-        details_inner,
-        "",
-        "# Related",
-    ]
-    parts.extend(rel_lines)
-    return "\n".join(parts)
-
-
-def append_index_and_relations(
-    *,
+    new_id: str,
+    new_body: str,
+    new_title: str,
+    new_tags: list[str],
+    existing_cards: list[dict],
     date: str,
-    title: str,
-    type_: str,
-    source: str,
-    keywords: str,
-    card_rel: str,
-    related: list[str],
-    tag_related: list[str],
-    conflicts: list[str],
-    confidence: str,
-    cfg: dict,
-    append_library_index: bool = True,
-) -> None:
-    if append_library_index:
-        with INDEX.open("a", encoding="utf-8") as f:
-            f.write(f"\n| {date} | {title} | {type_} | {source} | {keywords} | `{card_rel}` |")
-    if related:
-        with REL.open("a", encoding="utf-8") as f:
-            for target in related:
-                f.write(f"\n| {date} | `{card_rel}` | `{target}` | 关键词相交 | 自动关联（共享关键词） |")
-    if tag_related:
-        with REL.open("a", encoding="utf-8") as f:
-            for target in tag_related:
-                f.write(f"\n| {date} | `{card_rel}` | `{target}` | 标签相交 | 自动关联（共享标签） |")
-    if conflicts:
-        with REL.open("a", encoding="utf-8") as f:
-            for target in conflicts:
-                f.write(f"\n| {date} | `{card_rel}` | `{target}` | 冲突 | 新增内容包含冲突语义，请人工复核 |")
-                with QUEUE.open("a", encoding="utf-8") as q:
-                    q.write(
-                        f"\n| {date} | `{card_rel}` | 冲突待复核 | 与 `{target}` 存在冲突标记语义 | 人工确认口径并修订 | 待处理 |"
-                    )
-    if confidence in cfg.get("quality_rules", {}).get("low_confidence_values", []):
-        with QUEUE.open("a", encoding="utf-8") as q:
-            q.write(
-                f"\n| {date} | `{card_rel}` | 低置信度 | 该条目标记为低置信度 | 补充来源与证据后复核 | 待处理 |"
+) -> tuple[list[dict], list[str]]:
+    """计算新卡片与已有卡片的关联。返回 (relation_rows, queue_lines)。"""
+    new_kw = tokenize(new_body)
+    new_kw.add(new_title.lower())
+    new_tag_set = set(t.lower() for t in new_tags)
+
+    relation_rows: list[dict] = []
+    queue_lines: list[str] = []
+
+    for card in existing_cards:
+        card_id = card.get("id", "")
+        if not card_id:
+            continue
+        card_body = card.get("body_md", "")
+        card_title = card.get("title", "")
+        card_kw = tokenize(card_body)
+        card_kw.add(card_title.lower())
+        card_tag_set = set(t.lower() for t in parse_tags(card.get("tags", [])))
+
+        # 关键词相交
+        if new_kw and card_kw and (new_kw & card_kw):
+            relation_rows.append({
+                "d": date,
+                "s": new_id,
+                "t": card_id,
+                "r": "关键词相交",
+                "x": "自动关联（共享关键词）",
+            })
+
+        # 标签相交
+        if new_tag_set and card_tag_set and (new_tag_set & card_tag_set):
+            relation_rows.append({
+                "d": date,
+                "s": new_id,
+                "t": card_id,
+                "r": "标签相交",
+                "x": "自动关联（共享标签）",
+            })
+
+        # 冲突检测
+        if ("# Summary" in card_body and new_title in card_body) and ("冲突" in new_body or "相反" in new_body):
+            relation_rows.append({
+                "d": date,
+                "s": new_id,
+                "t": card_id,
+                "r": "冲突",
+                "x": "新增内容包含冲突语义，请人工复核",
+            })
+            queue_lines.append(
+                f"\n| {date} | `{new_id}` | 冲突待复核 | 与 `{card_id}` 存在冲突标记语义 | 人工确认口径并修订 | 待处理 |"
             )
+
+    return relation_rows, queue_lines
 
 
 def main() -> None:
@@ -180,7 +157,7 @@ def main() -> None:
         "--notion-page-id",
         dest="notion_page_id",
         default=None,
-        help="Notion 页面 ID 或含 ID 的 URL；notion_page 模式下用于按页去重（无本地补充 replace，有则 merge）",
+        help="Notion 页面 ID 或含 ID 的 URL",
     )
     args = parser.parse_args()
 
@@ -195,27 +172,17 @@ def main() -> None:
     tag_cfg = json.loads(TAG_DICT.read_text(encoding="utf-8"))
     max_tags = int(tag_cfg.get("recommended_tag_count", {}).get("default", 5))
 
-    if args.source_mode not in cfg.get("source_modes", []):
-        raise ValueError(f"unsupported source_mode: {args.source_mode}")
-
     now = datetime.now()
     date = now.strftime("%Y-%m-%d")
     ts = now.strftime("%Y%m%d-%H%M%S")
     slug = slugify(args.title)
+    new_id = f"{ts}_{slug}"
 
     inferred_tags = infer_tags(
-        " ".join(
-            [
-                args.title,
-                content,
-                args.type,
-                args.source,
-                args.source_url,
-                args.source_mode,
-                args.confidence,
-                args.keywords,
-            ]
-        ),
+        " ".join([
+            args.title, content, args.type, args.source,
+            args.source_url, args.source_mode, args.confidence, args.keywords,
+        ]),
         max_tags,
     )
 
@@ -228,160 +195,166 @@ def main() -> None:
     use_notion_dedupe = bool(nid_norm and args.source_mode == "notion_page")
     notion_display = format_notion_page_id_display(nid_norm) if nid_norm else ""
 
-    existing: Path | None = None
-    if use_notion_dedupe:
-        existing = find_card_by_notion_id(CARDS, nid_norm)  # type: ignore[arg-type]
-
     action = "created"
-    if existing is not None:
-        old_text = existing.read_text(encoding="utf-8", errors="ignore")
-        old_fm, old_body = split_frontmatter(old_text)
-        split = split_card_body(old_body)
-        if split is None:
-            raise ValueError(f"已有卡片结构异常（缺少 # Details / # Related）: {existing}")
-        _, old_details_inner, _ = split
 
-        if local_supplement_is_non_empty(old_details_inner):
-            new_details_inner = merge_details_inner(old_details_inner, content)
+    # 处理已有卡片更新（Notion 去重）
+    existing = None
+    if use_notion_dedupe:
+        existing = find_card_by_notion_id_jsonl(CARDS_JSONL, nid_norm)
+
+    cards_list = load_jsonl(CARDS_JSONL)
+    index_cards = load_index()
+
+    if existing is not None:
+        old_body = existing.get("body_md", "")
+        fm = existing.copy()
+        old_details = old_body or ""
+
+        if local_supplement_is_non_empty(old_details):
+            new_details = merge_details_inner(old_details, content)
             action = "merged"
         else:
-            new_details_inner = replace_details_inner(old_details_inner, content)
+            new_details = replace_details_inner(old_details, content)
             action = "replaced"
 
-        created = old_fm.get("Created", date)
-        related, tag_related, conflicts = collect_related(
-            exclude=existing,
-            keywords_csv=args.keywords,
-            inferred_tags=inferred_tags,
-            title=args.title,
-            content=content,
-        )
-        fm_block = frontmatter_lines(
-            title=args.title,
-            type_=args.type,
-            source=args.source,
-            source_mode=args.source_mode,
-            source_url=args.source_url,
-            source_path=args.source_path,
-            confidence=args.confidence,
-            created=created,
-            updated=date,
-            keywords=args.keywords,
-            tags=inferred_tags,
-            notion_page_id_display=notion_display,
-        )
-        card_rel = existing.relative_to(ROOT).as_posix()
-        out_text = render_card_file(fm_block, args.title, new_details_inner, related)
-        existing.write_text(out_text, encoding="utf-8")
+        # 更新正文
+        existing["body_md"] = new_details
+        existing["source"] = args.source
+        existing["source_mode"] = args.source_mode
+        existing["source_url"] = args.source_url
+        existing["confidence"] = args.confidence
+        existing["tags"] = ",".join(inferred_tags)
+        existing["keywords"] = args.keywords
 
-        append_index_and_relations(
+        # 计算关联
+        relation_rows, queue_lines = compute_relations(
+            new_id=existing["id"],
+            new_body=new_details,
+            new_title=existing.get("title", ""),
+            new_tags=inferred_tags,
+            existing_cards=[c for c in cards_list if c.get("id") != existing.get("id")],
             date=date,
-            title=args.title,
-            type_=args.type,
-            source=args.source,
-            keywords=args.keywords,
-            card_rel=card_rel,
-            related=related,
-            tag_related=tag_related,
-            conflicts=conflicts,
-            confidence=args.confidence,
-            cfg=cfg,
-            append_library_index=False,
         )
 
-        print(
-            json.dumps(
-                {
-                    "ok": True,
-                    "action": action,
-                    "card": card_rel,
-                    "related_count": len(related),
-                    "tag_related_count": len(tag_related),
-                    "conflict_count": len(conflicts),
-                    "tag_max": max_tags,
-                },
-                ensure_ascii=False,
-            )
-        )
+        # 写回 cards.jsonl
+        _write_jsonl(CARDS_JSONL, cards_list)
+
+        # 追加关联
+        if relation_rows:
+            _append_jsonl(RELATIONS_JSONL, relation_rows)
+
+        # 追加队列
+        if queue_lines:
+            with QUEUE.open("a", encoding="utf-8") as qf:
+                for ql in queue_lines:
+                    qf.write(ql)
+
+        # 评估低置信度
+        if args.confidence in cfg.get("quality_rules", {}).get("low_confidence_values", []):
+            with QUEUE.open("a", encoding="utf-8") as qf:
+                qf.write(f"\n| {date} | `{existing['id']}` | 低置信度 | 该条目标记为低置信度 | 补充来源与证据后复核 | 待处理 |")
+
+        # 更新索引中对应条目
+        for ic in index_cards:
+            if ic.get("id") == existing["id"]:
+                ic["type"] = args.type
+                ic["source"] = args.source
+                ic["keywords"] = [k.strip() for k in args.keywords.split(",") if k.strip()] if args.keywords else []
+                break
+        save_index(index_cards)
+
+        print(json.dumps({
+            "ok": True,
+            "action": action,
+            "id": existing["id"],
+            "related_count": len(relation_rows),
+            "tag_max": max_tags,
+        }, ensure_ascii=False))
         return
 
     # 新建卡片
-    card = CARDS / f"{ts}_{slug}.md"
-    CARD_rel = card.relative_to(ROOT).as_posix()
-
     if use_notion_dedupe:
-        details_inner = wrap_notion_export(content)
-        fm_block = frontmatter_lines(
-            title=args.title,
-            type_=args.type,
-            source=args.source,
-            source_mode=args.source_mode,
-            source_url=args.source_url,
-            source_path=args.source_path,
-            confidence=args.confidence,
-            created=date,
-            updated=None,
-            keywords=args.keywords,
-            tags=inferred_tags,
-            notion_page_id_display=notion_display,
-        )
+        body_md = wrap_notion_export(content)
     else:
-        details_inner = content
-        fm_block = [
-            "---",
-            "Lifecycle: 阶段",
-            f"Title: {args.title}",
-            f"Type: {args.type}",
-            f"Source: {args.source}",
-            f"SourceMode: {args.source_mode}",
-            f"SourceURL: {args.source_url}",
-            f"SourcePath: {args.source_path}",
-            f"Confidence: {args.confidence}",
-            f"Created: {date}",
-            f"Keywords: {args.keywords}",
-            f"Tags: {','.join(inferred_tags)}",
-            "---",
-        ]
+        body_md = content
 
-    related, tag_related, conflicts = collect_related(
-        exclude=card,
-        keywords_csv=args.keywords,
-        inferred_tags=inferred_tags,
-        title=args.title,
-        content=content,
-    )
+    card = {
+        "id": new_id,
+        "title": args.title,
+        "type": args.type,
+        "confidence": args.confidence,
+        "tags": ",".join(inferred_tags),
+        "keywords": args.keywords,
+        "source": args.source,
+        "source_url": args.source_url,
+        "source_mode": args.source_mode,
+        "source_path": args.source_path,
+        "notion_page_id": notion_display if notion_display else "",
+        "lifecycle": "阶段",
+        "created": date,
+        "body_md": body_md,
+    }
 
-    card.parent.mkdir(parents=True, exist_ok=True)
-    card.write_text(render_card_file(fm_block, args.title, details_inner, related), encoding="utf-8")
+    cards_list.append(card)
+    _write_jsonl(CARDS_JSONL, cards_list)
 
-    append_index_and_relations(
+    # 更新 library_index.json
+    index_cards.append({
+        "id": new_id,
+        "title": args.title,
+        "type": args.type,
+        "source": args.source,
+        "date": date,
+        "keywords": [k.strip() for k in args.keywords.split(",") if k.strip()] if args.keywords else [],
+        "confidence": args.confidence,
+    })
+    save_index(index_cards)
+
+    # 计算关联
+    relation_rows, queue_lines = compute_relations(
+        new_id=new_id,
+        new_body=body_md,
+        new_title=args.title,
+        new_tags=inferred_tags,
+        existing_cards=[c for c in cards_list if c.get("id") != new_id],
         date=date,
-        title=args.title,
-        type_=args.type,
-        source=args.source,
-        keywords=args.keywords,
-        card_rel=CARD_rel,
-        related=related,
-        tag_related=tag_related,
-        conflicts=conflicts,
-        confidence=args.confidence,
-        cfg=cfg,
     )
 
-    print(
-        json.dumps(
-            {
-                "ok": True,
-                "action": action,
-                "card": CARD_rel,
-                "related_count": len(related),
-                "tag_related_count": len(tag_related),
-                "conflict_count": len(conflicts),
-                "tag_max": max_tags,
-            },
-            ensure_ascii=False,
-        )
-    )
+    if relation_rows:
+        _append_jsonl(RELATIONS_JSONL, relation_rows)
+
+    if queue_lines:
+        with QUEUE.open("a", encoding="utf-8") as qf:
+            for ql in queue_lines:
+                qf.write(ql)
+
+    if args.confidence in cfg.get("quality_rules", {}).get("low_confidence_values", []):
+        with QUEUE.open("a", encoding="utf-8") as qf:
+            qf.write(f"\n| {date} | `{new_id}` | 低置信度 | 该条目标记为低置信度 | 补充来源与证据后复核 | 待处理 |")
+
+    print(json.dumps({
+        "ok": True,
+        "action": action,
+        "id": new_id,
+        "related_count": len(relation_rows),
+        "tag_max": max_tags,
+    }, ensure_ascii=False))
+
+
+def _write_jsonl(path: Path, rows: list[dict]) -> None:
+    """覆盖写入 JSONL。"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def _append_jsonl(path: Path, rows: list[dict]) -> None:
+    """追加写入 JSONL。"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

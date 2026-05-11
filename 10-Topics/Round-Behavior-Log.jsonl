@@ -23,3 +23,4 @@
 {"type":"hot","date":"2026-05-11","task":"其他","style":"方案先于执行","confirm":"关键确认","output_structure":"分段叙述","user_input":"直接文本","tool_channel":"文件操作","special":"回收站软删除规则+歧义保护落地","consumed":true}
 {"type":"warm","date":null,"task":null,"decomposition":null,"cognitive_path":null,"language_style":null,"expression_density":null,"emotional_tone":null,"confidence":null,"sample_phase":null,"consumed":false}
 {"type": "hot", "date": "2026-05-11", "task": "清理", "style": "直接执行", "confirm": "跳过确认", "output_structure": "简报", "user_input": "直接文本", "tool_channel": "文件操作(Delete/Shell)", "special": "JSON/JSONL 迁移后清理旧 Markdown：68 个删除 + 7 个新文件 + 11 个规则路径更新", "consumed": false}
+{"type": "hot", "date": "2026-05-11", "task": "清理", "style": "直接执行", "confirm": "关键确认", "output_structure": "表格化", "user_input": "混合", "tool_channel": "文件操作+Shell", "special": "16 文件批量迁移：Knowledge_Cards 目录删除→JSONL统一+11个引用文件修复+存储约定落地+backup", "consumed": false}

@@ -8,7 +8,6 @@
       "keywords": [
         "~~已拆分为11张原子卡片~~"
       ],
-      "card_path": "~~`Earth_Library/Knowledge_Cards/ARCHIVED_20260508-105811_商业管理_汇总版已拆分.md`~~",
       "archived": true
     },
     {
@@ -19,7 +18,6 @@
       "keywords": [
         "~~已拆分为45张原子卡片~~"
       ],
-      "card_path": "~~`Earth_Library/Knowledge_Cards/ARCHIVED_20260508-135807_流程建模_汇总版已拆分.md`~~",
       "archived": true
     },
     {
@@ -34,8 +32,7 @@
         "精益创业",
         "MVP",
         "商业战略"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205830_精益画布-PMF.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -48,8 +45,7 @@
         "产品平台化",
         "平台生态化",
         "商业战略"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205830_公司生命周期.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -63,8 +59,7 @@
         "收入来源",
         "核心资源",
         "商业战略"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205830_商业模式画布.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -77,8 +72,7 @@
         "优势劣势机会威胁",
         "战略分析",
         "商业战略"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205831_SWOT分析法.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -92,8 +86,7 @@
         "蓝海战略",
         "宏观环境",
         "商业战略"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205831_四大常见的宏观环境分析模型.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -107,8 +100,7 @@
         "内部因素",
         "外部因素",
         "商业战略"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205831_点子过滤器.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -124,8 +116,7 @@
         "绘制标准",
         "手递手原则",
         "异常流程"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205949_UML流程图的绘制与标准.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -140,8 +131,7 @@
         "流程编排",
         "编排",
         "协作"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205949_BPMN2-0业务流程建模标准.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -156,8 +146,7 @@
         "编排",
         "协作",
         "泳道"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205950_BPMN流程建模指南-1-概述.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -172,8 +161,7 @@
         "编排任务",
         "服务任务",
         "用户任务"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205950_BPMN流程建模指南-2-活动.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -187,8 +175,7 @@
         "道",
         "角色划分",
         "业务流程"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205950_BPMN流程建模指南-11-泳道.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -203,8 +190,7 @@
         "连接对象",
         "泳道",
         "绘制四步法"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205950_BPMN-业务流程建模符号-入门到掌握-这一篇就够了.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -221,8 +207,7 @@
         "连接对象",
         "泳道",
         "工件"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205951_企业业务流程建模-BPMN.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -238,8 +223,7 @@
         "事件网关",
         "分叉",
         "合并"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205951_BPMN流程建模指南-9-网关.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -255,8 +239,7 @@
         "边界事件",
         "中断",
         "非中断"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205951_BPMN流程建模指南-7-事件使用规则.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -270,8 +253,7 @@
         "数据输入",
         "数据输出",
         "数据关联"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205951_BPMN流程建模指南-12-数据对象.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -285,8 +267,7 @@
         "结束事件",
         "消息事件",
         "常见错误"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205951_BPMN流程建模指南-8-事件常见错误.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -302,8 +283,7 @@
         "信号事件",
         "多重事件",
         "并行多重事件"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205951_BPMN流程建模指南-4-开始事件.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -320,8 +300,7 @@
         "默认流",
         "异常流",
         "数据关联"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205952_BPMN流程建模指南-10-连接.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -336,8 +315,7 @@
         "泳道",
         "整体视角",
         "参与者视角"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205952_BPMN流程建模指南-13-应用示例.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -353,8 +331,7 @@
         "多实例",
         "发送任务",
         "接收任务"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205952_BPMN流程建模指南-3-活动的常见错误.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -372,8 +349,7 @@
         "信号",
         "终止",
         "多重"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205952_BPMN流程建模指南-5-结束事件.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -393,8 +369,7 @@
         "错误",
         "取消",
         "边界事件"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205952_BPMN流程建模指南-6-中间事件.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -410,8 +385,7 @@
         "进入条件",
         "退出条件",
         "价值项"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205953_业务架构核心要素.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -427,8 +401,7 @@
         "PCF",
         "BPMN",
         "企业架构"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205953_业务架构.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -444,8 +417,7 @@
         "应用架构",
         "技术架构",
         "架构开发"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205953_企业架构.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -460,8 +432,7 @@
         "状态拆合",
         "锁机制",
         "流程图区别"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205954_UML状态图的绘制与标准.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -477,8 +448,7 @@
         "数量关系",
         "属性",
         "系统分析"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-205954_UML类图的绘制与标准.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -492,8 +462,7 @@
         "如沟通汇报",
         "深度思考",
         "产品设计"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210606_5W2H分析法.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -502,8 +471,7 @@
       "source": "Notion 知识库 - 《产品方法论》",
       "keywords": [
         "产品思维"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210606_产品思维.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -517,8 +485,7 @@
         "基础功能是指当这类功能没有实现时",
         "用户对产品是",
         "极其不满"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210611_KANO模型.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -536,8 +503,7 @@
         "SaaS",
         "平台型产品",
         "四阶段"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210616_B端产品的演进路线.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -555,8 +521,7 @@
         "模块抽象",
         "子系统划分",
         "六步法"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210621_B端整体方案设计.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -573,8 +538,7 @@
         "产业链",
         "深度访谈",
         "业务分析三层框架"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210631_B端产品市场分析与业务调研.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -591,8 +555,7 @@
         "生态黏性",
         "静态维度",
         "动态维度"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210637_好产品的评价标准.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -609,8 +572,7 @@
         "能积累",
         "善生死",
         "三阶段验证链"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210642_从产品到产品矩阵.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -626,8 +588,7 @@
         "退出机制",
         "防作弊",
         "指标制定原则"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210647_产品各阶段的关键指标.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -641,8 +602,7 @@
         "简称为",
         "习惯",
         "模块"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210652_产品起步的逻辑.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -656,8 +616,7 @@
         "分别为",
         "验证期",
         "导入期"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210700_产品生命周期.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -674,8 +633,7 @@
         "数量复制",
         "人尽其用",
         "交付形态演变"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210706_产品服务系统.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -693,8 +651,7 @@
         "信噪比",
         "自然交互",
         "设计评审"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210712_如何理性评价产品设计的好坏.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -710,8 +667,7 @@
         "设计机会点",
         "场景拆分",
         "绘制六步法"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210719_用户体验旅程图.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -727,8 +683,7 @@
         "情绪",
         "常见误区",
         "用户画像"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210720_如何绘制-用户旅程图.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -744,8 +699,7 @@
         "显性画像",
         "隐性画像",
         "设计前期"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210727_同理心地图.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -761,8 +715,7 @@
         "Promotion",
         "Portfolio",
         "产品创新验证"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210732_5MVVP框架.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -778,8 +731,7 @@
         "问题-方案矩阵",
         "产业链",
         "不可再生资源"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210738_竞品生态.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -793,8 +745,7 @@
         "通过五个核心步骤来覆盖十三个关键要素",
         "帮助设计人员尽量全面地梳理需求",
         "挖掘需求背后的本质问题"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210744_需求分析的十三要素五步法.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -811,8 +762,7 @@
         "四类价值",
         "需求层次",
         "需求提报模板"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210751_B端产品需求管理与迭代.md`"
+      ]
     },
     {
       "date": "2026-05-08",
@@ -829,8 +779,7 @@
         "会计基础",
         "借贷记账法",
         "清结算"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260508-210759_支付的基础概念与会计基础.md`"
+      ]
     },
     {
       "date": "2026-05-09",
@@ -847,8 +796,7 @@
         "宏观环境",
         "点子过滤器",
         "域概览"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260509_Domain_Overview_商业战略与建模.md`"
+      ]
     },
     {
       "date": "2026-05-09",
@@ -862,8 +810,7 @@
         "业务架构",
         "企业架构",
         "域概览"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260509_Domain_Overview_流程建模与架构.md`"
+      ]
     },
     {
       "date": "2026-05-09",
@@ -879,8 +826,7 @@
         "5MVVP",
         "产品思维",
         "域概览"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260509_Domain_Overview_产品方法论.md`"
+      ]
     },
     {
       "date": "2026-05-09",
@@ -892,8 +838,7 @@
         "旅程图",
         "同理心地图",
         "域概览"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260509_Domain_Overview_用户研究.md`"
+      ]
     },
     {
       "date": "2026-05-09",
@@ -907,8 +852,7 @@
         "市场分析",
         "需求管理",
         "域概览"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260509_Domain_Overview_B端产品.md`"
+      ]
     },
     {
       "date": "2026-05-09",
@@ -922,8 +866,7 @@
         "会计基础",
         "域概览",
         "种子域"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260509_Domain_Overview_支付金融.md`"
+      ]
     },
     {
       "date": "2026-05-09",
@@ -937,8 +880,7 @@
         "序列图",
         "活动图",
         "绘制规范"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260509-193258_UML-绘制方式与通用注意点.md`"
+      ]
     },
     {
       "date": "2026-05-10",
@@ -952,8 +894,7 @@
         "执行层",
         "关注点分离",
         "软件架构"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260510-142226_三层架构-编排调度-能力-执行.md`"
+      ]
     },
     {
       "date": "2026-05-10",
@@ -968,8 +909,7 @@
         "表现层",
         "用户界面",
         "三层架构"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260510-145411_MVC架构-表现层内三分.md`"
+      ]
     },
     {
       "date": "2026-05-10",
@@ -984,8 +924,7 @@
         "Entities",
         "Use Cases",
         "Adapter"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260510-145416_整洁架构-依赖倒置的四层洋葱模型.md`"
+      ]
     },
     {
       "date": "2026-05-10",
@@ -1001,8 +940,7 @@
         "实体",
         "值对象",
         "战术设计"
-      ],
-      "card_path": "`Earth_Library/Knowledge_Cards/20260510-145422_DDD领域驱动设计-战略与战术建模.md`"
+      ]
     }
   ],
   "total": 62,
