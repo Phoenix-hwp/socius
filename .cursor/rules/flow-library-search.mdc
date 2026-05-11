@@ -39,10 +39,10 @@ cmd /c "python Earth_Library/scripts/search_library.py --q \"关键词\" --max_r
 ```
 
 **检索维度**（按优先级）：
-1. 标题匹配
-2. 关键词字段匹配
-3. 内容全文匹配
-4. 标签匹配
+1. 标题匹配（library_index.json 的 title 字段）
+2. 关键词字段匹配（library_index.json 的 keywords 字段）
+3. 正文匹配（cards.jsonl 的 body_md 字段）
+4. 标签匹配（cards.jsonl 的 tags 字段）
 
 ### 步骤 3：关联推荐（可选）
 
@@ -65,7 +65,7 @@ cmd /c "python Earth_Library/scripts/get_related.py --card_path \"xxx.md\" || no
 
 **过滤规则**：
 - 默认排除低置信度（除非用户明确要求）
-- 自动去重（基于 Relations_Index.md 的疑似重复标记）
+- 自动去重（基于 `relations.jsonl` 的疑似重复标记）
 
 ### 步骤 5：结果展示
 
@@ -78,15 +78,15 @@ Earth Library 检索结果：
 相关卡片：
 1. 【标题】（置信度：高 | 标签：xx, yy）
    摘要：...
-   路径：Knowledge_Cards/xxx.md
+   ID：cards.jsonl 中 id 字段
 
 2. 【标题】（置信度：中 | 标签：aa, bb）
    摘要：...
-   路径：Knowledge_Cards/yyy.md
+   ID：cards.jsonl 中 id 字段
 
 推荐关联：基于知识网络，还可参考...
 - xxx（关键词相交）
-- yyy（标签相交）
+- yyy（标签相交） — 来自 relations.jsonl
 ```
 
 **回执格式（未命中时）**：

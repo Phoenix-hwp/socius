@@ -105,8 +105,8 @@ NotionPageId: {ID}
 
 ### 步骤 4：结构化关系记录
 
-自动写入 `Relations_Index.md`：
-- 每张卡片的入库记录（便于追溯）
+自动写入 `relations.jsonl`：
+- 每张卡片的入库记录 （短字段：`"d"`日期 / `"s"`来源ID / `"t"`目标ID 或 null / `"r"`关系类型 / `"x"`说明）
 - 可选：父子关系标注（人工后续补充强语义边）
 
 ### 步骤 5：执行与回执
@@ -127,15 +127,15 @@ Notion 原子入库完成：
 - 书籍/主题: 《书名》
 - 总页面数: N
 - 成功入库: N 张卡片
-- 卡片路径示例:
-  1. Knowledge_Cards/YYYYMMDD-HHMMSS_第一章.md
-  2. Knowledge_Cards/YYYYMMDD-HHMMSS_第二节.md
+- 卡片 ID 示例:
+  1. <YYYYMMDD-HHMMSS_第一章标题>
+  2. <YYYYMMDD-HHMMSS_第二节标题>
   ...
-- 关系索引: Relations_Index.md（已更新）
+- 关系: relations.jsonl（已更新）
 
 下一步建议：
 1. 逐张卡片补充「核心要点」和「关键摘录」
-2. 在 Relations_Index.md 中添加章节间的强语义关联
+2. 在 relations.jsonl 中添加章节间的强语义关联 (`"r":"precedes"` / `"r":"prerequisite"` 等)
 3. 使用「搜索图书馆」验证关联检索效果
 ```
 
@@ -154,12 +154,10 @@ Notion 原子入库完成：
 - 本地补充: 关联思考、实践案例
 
 ### 关联强化（可选）
-在 `Relations_Index.md` 中人工添加：
-```markdown
-| 日期 | 来源条目 | 目标条目 | 关系类型 | 关系说明 |
-|---|---|---|---|---|
-| 2026-05-08 | `Knowledge_Cards/...第一章.md` | `Knowledge_Cards/...第二章.md` | precedes | 章节顺序 |
-| 2026-05-08 | `Knowledge_Cards/...商业模式.md` | `Knowledge_Cards/...价值主张.md` | prerequisite | 概念依赖 |
+在 `relations.jsonl` 中人工添加强语义关联（短字段名：`"d"`日期 / `"s"`来源ID / `"t"`目标ID / `"r"`关系类型 / `"x"`说明），示例：
+```json
+{"d":"2026-05-08","s":"第一章ID","t":"第二章ID","r":"precedes","x":"章节顺序"}
+{"d":"2026-05-08","s":"商业模式ID","t":"价值主张ID","r":"prerequisite","x":"概念依赖"}
 ```
 
 ---

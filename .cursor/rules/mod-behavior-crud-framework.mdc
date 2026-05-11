@@ -18,8 +18,8 @@ glossary:
 | 阶段 | 名称 | 核心职责 | 下层工作流引用 |
 |:---:|:---|:---|:---|
 | **A** | 开端续接 | 会话开始时读取任务表，按策略续接活跃任务 | `session-profile-workflow.mdc`（门户） |
-| **B** | 轮级快照 | 每轮结尾自动记录六字段行为摘要 | `flow-behavior-auto-receipt.mdc` 步骤 A |
-| **C** | 任务收束 | 任务完成时合并快照写入 `10-Topics/Behavior-Fit-Log.md` §2，归档任务 | `flow-behavior-auto-receipt.mdc` 步骤 C |
+| **B** | 轮级快照 | 每轮结尾自动记录行为摘要：热快照（操作维度，6 字段）+ 温快照（认知维度，5 字段）双表分离 | `flow-behavior-auto-receipt.mdc` 步骤 A + A.2 |
+| **C** | 任务收束 | 任务完成时合并快照追加到 `10-Topics/Behavior-Fit-Log.jsonl`，归档任务 | `flow-behavior-auto-receipt.mdc` 步骤 C |
 | **D** | 手动收束 | 用户触发 `/收束` 时执行完整版 | `flow-behavior-auto-receipt.mdc` 步骤 E |
 
 ---
@@ -32,13 +32,13 @@ glossary:
 | 第三层 | `flow-behavior-auto-receipt.mdc` | 操作细则 — 步骤 A–E 全链路 |
 | 横切 | `session-profile-workflow.mdc` | 门户 — 委托到本框架与第三层 |
 | 注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度与值域定义 |
-| 跟踪 | `10-Topics/Active-Task-Tracker.md` | 任务状态持久化 |
-| 快照 | `10-Topics/Round-Behavior-Log.md` | 轮级行为快照 |
+| 跟踪 | `10-Topics/Active-Task-Tracker.json` | 任务状态持久化 |
+| 快照 | `10-Topics/Round-Behavior-Log.jsonl` | 轮级行为快照（热快照 + 温快照） |
 
 ---
 
 ## 跨模块衔接
 
 - **任务跟踪**：独立文件跟踪，跨会话持久化，由阶段 A 读取、阶段 C 更新。
-- **L3 分析**：阶段 C 产出标准化行（写入 `10-Topics/Behavior-Fit-Log.md` §2） → L3 在满足阈值后触发模式发现与趋势检测。
+- **L3 分析**：阶段 C 产出标准化行（写入 `10-Topics/Behavior-Fit-Log.jsonl`） → L3 在满足阈值后触发模式发现与趋势检测。
 - **冲突检测**：B+ 层（即时/记录/统计），不单独成阶段，嵌入阶段 B/C。

@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "description": "活跃任务追踪 — 跨轮次跟踪任务状态，支持单轮与跨轮自动续接",
+    "status_flow": "待处理 → 进行中 → 已完成 / 取消",
+    "types": {
+      "探索": "边做边发现，收束时用选项确认是否完成",
+      "目标": "创建时已知子项清单"
+    }
+  },
+  "active": [],
+  "archive": [
+    {
+      "id": "T001",
+      "description": "行为偏好系统改造",
+      "type": "探索",
+      "status": "已完成",
+      "dependency": null,
+      "completed": "2026-05-10",
+      "related_log": "2026-05-10"
+    },
+    {
+      "id": "T002",
+      "description": "自学习体系落地（方法可靠性注册表 + 能力固化）",
+      "type": "目标",
+      "status": "已完成",
+      "dependency": null,
+      "completed": "2026-05-11",
+      "related_log": "Behavior-Fit-Log §2 2026-05-11"
+    }
+  ]
+}

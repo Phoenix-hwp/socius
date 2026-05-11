@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "description": "方法可靠性注册表 — 记录每种「任务类型 → 方法路径」在当前设备上的成败统计",
+    "thresholds": {
+      "fail_downgrade": 3,
+      "success_recover": 5,
+      "disable_rate": 0.7,
+      "disable_min_calls": 10
+    },
+    "routing_hint": "网关路由层读取时仅匹配当前设备（hostname）记录"
+  },
+  "records": [
+    {
+      "task_type": "提交git",
+      "method": "Shell(git)",
+      "hostname": "DESKTOP-ABC123",
+      "total_calls": 12,
+      "consecutive_fails": 3,
+      "consecutive_successes": 0,
+      "last_status": "失败(认证)",
+      "last_context": "2026-05-08 Win10",
+      "state": "⚠ 降权"
+    },
+    {
+      "task_type": "提交git",
+      "method": "Shell(gh)",
+      "hostname": "DESKTOP-ABC123",
+      "total_calls": 5,
+      "consecutive_fails": 0,
+      "consecutive_successes": 5,
+      "last_status": "成功",
+      "last_context": "2026-05-10 Win10",
+      "state": "✅ 正常"
+    },
+    {
+      "task_type": "Notion创建",
+      "method": "MCP",
+      "hostname": "DESKTOP-ABC123",
+      "total_calls": 20,
+      "consecutive_fails": 2,
+      "consecutive_successes": 0,
+      "last_status": "失败(超时)",
+      "last_context": "2026-05-09 Win10",
+      "state": "⚠ 降权"
+    }
+  ]
+}

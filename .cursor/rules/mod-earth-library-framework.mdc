@@ -89,7 +89,7 @@ Agent 回答用户问题前，先判断问题域：
 - 关键词匹配（标题/内容/关键词字段）
 - 标签筛选
 - 置信度筛选
-- 关联推荐（基于 Relations_Index.md）
+- 关联推荐（基于 `relations.jsonl`）
 
 **进入工作流**：`flow-library-search.mdc`
 

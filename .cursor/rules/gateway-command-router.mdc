@@ -20,7 +20,7 @@ alwaysApply: true
 
 ## 路由流程
 
-0. **方法可靠性预检（强制）**：在执行任何映射动作之前，先 Read `.cursor/method-reliability-registry.md`，筛选「当前任务类型 + 当前设备(hostname)」的记录。若该方法的状态为 ⚠ 降权 或 🚫 禁用，且用户未显式指定该方法 → 跳过，取下一个 ✅ 正常 的方法。若无正常方法可用 → 提示用户所有已知方法均被降权/禁用，请手动指定或等待恢复。
+0. **方法可靠性预检（强制）**：在执行任何映射动作之前，先 Read `.cursor/method-reliability-registry.json`，筛选「当前任务类型 + 当前设备(hostname)」的记录。若该方法的状态为 ⚠ 降权 或 🚫 禁用，且用户未显式指定该方法 → 跳过，取下一个 ✅ 正常 的方法。若无正常方法可用 → 提示用户所有已知方法均被降权/禁用，请手动指定或等待恢复。
 1. **先在 `10-Topics/Cursor-command-aliases.md` 中查找**完全匹配**与**高相似匹配**（同义词、近义说法）
 2. **若命中映射**：必须先执行映射动作（通常是先 Read 指定文件并基于该文件继续处理），不得跳过到无关检索
 3. **若未命中映射**：才执行常规搜索；并可建议用户把该短指令加入别名清单
@@ -191,7 +191,7 @@ alwaysApply: true
   - 第二层：`mod-behavior-crud-framework.mdc`（统一框架：开端续接 / 快照 / 收束 / 手动收束）
   - 第三层：`flow-behavior-auto-receipt.mdc`（自动收束流程：步骤 A–E 全链路）
   - 注册表：`10-Topics/Behavior-Dimensions-Registry.md`（行为维度与值域）
-  - 跟踪文件：`10-Topics/Active-Task-Tracker.md`（任务状态跟踪）
+  - 跟踪文件：`10-Topics/Active-Task-Tracker.json`（任务状态跟踪）
 - **能力固化模块**：
   - 第三层：`flow-capability-encapsulate.mdc`（能力封装工作流：提取 → 判定 → 预览 → 落盘）
 - **多轮长记忆（横切）**：

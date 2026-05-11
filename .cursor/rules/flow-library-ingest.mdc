@@ -63,40 +63,18 @@ content: （知识详细内容）
 - 范围：3-6 个
 - 默认：5 个
 
-### 步骤 4：生成知识卡片
+### 步骤 4：写入 JSONL 卡片
 
-写入 `Earth_Library/Knowledge_Cards/YYYYMMDD-HHMMSS_标题.md`
-
-**卡片模板**：
-```markdown
----
-title: （标题）
-type: （类型）
-source: （来源）
-source_mode: （来源模式）
-source_url: （链接，可选）
-confidence: （置信度）
-keywords: （关键词）
-tags: （自动标签）
-created: YYYY-MM-DD HH:MM:SS
----
-
-# （标题）
-
-## 核心内容
-（content）
-
-## 后续可扩展
-（可选：相关问题或行动项）
+追加一行 JSON 到 `Earth_Library/cards.jsonl`，字段：
+```json
+{"id":"<YYYYMMDD-HHMMSS_标题>","title":"<标题>","type":"<类型>","source":"<来源>","source_mode":"<来源模式>","confidence":"<置信度>","keywords":["k1","k2","k3"],"tags":["t1","t2","t3"],"created":"<ISO时间>","body_md":"<正文markdown>"}
 ```
 
 ### 步骤 5：更新索引与关联
 
-1. **追加总索引**：`Earth_Library/Library_Index.md`
-2. **计算关联**：
-   - 关键词相交检测
-   - 标签相交检测
-   - 写入 `Earth_Library/Relations/Relations_Index.md`
+1. **更新总索引**：`Earth_Library/library_index.json` — 在 `cards` 数组中追加新条目。
+2. **更新关联**：`Earth_Library/relations.jsonl` — 计算关键词相交 / 标签相交，追加关联行（短字段名：`"d"`日期 / `"s"`来源ID / `"t"`目标ID / `"r"`关系类型 / `"x"`说明）。
+3. **读取方式**：Agent 直接 Read JSON/JSONL 文件（单次 Read 获取全量），无需逐卡 Glob。
 
 ### 步骤 6：执行与回执
 
@@ -112,10 +90,10 @@ cmd /c "python Earth_Library/scripts/quick_ingest.py --text \"内容\" || node E
 **成功回执**：
 ```
 已存入 Earth Library：
-- 卡片：Knowledge_Cards/20260503-143052_标题.md
-- 索引：Library_Index.md（已更新）
+- 卡片：cards.jsonl 第 N 行
+- 索引：library_index.json（已更新）
 - 标签：[标签1, 标签2, 标签3]
-- 关联：发现 M 条相关知识（Relations_Index.md 已更新）
+- 关联：发现 M 条相关知识（relations.jsonl 已更新）
 ```
 
 ---
