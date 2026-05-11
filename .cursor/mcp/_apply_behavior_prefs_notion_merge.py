@@ -8,9 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
-sys.path.insert(0, str(_SCRIPT_DIR))
 
-from notion_sdk import NotionClient, load_env_file  # noqa: E402
+from notion_sdk import NotionClient, load_env_file
 
 # Reuse markdown → blocks from workflow runner
 import importlib.util

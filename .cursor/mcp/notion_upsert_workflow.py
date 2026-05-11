@@ -23,11 +23,7 @@ from pathlib import Path
 from typing import Any
 from datetime import datetime
 
-# Add notion_sdk to path
-_SCRIPT_DIR = Path(__file__).resolve().parent
-if str(_SCRIPT_DIR / "notion_sdk") not in sys.path:
-    sys.path.insert(0, str(_SCRIPT_DIR))
-
+# notion_sdk is importable from the script's own directory (Python adds __file__ dir to sys.path)
 from notion_sdk import NotionClient, load_env_file, parse_notion_id
 
 
@@ -49,7 +45,7 @@ def md_to_blocks(markdown: str) -> list[dict[str, Any]]:
                 blocks.append({
                     "type": "paragraph",
                     "paragraph": {
-                        "rich_text": [{"type": "text", "text": {"content": content[:2000]}}]
+                        "rich_text": [{"type": "text", "text": {"content": content[:LONG_CONTENT_THRESHOLD["chars"]]}}]
                     }
                 })
             current_paragraph.clear()
@@ -63,7 +59,7 @@ def md_to_blocks(markdown: str) -> list[dict[str, Any]]:
             blocks.append({
                 "type": "heading_1",
                 "heading_1": {
-                    "rich_text": [{"type": "text", "text": {"content": stripped[2:].strip()[:2000]}}]
+                    "rich_text": [{"type": "text", "text": {"content": stripped[2:].strip()[:LONG_CONTENT_THRESHOLD["chars"]]}}]
                 }
             })
         elif stripped.startswith("## "):
@@ -71,7 +67,7 @@ def md_to_blocks(markdown: str) -> list[dict[str, Any]]:
             blocks.append({
                 "type": "heading_2",
                 "heading_2": {
-                    "rich_text": [{"type": "text", "text": {"content": stripped[3:].strip()[:2000]}}]
+                    "rich_text": [{"type": "text", "text": {"content": stripped[3:].strip()[:LONG_CONTENT_THRESHOLD["chars"]]}}]
                 }
             })
         elif stripped.startswith("### "):
@@ -79,7 +75,7 @@ def md_to_blocks(markdown: str) -> list[dict[str, Any]]:
             blocks.append({
                 "type": "heading_3",
                 "heading_3": {
-                    "rich_text": [{"type": "text", "text": {"content": stripped[4:].strip()[:2000]}}]
+                    "rich_text": [{"type": "text", "text": {"content": stripped[4:].strip()[:LONG_CONTENT_THRESHOLD["chars"]]}}]
                 }
             })
         # 代码块检测（简化：行首 ``` 开始/结束）
@@ -93,7 +89,7 @@ def md_to_blocks(markdown: str) -> list[dict[str, Any]]:
             blocks.append({
                 "type": "bulleted_list_item" if stripped.startswith(("- ", "* ")) else "numbered_list_item",
                 "bulleted_list_item" if stripped.startswith(("- ", "* ")) else "numbered_list_item": {
-                    "rich_text": [{"type": "text", "text": {"content": stripped[2:].strip()[:2000]}}]
+                    "rich_text": [{"type": "text", "text": {"content": stripped[2:].strip()[:LONG_CONTENT_THRESHOLD["chars"]]}}]
                 }
             })
         else:

@@ -21,10 +21,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-# Ensure notion_sdk / notion_drill are importable
+# notion_drill / notion_drill_markdown / notion_sdk are importable from __file__ directory
 _SCRIPT_DIR = Path(__file__).resolve().parent
-if str(_SCRIPT_DIR) not in sys.path:
-    sys.path.insert(0, str(_SCRIPT_DIR))
 
 from notion_drill import DrillNode, NotionDrillIngestor
 from notion_drill_markdown import build_details_section

@@ -16,11 +16,6 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Add hook_framework to path
-_HOOKS_DIR = Path(__file__).resolve().parent
-if str(_HOOKS_DIR) not in sys.path:
-    sys.path.insert(0, str(_HOOKS_DIR))
-
 from hook_framework import run_hook
 
 

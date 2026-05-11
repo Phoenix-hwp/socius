@@ -46,8 +46,13 @@ _REPO_ROOT = Path(os.environ.get("CURSOR_PROJECT_DIR", Path(__file__).resolve().
 _NOTION_DRILL_SCRIPT = _REPO_ROOT / ".cursor" / "mcp" / "notion_drill.py"
 _NOTION_ENV = _REPO_ROOT / ".cursor" / "mcp" / "notion.env"
 
-# Shared data model -- kept in a neutral .cursor/_shared/ path reachable
+# Shared data model — kept in a neutral .cursor/_shared/ path reachable
 # from both Earth Library and Notion MCP scripts.
+# EXEMPTION: sys.path.insert is retained because _shared is intentionally a
+# bridge namespace between two domains (Earth_Library ↔ .cursor/mcp). Both
+# domains import DrillNodeData from this shared neutral location, satisfying
+# script-coding-constraints rule 2 via a single shared module rather than
+# cross-domain import.
 _SHARED_DIR = _REPO_ROOT / ".cursor" / "_shared"
 if str(_SHARED_DIR) not in sys.path:
     sys.path.insert(0, str(_SHARED_DIR))

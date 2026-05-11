@@ -1,5 +1,5 @@
 ---
-description: 多轮长记忆项目的开场、执行、收束与合并流程
+description: 多轮长记忆项目的入场、推进、收束与合并约定
 alwaysApply: true
 ---
 
@@ -7,45 +7,27 @@ alwaysApply: true
 
 适用场景：用户明确某主题将进行多轮长对话（项目型或主题型）。
 
-## 1) 初始化阶段（一次性）
+## 初始化：见 `flow-multi-round-upgrade.mdc`
 
-- 当用户要求升级为多轮项目时：
-  1. 执行 `flow-multi-round-upgrade.mdc` 升级流程
-  2. 基于 `Knowledge-Assets/Master-Control-Template.md` 创建 `<P>/<P>_Master_Control.md`
-  3. 创建 `<P>/<P>_Project_Memo.md`（如不存在）
-  4. 创建 `<P>/对话备份/` 目录
-  5. 写入 R0 初始化日志
+- 升级流程（创建 Master_Control + Project_Memo + 对话备份目录 + R0 初始化）由该文件定义。
 
-## 2) 推进模式
+## 推进模式
 
-- 主控文件 `Master_Control.md` §1 必须声明 `推进模式`：
-  - `章节式`
-  - `开放式`
+- 主控文件 `Master_Control.md` §1 必须声明 `推进模式`：`章节式` / `开放式`。
 - 未声明时默认 `章节式`，并在当轮询问确认是否改为开放式。
 
-## 3) 每轮开场
+## 每轮开场：见 `round-start-checkpoint-confirmation.mdc`
 
-> 详见 `round-start-checkpoint-confirmation.mdc`（轻确认版）。
-> 本节仅保留入口指针：先读 `Master_Control` → 轻确认下轮起点；`Master_Control` 不存在时触发 `flow-multi-round-upgrade.mdc`。
+- 先读 `Master_Control` → 轻确认下轮起点；`Master_Control` 不存在时触发 `flow-multi-round-upgrade.mdc`。
 
-## 4) 每轮输出结构（固定）
+## 每轮输出结构（固定）
 
-- 问题清单
-- 可执行方案
-- 建议改写
-- 本轮结论 / 下轮入口
+- 问题清单 / 可执行方案 / 建议改写 / 本轮结论 + 下轮入口。
 
-## 5) 轮次收束指令
+## 轮次收束：见 `flow-behavior-auto-receipt.mdc`
 
-- 当用户输入 `总结本轮对话`（或同义表达）时，必须：
-  1. 生成本轮小结（已完成/未完成/待确认/下轮起点）。
-  2. 写回主控文件中的轮次日志与相关看板区域。
-  3. 开放式模式下，额外询问：
-     - `是否同意本轮结论作为下一轮默认起点？`
+- 触发语 `总结本轮对话` → 按该文件执行小结生成与写回。
 
-## 6) 合并闸门
+## 合并闸门
 
-- 当用户明确表示合并时，通过 AskQuestion 弹出 `[确认合并] [暂缓]`：
-  1. 先做一致性快检：术语、口径、规则、依赖。
-  2. 仅将"已确认"内容写入主文档。
-  3. 在轮次日志追加"合并记录"（时间、范围、摘要）。
+- 用户明确表示合并时，通过 AskQuestion `[确认合并] [暂缓]` 确认，先做一致性快检后写入主文档并追加合并记录。

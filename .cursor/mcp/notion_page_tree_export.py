@@ -14,11 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-# Add notion_sdk to path
-_SCRIPT_DIR = Path(__file__).resolve().parent
-if str(_SCRIPT_DIR) not in sys.path:
-    sys.path.insert(0, str(_SCRIPT_DIR))
-
+# notion_sdk is importable from the script's own directory (Python adds __file__ dir to sys.path)
 from notion_sdk import NotionClient, load_env_file, parse_notion_id
 
 

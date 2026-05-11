@@ -374,7 +374,6 @@ def _cli_main() -> int:
     args = parser.parse_args()
 
     script_dir = Path(__file__).resolve().parent
-    sys.path.insert(0, str(script_dir))
     from notion_sdk import load_env_file, parse_notion_id
 
     env_path = Path(args.env)

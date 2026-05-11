@@ -44,9 +44,11 @@ glossary:
 
 ### 步骤 5：commit message 拟定与确认
 
-1. Agent 根据变更内容拟定建议的 commit message
-2. 回执给用户确认或修改
-3. 用户确认后执行 `git commit -m "message"`
+1. Agent 根据变更内容拟定建议的 commit message（含标题 + 正文，展示完整内容）
+2. 通过 **AskQuestion** 弹出确认选项：
+   - `[确认提交]` — 直接执行 `git commit -m "message"`
+   - `[修改message]` — 暂停，等待用户口述修改内容
+3. 用户选择 `[确认提交]` 后执行 commit
 
 ### 步骤 6：推送前拉取与推送
 
@@ -66,10 +68,10 @@ glossary:
 
 1. 暂停推送
 2. 回执冲突文件清单
-3. 询问用户：
-   - `1`：协助解决冲突后继续
-   - `2`：中止 rebase，改用 merge
-   - `3`：取消本次推送
+3. 通过 **AskQuestion** 弹出选项：
+   - `[协助解决冲突]` — Agent 协助解决后继续推送
+   - `[改用merge]` — 中止 rebase，改用 `git pull --no-rebase`
+   - `[取消推送]` — 取消本次推送，保留本地内容
 
 ---
 
