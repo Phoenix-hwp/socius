@@ -33,24 +33,28 @@ glossary:
 - 删除：Z 个（file5...）
 ```
 
-### 步骤 3：add 策略确认
+### 步骤 3：轮次收束写入（提交前纳入行为日志）
 
-**默认**：`git add .`（添加所有变更）
+在 `git add` 之前，确保当前轮次的行为快照已写入 `10-Topics/Round-Behavior-Log.md`（按 `flow-behavior-auto-receipt.mdc` 步骤 A 执行），以便本轮日志行随本次提交一并推送，避免 push 后立即出现待处理修改。
+
+### 步骤 4：add 策略确认
+
+**默认**：`git add .`（添加所有变更，含步骤 3 写入的日志文件）
 **若用户指定范围**：按用户要求执行 `git add <指定文件>`
 
-### 步骤 4：commit message 拟定与确认
+### 步骤 5：commit message 拟定与确认
 
 1. Agent 根据变更内容拟定建议的 commit message
 2. 回执给用户确认或修改
 3. 用户确认后执行 `git commit -m "message"`
 
-### 步骤 5：推送前拉取与推送
+### 步骤 6：推送前拉取与推送
 
 1. `git pull --rebase`
 2. 若无冲突：`git push`
 3. 推送成功后回执：远端分支 + 提交摘要
 
-### 步骤 5 补充：拉取并入远端更新
+### 步骤 6 补充：拉取并入远端更新
 
 当本次 git pull 实际合并入了远端新提交时，回执末尾须指向 `post-git-pull-three-layer-awareness.mdc`，并按其中「拉取完成后的立即动作 A/B」回执新增规则/脚本摘要。
 
