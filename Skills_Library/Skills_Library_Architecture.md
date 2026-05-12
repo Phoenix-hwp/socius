@@ -16,7 +16,10 @@ Skills Library 是本系统的 **外部能力插拔层**，位于 Clean Architec
 
 ```
 Skills_Library/
-├── skill-registry.json          ← 技能注册表（所有技能的统一索引）
+├── skill-registry.json          ← 技能注册表（已安装技能的索引，含 task_types + performance_score）
+├── skill-candidates.md          ← 备选候选表（已评估但未接入的能力，含准入分 + 评估历史）
+├── task-type-registry.md        ← 任务类型锚点（类型名 + 触发关键词 + 覆盖技能 + 历史中位数据）
+├── skill-performance-log.jsonl  ← 表现评分日志（每次任务完成后写入五维评分）
 ├── config.json                  ← 单 Agent 配置（开关、策略）
 ├── Skills_Library_Architecture.md ← 本文档
 └── skills/
@@ -26,6 +29,24 @@ Skills_Library/
         ├── config.example.json  ← 配置模板
         └── assets/              ← 附件、依赖声明
 ```
+
+## 评估体系
+
+### 准入评估（接入前）
+六维评分（功能契合、质量信号、风险可控、安装难度、体系兼容、可逆性，满分 30），≥18 分准入候选表，≥24 分推荐立即接入。
+详见 `.cursor/rules/mod-skill-evaluation.mdc` §2。
+
+### 表现评估（接入后）
+每次完成任务后五维评分（正确性、自主度、副作用、效率、能耗，满分 25），取最近 5 次均值作为技能表现分。
+详见 `.cursor/rules/mod-skill-evaluation.mdc` §3。
+
+### 周期性巡检
+轻检（每次 sessionStart 静默标注）、中检（≥30 天，逐技能质量/风险/趋势）、重检（≥180 天，全量过一遍 + 静默淘汰）。
+详见 `.cursor/rules/mod-skill-evaluation.mdc` §6。
+
+### 任务匹配
+用户任务 → 提取关键词 → 命中任务类型 → 内部技能优先 → 外部技能次之 → 全网搜索。
+详见 `.cursor/rules/mod-skill-evaluation.mdc` §4。
 
 ## 频率分型
 

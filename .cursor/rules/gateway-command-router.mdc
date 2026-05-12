@@ -95,6 +95,7 @@ alwaysApply: true
 | `技能全开` / `启用所有技能` | `flow-skill-toggle.mdc`（框架：`mod-skills-library-framework.mdc`） | 一键启闭所有外部技能（锁定技能除外） |
 | `技能全关` / `禁用所有技能` | `flow-skill-toggle.mdc`（框架：`mod-skills-library-framework.mdc`） | 一键关闭所有外部技能，仅保留内核规则 |
 | `执行技能` / `运行技能` / `调用技能` | `flow-skill-execute.mdc`（框架：`mod-skills-library-framework.mdc`） | 执行前快照 → 写路径限制 → 执行后差异审查 → AskQuestion 确认/回滚 |
+| `评估技能` / `技能评估` / `技能巡检` | `mod-skill-evaluation.mdc`（框架：`mod-skills-library-framework.mdc`） | 中检：逐技能检查质量变化/风险变化/表现评分趋势 |
 
 ---
 
@@ -213,4 +214,9 @@ alwaysApply: true
   - 第三层：`flow-skill-acquire.mdc`（技能获取：安全闸门 + 隔离试运行 + 确认部署）
   - 第三层：`flow-skill-execute.mdc`（技能执行：快照 + 写路径限制 + 差异审查 + 确认/回滚）
   - 第三层：`flow-skill-toggle.mdc`（技能开关：单技能/全开全关/休眠/归档）
+- **评估体系**：
+  - 第二层：`mod-skill-evaluation.mdc`（准入评分 + 表现评分 + 巡检 + 替换）
+  - 数据：`Skills_Library/task-type-registry.md`（任务类型锚点）
+  - 数据：`Skills_Library/skill-performance-log.jsonl`（表现评分日志）
+  - 数据：`Skills_Library/skill-candidates.md`（备选候选表）
 - **横切**：`kernel-runtime.mdc`（内核运行：知识库 + 开端收束 + 轮次确认 + 长记忆）

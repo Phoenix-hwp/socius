@@ -2,7 +2,7 @@
 title: Cursor 指令别名清单
 type: cursor-command-aliases
 created: 2026-04-21
-updated: 2026-05-12 (新增变更前影响枚举指令)
+updated: 2026-05-12 (新增技能评估指令 + 评估体系落盘)
 tags:
   - cursor
   - aliases
@@ -59,6 +59,7 @@ tags:
 | 技能全开 | 启用所有技能 | 一键启闭所有外部技能（锁定技能除外） | `.cursor/rules/flow-skill-toggle.mdc` |
 | 技能全关 | 禁用所有技能、停用技能 | 一键关闭所有外部技能，仅保留内核规则 | `.cursor/rules/flow-skill-toggle.mdc` |
 | 执行技能 | 运行技能、调用技能 | 执行已部署的 Skill（执行前快照 → 写路径限制 → 差异审查 → 确认/回滚） | `.cursor/rules/flow-skill-execute.mdc`、`.cursor/rules/mod-skills-library-framework.mdc` |
+| 评估技能 | 技能评估、技能巡检 | 对备选和已安装技能执行中检：逐技能检查质量变化/风险变化/表现评分趋势 | `.cursor/rules/mod-skill-evaluation.mdc`、`Skills_Library/task-type-registry.md` |
 
 ## 2. 维护约定
 

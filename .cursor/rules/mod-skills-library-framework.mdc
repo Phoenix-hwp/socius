@@ -8,6 +8,8 @@ related:
   - flow-skill-acquire.mdc（技能获取工作流）
   - flow-skill-execute.mdc（技能执行工作流）
   - flow-skill-toggle.mdc（技能开关工作流）
+  - mod-skill-evaluation.mdc（评估体系：准入 + 表现 + 巡检 + 匹配）
+  - Skills_Library/task-type-registry.md（任务类型锚点）
 ---
 
 # Skills Library 统一框架
@@ -32,6 +34,7 @@ related:
 | **D** | 部署确认 | AskQuestion [确认部署] [回滚] | `flow-skill-acquire.mdc` §D |
 | **E** | 生命周期管理 | 开关 / 休眠 / 归档 / 移除 | `flow-skill-toggle.mdc` |
 | **F** | 运行时防护 | 执行前快照 → 写路径限制 → 差异审查 → 确认/回滚 | `flow-skill-execute.mdc` |
+| **G** | 评估与巡检 | 准入评分 → 表现评分 → 周期巡检 → 竞争替换 → 静默淘汰 | `mod-skill-evaluation.mdc`（含 `task-type-registry.md`、`skill-performance-log.jsonl`） |
 
 ## 技能注册表结构
 
