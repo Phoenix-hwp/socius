@@ -50,3 +50,4 @@
 {"date":"2026-05-10","topic":"行为偏好系统改造","behavior":"直接执行 | 跳过确认 | 表格化 | 直接文本 | 文件操作 + Shell | 方案落地; L3+阈值; 冲突/趋势检测; 三层架构修复; StepE AskQuestion阻断修复","fit":"高","format":"compact"}
 {"date":"2026-05-11","topic":"自学习体系落地（T002）","behavior":"直接执行 | 跳过确认 | 分段叙述 | 直接文本 | 文件操作 | Notion二期;A+B1注册表封装;AskQuestion横切;续接清理;B2待二期","fit":"高","format":"compact"}
 {"date":"2026-05-11","topic":"认知维度扩展 + 格式迁移（JSONL）","behavior":"方案先于执行 | 逐步确认 | 表格化 | 混合 | 文件操作 | 认知维度6→12扩展;L3闸门阻断;行为日志JSONL迁移;Earth Library卡片JSONL迁移","fit":"高","format":"compact"}
+{"date":"2026-05-12","topic":"GitHub外部能力接入方案备忘","behavior":"直接执行 | 跳过确认 | 分段叙述 | 直接文本 | 文件操作 | 用户说'先提交再备忘'→Agent先提交了;正确理解:应先完成本地改动再一起提交;时序指令需合并理解而非逐字顺序","fit":"中","format":"compact"}
