@@ -21,6 +21,14 @@ alwaysApply: true
 ## 路由流程
 
 0. **方法可靠性预检（强制）**：在执行任何映射动作之前，先 Read `.cursor/method-reliability-registry.json`，筛选「当前任务类型 + 当前设备(hostname)」的记录。若该方法的状态为 ⚠ 降权 或 🚫 禁用，且用户未显式指定该方法 → 跳过，取下一个 ✅ 正常 的方法。若无正常方法可用 → 提示用户所有已知方法均被降权/禁用，请手动指定或等待恢复。
+0.1 **设备执行规则匹配（强制）**：在通过方法预检后、即将发出 Shell 命令前，Read `.cursor/device-execution-rules.json`，检测当前平台（`$env:OS` / `uname` + 当前 Shell 类型）。过滤 `os` 与 `shell` 字段均匹配的规则，对即将执行的命令文本逐条匹配 `condition`：
+   - `always`：无条件应用
+   - `starts_with "<prefix>"`：命令以指定前缀开头
+   - `contains "<substr>"`：命令包含指定子串
+   - `regex "<pattern>"`：命令匹配正则
+   - 命中规则后按 `action` 执行：`replace`（自动替换 from→to）、`before`（在命令前追加 to）、`after`（在命令后追加 to）、`warn`（提示已有修正建议但不自动应用）、`block`（拒绝执行并说明原因）
+   - 应用修正后，在执行前简短标注 `⚙ 已应用设备规则 <id>：<rationale>`，让用户感知
+   - 跨设备兼容：本文件随 Git 同步；运行时仅匹配当前 OS+Shell 的规则，无关规则自动跳过，不产生副作用
 1. **先在 `10-Topics/Cursor-command-aliases.md` 中查找**完全匹配**与**高相似匹配**（同义词、近义说法）
 2. **若命中映射**：必须先执行映射动作（通常是先 Read 指定文件并基于该文件继续处理），不得跳过到无关检索
 3. **若未命中映射**：才执行常规搜索；并可建议用户把该短指令加入别名清单
