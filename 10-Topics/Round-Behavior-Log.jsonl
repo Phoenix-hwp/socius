@@ -22,7 +22,8 @@
 {"type":"hot","date":"2026-05-11","task":"T002","style":"问答为主","confirm":"跳过确认","output_structure":"简报","user_input":"直接文本","tool_channel":"文件操作","special":"T002续接：状态摘要+清除过时依赖","consumed":true}
 {"type":"hot","date":"2026-05-11","task":"其他","style":"方案先于执行","confirm":"关键确认","output_structure":"分段叙述","user_input":"直接文本","tool_channel":"文件操作","special":"回收站软删除规则+歧义保护落地","consumed":true}
 {"type":"warm","date":"2026-05-11","task":null,"decomposition":"—","cognitive_path":"—","language_style":"—","expression_density":"—","emotional_tone":"—","confidence":"低","sample_phase":"warmup","consumed":true}
-{"type":"hot","date":"2026-05-12","task":null,"style":"直接执行","confirm":"跳过确认","output_structure":"分段叙述","user_input":"直接文本","tool_channel":"文件操作","special":"规则落地+快照清理","consumed":false}
+{"type":"hot","date":"2026-05-12","task":null,"style":"直接执行","confirm":"跳过确认","output_structure":"分段叙述","user_input":"直接文本","tool_channel":"文件操作","special":"规则落地+快照清理","consumed":true}
+{"type":"hot","date":"2026-05-12","task":null,"style":"直接执行","confirm":"跳过确认","output_structure":"混合","user_input":"直接文本","tool_channel":"Shell(git)+文件操作","special":"提交git：push adb9668","consumed":false}
 {"type":"warm","date":"2026-05-12","task":null,"decomposition":"自底向上","cognitive_path":"先细节后框架","language_style":"结构化","expression_density":"简洁","emotional_tone":"逻辑","confidence":"低","sample_phase":"warmup","consumed":false}
 {"type": "hot", "date": "2026-05-11", "task": "清理", "style": "直接执行", "confirm": "跳过确认", "output_structure": "简报", "user_input": "直接文本", "tool_channel": "文件操作(Delete/Shell)", "special": "JSON/JSONL 迁移后清理旧 Markdown：68 个删除 + 7 个新文件 + 11 个规则路径更新", "consumed": false}
 {"type": "hot", "date": "2026-05-11", "task": "清理", "style": "直接执行", "confirm": "关键确认", "output_structure": "表格化", "user_input": "混合", "tool_channel": "文件操作+Shell", "special": "16 文件批量迁移：Knowledge_Cards 目录删除→JSONL统一+11个引用文件修复+存储约定落地+backup", "consumed": false}
