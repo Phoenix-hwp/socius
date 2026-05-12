@@ -190,6 +190,7 @@ python "Earth_Library/scripts/library_optimize.py"
 | 技能管理 | 技能开关、管理Skills | 查看/启闭/休眠/归档技能（AskQuestion 面板交互） | `mod-skills-library-framework.mdc` | `flow-skill-toggle.mdc` |
 | 技能全开 | 启用所有技能 | 一键启闭所有外部技能（锁定技能除外） | `mod-skills-library-framework.mdc` | `flow-skill-toggle.mdc` |
 | 技能全关 | 禁用所有技能、停用技能 | 一键关闭所有外部技能，仅保留内核规则 | `mod-skills-library-framework.mdc` | `flow-skill-toggle.mdc` |
+| 执行技能 | 运行技能、调用技能 | 执行已部署的 Skill（快照 → 写路径限制 → 差异审查 → 确认/回滚） | `mod-skills-library-framework.mdc` | `flow-skill-execute.mdc` |
 
 ### 架构文件
 
@@ -198,8 +199,9 @@ python "Earth_Library/scripts/library_optimize.py"
 | `Skills_Library/Skills_Library_Architecture.md` | Skills Library 架构文档 |
 | `Skills_Library/skill-registry.json` | 技能注册表（统一管理所有技能） |
 | `Skills_Library/config.json` | 单 Agent 技能配置（开关控制） |
-| `.cursor/rules/external-dependency-boundary.mdc` | 外部依赖边界 — 内核安全隔离 |
-| `.cursor/rules/mod-skills-library-framework.mdc` | Skills Library 统一框架 |
+| `.cursor/rules/external-dependency-boundary.mdc` | 外部依赖边界 — 内核安全隔离 + 执行阶段快照/回滚约束 |
+| `.cursor/rules/mod-skills-library-framework.mdc` | Skills Library 统一框架（阶段 A–F） |
+| `.cursor/rules/flow-skill-execute.mdc` | 技能执行工作流（三部曲：快照 → 隔离 → 审查/回滚） |
 
 ### 频率分型
 

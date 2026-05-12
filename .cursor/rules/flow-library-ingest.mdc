@@ -103,6 +103,12 @@ cmd /c "python Earth_Library/scripts/quick_ingest.py --text \"内容\" || node E
 1. **仅入库新增知识**：不把过程噪音、临时草稿写入
 2. **置信度诚实标记**：不确定的知识标记为"中"或"低"
 3. **关键词准确**：便于后续检索与关联
+4. **批量入库（≥3 条）执行防污染**：按 `pre-change-impact-enumeration.mdc` §5 执行差异审查：
+   - 入库前：`git rev-parse HEAD` 记录基线
+   - 入库后：`git diff --stat` + `git diff -- Earth_Library/` 审查变更
+   - 无越权变更 → 简短回执 ✅
+   - 有越权变更（如误写入其他目录）→ AskQuestion `[确认保留] [回滚越权] [回滚全部]`
+   - 本章节是 §5 通用原则在 Earth Library 批量场景的具体落地，防控等级介于 Skills 执行（最高）和通用（最低）之间
 
 ---
 

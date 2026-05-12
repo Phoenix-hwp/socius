@@ -17,6 +17,7 @@ related:
 
 **执行通道（默认）**：
 - **获取**：`flow-skill-acquire.mdc`（安全闸门 + 隔离试运行）
+- **执行**：`flow-skill-execute.mdc`（执行前快照 + 写路径限制 + 差异审查 + 确认/回滚）
 - **开关**：`flow-skill-toggle.mdc`（单技能开关 + 全开/全关）
 - **移除**：归档到 `.trash/Skills_Library/<skill-name>/`，30 天后物理删除
 
@@ -29,6 +30,7 @@ related:
 | **C** | 试运行 | git worktree 隔离 → 部署 → 验证 → 报告 | `flow-skill-acquire.mdc` §C |
 | **D** | 部署确认 | AskQuestion [确认部署] [回滚] | `flow-skill-acquire.mdc` §D |
 | **E** | 生命周期管理 | 开关 / 休眠 / 归档 / 移除 | `flow-skill-toggle.mdc` |
+| **F** | 运行时防护 | 执行前快照 → 写路径限制 → 差异审查 → 确认/回滚 | `flow-skill-execute.mdc` |
 
 ## 技能注册表结构
 
@@ -80,3 +82,5 @@ related:
 - [ ] 安全闸门各项是否均已检查并通过？
 - [ ] 试运行是否在隔离环境（git worktree）中执行？
 - [ ] 部署/移除前是否已通过 AskQuestion 确认？
+- [ ] **执行前**：是否已完成快照（git stash / 基线 commit）并按 `flow-skill-execute.mdc` 做路径限制？
+- [ ] **执行后**：是否已做差异审查（git diff --stat + 逐路径 diff）并确认无越权写入？

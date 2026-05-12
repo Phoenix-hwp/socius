@@ -58,6 +58,14 @@ related:
 - Skill 执行失败时：记录到 `method-reliability-registry.json`，降权或禁用，**不阻塞当前对话**。
 - 用户可通过 `config.json` 一键全开/全关所有外部 Skills。
 
+## 执行阶段强制约束
+
+> 本段呼应 `pre-change-impact-enumeration.mdc` §5（执行后差异审查）和 `flow-skill-execute.mdc`（Skills 执行三部曲）。
+
+- **Skills 执行前**：必须记录基线（`git rev-parse HEAD`）或 `git stash`，详见 `flow-skill-execute.mdc` §A。
+- **执行后**：必须执行 `git diff --stat` 差异审查，确认无越权写入后方可放行。
+- **回滚权限**：用户始终保留用基线 commit 一键回滚的权利（`git reset --hard <基线>`），Agent 不得在未确认前提交或推送变更。
+
 ## Agent 自检（涉及外部能力时）
 
 - [ ] 外部能力的入口是否在 `Skills_Library/skills/` 下，而非散落在 `.cursor/` 或仓库根？

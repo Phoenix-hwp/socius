@@ -58,6 +58,7 @@ tags:
 | 技能管理 | 技能开关、管理Skills | 查看/启用/禁用/休眠/归档技能（AskQuestion 面板交互） | `.cursor/rules/flow-skill-toggle.mdc`、`.cursor/rules/mod-skills-library-framework.mdc` |
 | 技能全开 | 启用所有技能 | 一键启闭所有外部技能（锁定技能除外） | `.cursor/rules/flow-skill-toggle.mdc` |
 | 技能全关 | 禁用所有技能、停用技能 | 一键关闭所有外部技能，仅保留内核规则 | `.cursor/rules/flow-skill-toggle.mdc` |
+| 执行技能 | 运行技能、调用技能 | 执行已部署的 Skill（执行前快照 → 写路径限制 → 差异审查 → 确认/回滚） | `.cursor/rules/flow-skill-execute.mdc`、`.cursor/rules/mod-skills-library-framework.mdc` |
 
 ## 2. 维护约定
 
