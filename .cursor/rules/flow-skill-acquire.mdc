@@ -1,0 +1,109 @@
+---
+description: 技能获取工作流 — 安全闸门 + 隔离试运行 + 确认部署
+alwaysApply: false
+Lifecycle: 长期
+Created: 2026-05-12
+related:
+  - mod-skills-library-framework.mdc（Skills Library 框架）
+  - external-dependency-boundary.mdc（外部依赖边界）
+  - .cursor/method-reliability-registry.json（方法可靠性注册表）
+---
+
+# 技能获取工作流
+
+## 触发条件
+
+- 用户说「获取技能」「安装技能」「接入 GitHub 能力」「添加 Skill」等
+- 用户提供 GitHub URL 或本地技能路径
+
+## §A 技能发现
+
+1. 用户提供技能来源：
+   - **GitHub URL**（如 `https://github.com/user/repo`）→ 直接进入 §B
+   - **名称检索**（如「找一个 Python 代码审查 skill」）→ 在 GitHub 搜索，展示候选清单
+   - **本地路径**（如 `D:\my-skills\my-skill`）→ 验证目录下存在 `SKILL.md`
+2. 展示候选技能摘要（名称、描述、依赖、风险信号），AskQuestion 确认选择。
+
+## §B 安全闸门（四维检查）
+
+对选定的技能执行以下检查，**任一不通过则阻断**：
+
+### B1 依赖声明
+- 检查 `SKILL.md` 或 `requirements.txt` / `package.json` 中依赖声明
+- 列出所有外部依赖（pip/npm/系统工具）
+- 检查依赖是否与当前环境兼容
+
+### B2 配置检查
+- 检查是否存在 `config.example.json` 或等效模板
+- 模板中无不安全默认值（如 `password: "admin"`）
+- 若不存在模板 → 不阻断，但标注「缺少配置模板」
+
+### B3 功能范围
+- 检查 `SKILL.md` 中声明的写入范围
+- 写入范围必须在 `Skills_Library/skills/<name>/` 或用户明确授权的路径内
+- **禁止**声明需要写入 `.cursor/rules/`、`.git/`、内核文件
+
+### B4 安全信号
+- 扫描入口脚本中的高风险模式：
+  - `eval()` / `exec()` / `subprocess(shell=True)` → 🚫 高风险
+  - `os.system()` → ⚠ 中风险
+  - 网络请求到非声明域名 → ⚠ 中风险
+- 展示风险清单，每项标注风险等级
+
+### 闸门结果
+- 全部通过 → 进入 §C 试运行
+- 有 ⚠ 中风险 → 展示清单，AskQuestion [继续（已知风险）] [放弃]
+- 有 🚫 高风险 → 强制阻断，AskQuestion [强制继续（已理解风险）] [放弃]
+
+## §C 隔离试运行
+
+### C1 创建隔离环境
+```bash
+# 在仓库根执行
+git worktree add .trash/skill-trial/<skill-name> HEAD
+cd .trash/skill-trial/<skill-name>
+```
+
+### C2 部署技能
+- 将技能文件复制到隔离环境中的 `Skills_Library/skills/<skill-name>/`
+- 安装依赖（在隔离环境中）
+- 执行 `SKILL.md` 中声明的验证步骤
+
+### C3 验证
+- 运行技能的自检/测试（如有）
+- 执行一次空载调用（dry-run），确认无崩溃
+- 检查隔离环境中是否有非预期文件变更
+
+### C4 报告
+- 输出试运行报告：成功/失败 + 日志摘要
+- 失败 → 自动回滚（`git worktree remove .trash/skill-trial/<skill-name>`）
+- 成功 → 进入 §D
+
+## §D 部署确认
+
+展示部署摘要：
+- 技能名称、来源、频率分型
+- 依赖清单
+- 试运行结果
+- 写入范围
+
+AskQuestion：
+- 单选项：`[确认部署] [回滚（放弃）]`
+- 附：`[修改频率分型]`（如用户需调整常用/高频/低频/特定）
+
+### 确认部署后
+1. 将技能文件从试运行环境复制到实际 `Skills_Library/skills/<skill-name>/`
+2. 在 `Skills_Library/skill-registry.json` 中登记
+3. 更新 `Skills_Library/config.json`（默认启用）
+4. 清理试运行环境（`git worktree remove`）
+5. 回执部署成功 + 技能 ID
+
+## §E 失败兜底
+
+- GitHub 不可达 → 提示检查网络，保留 URL 待重试
+- git worktree 创建失败 → 检查 git 版本（需 ≥2.5），磁盘空间
+- 依赖安装失败 → 展示错误日志，AskQuestion [跳过依赖（可能不可用）] [放弃]
+
+## 与外部依赖边界的关系
+
+本工作流是 `external-dependency-boundary.mdc` 中「插拔式接入」的执行实现。Any deployment through this workflow guarantees the kernel layer remains untouched.

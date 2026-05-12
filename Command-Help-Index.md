@@ -11,8 +11,8 @@
 | 读取对话 | 查对话 | 按日期+时段检索备份（日常索引或项目目录双源） | `mod-conversation-framework.mdc` | `flow-conversation-read.mdc` |
 | 继续对话 | 继续XX项目、继续 | 按归属路由：无归属按索引检索+恢复上下文；有项目读Master_Control→轻确认 | `mod-multi-round-framework.mdc` | `flow-conversation-resume.mdc` |
 | 升级为多轮 | 创建项目主控、转为长记忆 | 创建Master_Control+Project_Memo+备份目录，R0初始化 | `mod-multi-round-framework.mdc` | `flow-multi-round-upgrade.mdc` |
-| 总结本轮对话 | 本轮总结 | 收束本轮并写回轮次日志与看板；开放式模式确认是否采纳 | `long-memory-round-workflow.mdc` | — |
-| 确认合并 | 执行合并 | 一致性快检后将已确认内容写入主文档并登记合并记录 | `long-memory-round-workflow.mdc` | — |
+| 总结本轮对话 | 本轮总结 | 收束本轮并写回轮次日志与看板；开放式模式确认是否采纳 | `kernel-runtime.mdc` §4.5 | — |
+| 确认合并 | 执行合并 | 一致性快检后将已确认内容写入主文档并登记合并记录 | `kernel-runtime.mdc` §4.6 | — |
 
 ## 3) 项目备忘录相关（多项目支持）（三层架构）
 
@@ -178,7 +178,41 @@ python "Earth_Library/scripts/library_optimize.py"
 
 ---
 
-## 11) 行为偏好（自动收束与任务跟踪）
+## 11) Skills Library（技能库 — 外部能力插拔层）
+
+> 定位：位于 Clean Architecture 最外层，管理所有可插拔能力（内部固化 + 外部获取）。按频率分型（常用/高频/低频/特定），支持单 Agent 独立配置。
+
+### 核心指令
+
+| 指令 | 别名 | 说明 | 框架 | 工作流 |
+|:---|:---|:---|:---|:---|
+| 获取技能 | 安装技能、接入能力、添加Skill | 外部技能获取 → 安全闸门（四维检查） → 隔离试运行 → AskQuestion 确认部署 | `mod-skills-library-framework.mdc` | `flow-skill-acquire.mdc` |
+| 技能管理 | 技能开关、管理Skills | 查看/启闭/休眠/归档技能（AskQuestion 面板交互） | `mod-skills-library-framework.mdc` | `flow-skill-toggle.mdc` |
+| 技能全开 | 启用所有技能 | 一键启闭所有外部技能（锁定技能除外） | `mod-skills-library-framework.mdc` | `flow-skill-toggle.mdc` |
+| 技能全关 | 禁用所有技能、停用技能 | 一键关闭所有外部技能，仅保留内核规则 | `mod-skills-library-framework.mdc` | `flow-skill-toggle.mdc` |
+
+### 架构文件
+
+| 文件 | 用途 |
+|:---|:---|
+| `Skills_Library/Skills_Library_Architecture.md` | Skills Library 架构文档 |
+| `Skills_Library/skill-registry.json` | 技能注册表（统一管理所有技能） |
+| `Skills_Library/config.json` | 单 Agent 技能配置（开关控制） |
+| `.cursor/rules/external-dependency-boundary.mdc` | 外部依赖边界 — 内核安全隔离 |
+| `.cursor/rules/mod-skills-library-framework.mdc` | Skills Library 统一框架 |
+
+### 频率分型
+
+| 分型 | 定义 | 保留策略 |
+|:---|:---|:---|
+| 常用 | 日常高频使用 | 常驻，永久保留 |
+| 高频 | 项目期高频使用 | 项目结束后评估是否降级 |
+| 低频 | 特定 agent 或场景 | 按需加载，可休眠 |
+| 特定 | 一次性任务获取 | 任务完成后 30 天自动归档 |
+
+---
+
+## 12) 行为偏好（自动收束与任务跟踪）
 
 > 定位：将行为偏好从「手动指令触发」升级为「自动收束 + 任务状态跟踪 + 跨轮续接 + L3 模式发现」。
 
@@ -189,8 +223,8 @@ python "Earth_Library/scripts/library_optimize.py"
 | 任务状态跟踪 | `10-Topics/Active-Task-Tracker.md` | 会话开始/结束 |
 | 轮级行为快照（六字段） | `10-Topics/Round-Behavior-Log.md` | 每轮结尾自动 |
 | 任务完成自动收束 | `flow-behavior-auto-receipt.mdc` | 任务 → 已完成时 |
-| 手动收束（完整版） | `session-profile-workflow.mdc` | `/收束` / `结束对话` |
-| 续接 | `session-profile-workflow.mdc` | 会话开始 |
+| 手动收束（完整版） | `kernel-runtime.mdc` §2.2 | `/收束` / `结束对话` |
+| 续接 | `kernel-runtime.mdc` §1.2 | 会话开始 |
 | 维度注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 新增/启用/禁用时 |
 
 ### 关键文件
@@ -201,7 +235,7 @@ python "Earth_Library/scripts/library_optimize.py"
 | 行为快照 | `10-Topics/Round-Behavior-Log.md` | 每轮六字段摘要 |
 | 维度定义 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度注册表，支持增/启/禁 |
 | 自动收束规则 | `.cursor/rules/flow-behavior-auto-receipt.mdc` | 双层记录工作流 |
-| 会话规则 | `.cursor/rules/session-profile-workflow.mdc` | 开端续接 + 收束触发 |
+| 会话规则 | `.cursor/rules/kernel-runtime.mdc` | 开端续接 + 收束触发 |
 
 ### 维度字段
 

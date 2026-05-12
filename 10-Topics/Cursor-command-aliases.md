@@ -2,7 +2,7 @@
 title: Cursor 指令别名清单
 type: cursor-command-aliases
 created: 2026-04-21
-updated: 2026-05-09 (多轮对话备份架构重构：新增继续对话/升级为多轮，废弃创建项目索引)
+updated: 2026-05-12 (新增变更前影响枚举指令)
 tags:
   - cursor
   - aliases
@@ -26,8 +26,8 @@ tags:
 | 继续对话 | 继续XX项目、继续 | 按归属路由：无归属按日常索引检索+恢复上下文；有项目读取 `Master_Control` 轮次日志→轻确认下轮起点→继续推进。无主控时触发升级询问 | `flow-conversation-resume.mdc`（框架：`mod-multi-round-framework.mdc`） |
 | 升级为多轮 | 创建项目主控、转为长记忆 | 创建 `<P>/<P>_Master_Control.md`（基于模板）+ `<P>/<P>_Project_Memo.md` + `<P>/对话备份/`，R0 初始化，后续备份自动归属项目 | `flow-multi-round-upgrade.mdc`（框架：`mod-multi-round-framework.mdc`） |
 | ⛔ 创建XX项目索引 | 创建项目索引 | ⛔ 废弃于 2026-05-09，由「升级为多轮」替代 | 废弃 |
-| 总结本轮对话 | 本轮总结 | 输出并落盘本轮"已完成/未完成/待确认/下轮起点"；开放式模式下确认是否采纳本轮结论 | `.cursor/rules/long-memory-round-workflow.mdc` |
-| 确认合并 | 执行合并 | 触发合并闸门：一致性快检后将已确认内容写入主文档，并记录合并日志 | `.cursor/rules/long-memory-round-workflow.mdc` |
+| 总结本轮对话 | 本轮总结 | 输出并落盘本轮"已完成/未完成/待确认/下轮起点"；开放式模式下确认是否采纳本轮结论 | `.cursor/rules/kernel-runtime.mdc` §4.5 |
+| 确认合并 | 执行合并 | 触发合并闸门：一致性快检后将已确认内容写入主文档，并记录合并日志 | `.cursor/rules/kernel-runtime.mdc` §4.6 |
 | 执行策略 | 策略、风险策略 | 返回全局风险分级自动执行策略（balanced）及当前会话执行原则 | `Command-Help-Index.md` |
 | 快速模式 | 自动执行、少确认 | 将当前会话切换到"低/中风险自动执行，高风险确认" | `Command-Help-Index.md` |
 | 谨慎模式 | 全确认、严格确认 | 将当前会话切换到"所有写入动作先确认" | `Command-Help-Index.md` |
@@ -51,7 +51,13 @@ tags:
 | git到新设备 | 克隆到新路径、同步到新位置、拉取git到新目录 | 将远程仓库拉取到用户指定的新路径，包含确认步骤、路径选择、冲突处理 | `.cursor/rules/flow-git-clone-to-custom-path.mdc` |
 | 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | **换设备后由 Agent 执行初始化链路**：提醒先 `git clone/pull`（若用户未做）；在**工作区根**用工具或等价方式运行 `bootstrap-on-pull.cmd`（占位、环境、Shim 依赖、ngrok 检测、API Key 占位）；回执须含脚本摘要与**仍需手动**项（见 `模型配置说明.md`）。用户仅说「初始化」且无他义时，视同本指令 | `.cursor/rules/git-cross-device-and-secrets.mdc`、`模型配置说明.md` |
 | 运行模型 | 切换模型、启动模型 | **交互终端**：在 `.cursor/ai-model-shim/` 目录下以可见终端窗口运行 `auto-switch.cmd`，弹出菜单供用户选择 Kimi K2.6 / DeepSeek V4 Pro，后续流程（Shim 代理 + ngrok 隧道）在终端内交互完成 | `.cursor/ai-model-shim/auto-switch.cmd` |
-| 封装能力 | 固化流程、封装指令 | **被动固化（B1）**：提取近期执行的步骤序列 → 按复杂度判定产物（≤3→别名，4-7→flow-*.mdc，8+→Skill）→ 预览 → 等待 `确认封装` 后落盘并登记到 `Capability-Registry.md` | `.cursor/rules/flow-capability-encapsulate.mdc` |
+| 封装能力 | 固化流程、封装指令 | **被动固化（B1）**：提取近期执行的步骤序列 → 按复杂度判定产物（≤3→别名，4-7→flow-*.mdc，8+→Skill）→ 预览 → 等待 `确认封装` 后落盘并登记到 `Skills_Library/skill-registry.json` | `.cursor/rules/flow-capability-encapsulate.mdc` |
+| （会话约定）变更前影响枚举 | 影响枚举、搜引用 | **非口令菜单**：涉及路径/字段名/文件名变更前，强制搜索全库引用并列出待同步清单，全部打勾后方可落盘。详见 `pre-change-impact-enumeration.mdc` | `.cursor/rules/pre-change-impact-enumeration.mdc`、`.cursor/change-impact-checklist.json` |
+
+| 获取技能 | 安装技能、接入能力、添加Skill | 从 GitHub/本地获取外部技能 → 安全闸门 → 隔离试运行 → AskQuestion 确认部署 | `.cursor/rules/flow-skill-acquire.mdc`、`.cursor/rules/mod-skills-library-framework.mdc` |
+| 技能管理 | 技能开关、管理Skills | 查看/启用/禁用/休眠/归档技能（AskQuestion 面板交互） | `.cursor/rules/flow-skill-toggle.mdc`、`.cursor/rules/mod-skills-library-framework.mdc` |
+| 技能全开 | 启用所有技能 | 一键启闭所有外部技能（锁定技能除外） | `.cursor/rules/flow-skill-toggle.mdc` |
+| 技能全关 | 禁用所有技能、停用技能 | 一键关闭所有外部技能，仅保留内核规则 | `.cursor/rules/flow-skill-toggle.mdc` |
 
 ## 2. 维护约定
 

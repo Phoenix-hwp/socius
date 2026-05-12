@@ -30,7 +30,7 @@ glossary:
 |:---|:---|:---|
 | 第二层 | `mod-behavior-crud-framework.mdc` | 本文件 — 统一框架、阶段边界 |
 | 第三层 | `flow-behavior-auto-receipt.mdc` | 操作细则 — 步骤 A–E 全链路 |
-| 横切 | `session-profile-workflow.mdc` | 门户 — 委托到本框架与第三层 |
+| 横切 | `kernel-runtime.mdc` | 门户 — 委托到本框架与第三层 |
 | 注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度与值域定义 |
 | 跟踪 | `10-Topics/Active-Task-Tracker.json` | 任务状态持久化 |
 | 快照 | `10-Topics/Round-Behavior-Log.jsonl` | 轮级行为快照（热快照 + 温快照） |

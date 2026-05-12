@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "description": "影响面注册表 — 按对象类型预注册搜索范围。第一层变更前影响枚举（pre-change-impact-enumeration.mdc）读取本表获取应搜索的文件类型列表，确保不遗漏任何引用端点。",
+    "usage": "Agent 做变更前影响枚举时，遍历 search_scopes 中所有 group，对每个 glob 执行关键词搜索，输出待同步清单。",
+    "lifecycle": "长期",
+    "created": "2026-05-12"
+  },
+  "search_scopes": [
+    {
+      "group": "脚本（Python）",
+      "globs": [".cursor/mcp/**/*.py", ".cursor/hooks/**/*.py", ".cursor/tools/**/*.py", "Earth_Library/scripts/**/*.py"],
+      "keywords": ["import", "from", "file_path", "card_path", "path", "DIR", "DEFAULT", "load", "open"],
+      "note": "路径字面量、import/from 引用、函数调用、文件读写路径"
+    },
+    {
+      "group": "脚本（Node.js）",
+      "globs": [".cursor/mcp/**/*.mjs", ".cursor/hooks/**/*.mjs", "Earth_Library/scripts/**/*.mjs"],
+      "keywords": ["require", "import", "readFile", "writeFile", "join", "resolve"],
+      "note": "require/import 引用、fs 文件路径"
+    },
+    {
+      "group": "脚本（批处理）",
+      "globs": ["**/*.cmd", "**/*.bat", "**/*.ps1"],
+      "keywords": ["call", "cd", "set", "python", "node", "%~dp0"],
+      "note": "路径引用、脚本调用链"
+    },
+    {
+      "group": "Agent 规则",
+      "globs": [".cursor/rules/**/*.mdc"],
+      "keywords": ["路径", "path", "文件索引", "`*.py`", "`*.json`", "Skill", "MCP"],
+      "note": "规则文件中的路径引用、指令映射、模块依赖声明"
+    },
+    {
+      "group": "Agent 模板",
+      "globs": ["Earth_Library/Templates/**/*.md"],
+      "keywords": ["第二步", "第三步", "检索", "搜索", "读取", "写入", "cards.jsonl", "library_index"],
+      "note": "QnA 模板中的步骤引用、路径引用、数据文件引用"
+    },
+    {
+      "group": "数据文件",
+      "globs": ["**/*.json", "**/*.jsonl"],
+      "keywords": ["card_path", "file_path", "path", "domain", "source", "references"],
+      "note": "字段名定义、索引路径、结构定义"
+    },
+    {
+      "group": "文档（Earth Library）",
+      "globs": ["Earth_Library/*.md", "Earth_Library/**/*.md"],
+      "keywords": ["Knowledge_Cards", "cards.jsonl", "library_index", "模板", "路径", "格式"],
+      "note": "架构文档、README、Memo 中的路径与格式描述"
+    },
+    {
+      "group": "文档（10-Topics）",
+      "globs": ["10-Topics/**/*.md"],
+      "keywords": ["规则文件", ".cursor/rules", "工作流", "指令", "别名"],
+      "note": "知识库主题笔记中的规则引用、工作流描述"
+    },
+    {
+      "group": "网关与别名",
+      "globs": [".cursor/rules/gateway-*.mdc", "10-Topics/Cursor-command-aliases.md", "Command-Help-Index.md"],
+      "keywords": ["别名", "映射", "command", "路由", "模块"],
+      "note": "指令别名映射、跨模块引用登记"
+    },
+    {
+      "group": "自动化入口",
+      "globs": [".cursor/hooks.json", ".cursor/hooks/**/*.py", ".cursor/hooks/**/*.mjs"],
+      "keywords": ["sessionStart", "sessionEnd", "launch", "profile", "context"],
+      "note": "钩子入口配置与脚本中的路径依赖"
+    },
+    {
+      "group": "Git 配置",
+      "globs": [".gitignore", ".gitattributes"],
+      "keywords": ["Daily-Backups", ".trash", "cards.jsonl", "library_index"],
+      "note": "变更路径是否影响 Git 追踪与排除规则"
+    },
+    {
+      "group": "模型 Shim",
+      "globs": [".cursor/ai-model-shim/*.cmd", ".cursor/ai-model-shim/*.py", ".cursor/ai-model-shim/*.mjs"],
+      "keywords": ["auto-switch", "config.json", "bootstrap", "model", "provider"],
+      "note": "模型切换脚本中的配置路径与环境依赖"
+    },
+    {
+      "group": "项目文档（20-Projects）",
+      "globs": ["20-Projects/**/*.md"],
+      "keywords": ["背景", "架构", "模块", "M0", "路径", "引用"],
+      "note": "项目长期背景文件中的知识库路径引用"
+    }
+  ],
+  "fallback": {
+    "description": "若变更关键词不在上述任何 group 的 keywords 列表中，Agent 应自己判断适用哪些 group，或默认遍历所有 glob。",
+    "default_search": "对所有 glob 执行关键词搜索，无需用户确认"
+  }
+}

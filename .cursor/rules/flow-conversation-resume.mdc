@@ -99,4 +99,4 @@ glossary:
 - 多轮框架：`mod-multi-round-framework.mdc`
 - 归属判断：`flow-conversation-routing.mdc`
 - 升级流程：`flow-multi-round-upgrade.mdc`
-- 检查点确认：`round-start-checkpoint-confirmation.mdc`
+- 检查点确认：`kernel-runtime.mdc` §3

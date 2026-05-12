@@ -1,0 +1,203 @@
+{
+  "meta": {
+    "description": "Skills Library 技能注册表 — 统一管理所有可插拔能力（内部固化 + 外部获取），按频率分型。",
+    "version": "1.0.0",
+    "created": "2026-05-12",
+    "updated": "2026-05-12"
+  },
+  "frequency_tiers": {
+    "常用": { "definition": "日常高频使用，常驻加载", "retention": "永久保留" },
+    "高频": { "definition": "项目期高频使用，项目期保留", "retention": "项目结束后评估" },
+    "低频": { "definition": "特定 agent 或场景使用", "retention": "按需加载，可休眠" },
+    "特定": { "definition": "一次性任务获取，用完归档", "retention": "任务完成后 30 天自动归档" }
+  },
+  "skills": [
+    {
+      "id": "skill-notion-crud",
+      "name": "Notion CRUD 套件",
+      "source": "internal",
+      "source_url": "",
+      "frequency": "常用",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": ["Notion MCP / notion.env"],
+      "write_scope": ["Notion 页面空间"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-notion-crud-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-notion-create.mdc",
+          ".cursor/rules/flow-notion-update.mdc",
+          ".cursor/rules/flow-notion-delete.mdc",
+          ".cursor/rules/flow-notion-query.mdc",
+          ".cursor/rules/flow-notion-select-parent.mdc",
+          ".cursor/rules/flow-notion-locate-target.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-git-crud",
+      "name": "Git CRUD 套件",
+      "source": "internal",
+      "frequency": "常用",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": ["git >= 2.25"],
+      "write_scope": ["仓库内所有文件", ".git/"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-git-crud-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-git-commit.mdc",
+          ".cursor/rules/flow-git-pull.mdc",
+          ".cursor/rules/flow-git-safe-pull.mdc",
+          ".cursor/rules/flow-git-clone-to-custom-path.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-conversation",
+      "name": "对话备份与恢复套件",
+      "source": "internal",
+      "frequency": "常用",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": [],
+      "write_scope": ["Daily-Backups/", "<项目目录>/对话备份/"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-conversation-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-conversation-backup.mdc",
+          ".cursor/rules/flow-conversation-read.mdc",
+          ".cursor/rules/flow-conversation-resume.mdc",
+          ".cursor/rules/flow-conversation-routing.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-earth-library",
+      "name": "Earth Library 知识库套件",
+      "source": "internal",
+      "frequency": "常用",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": [],
+      "write_scope": ["Earth_Library/"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-earth-library-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-library-ingest.mdc",
+          ".cursor/rules/flow-library-ingest-notion-atomic.mdc",
+          ".cursor/rules/flow-library-search.mdc",
+          ".cursor/rules/flow-library-review.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-project-memo",
+      "name": "项目备忘录套件",
+      "source": "internal",
+      "frequency": "高频",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": [],
+      "write_scope": ["<项目目录>/Project_Memo.md"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-project-memo-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-project-memo-read.mdc",
+          ".cursor/rules/flow-project-memo-append.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-multi-round",
+      "name": "多轮长记忆套件",
+      "source": "internal",
+      "frequency": "高频",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": [],
+      "write_scope": ["<项目目录>/Master_Control.md", "<项目目录>/Project_Memo.md"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-multi-round-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-multi-round-upgrade.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-behavior",
+      "name": "行为偏好套件",
+      "source": "internal",
+      "frequency": "常用",
+      "status": "active",
+      "locked": true,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": [],
+      "write_scope": ["10-Topics/Round-Behavior-Log.jsonl", "10-Topics/Behavior-Fit-Log.jsonl", "10-Topics/Active-Task-Tracker.json"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-behavior-crud-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-behavior-auto-receipt.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-capability-encapsulate",
+      "name": "能力封装",
+      "source": "internal",
+      "frequency": "低频",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": [],
+      "write_scope": [".cursor/rules/", "Skills_Library/", "10-Topics/Cursor-command-aliases.md"],
+      "risk_signals": [],
+      "entry": {
+        "workflows": [
+          ".cursor/rules/flow-capability-encapsulate.mdc"
+        ]
+      }
+    },
+    {
+      "id": "skill-skills-library",
+      "name": "Skills Library 管理套件",
+      "source": "internal",
+      "frequency": "低频",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "dependencies": ["git >= 2.5 (worktree)"],
+      "write_scope": ["Skills_Library/", ".trash/Skills_Library/"],
+      "risk_signals": [],
+      "entry": {
+        "framework": ".cursor/rules/mod-skills-library-framework.mdc",
+        "workflows": [
+          ".cursor/rules/flow-skill-acquire.mdc",
+          ".cursor/rules/flow-skill-toggle.mdc"
+        ]
+      }
+    }
+  ]
+}

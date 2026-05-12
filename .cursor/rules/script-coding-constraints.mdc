@@ -62,3 +62,4 @@ alwaysApply: true
 - [ ] 规则文件是否落在正确的三层层级？alwaysApply 摘要是否已收敛到网关？
 - [ ] 新增文件是否声明了 `Lifecycle`？
 - [ ] 跨设备场景（不同盘符、不同 `CURSOR_PROJECT_DIR`）是否仍能正常工作？
+- [ ] **新增/修改钩子时**：是否同时提供 Python 与 Node.js 双实现？输出是否为 UTF-8 一行 JSON？

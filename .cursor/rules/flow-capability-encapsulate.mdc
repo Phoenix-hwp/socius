@@ -42,7 +42,7 @@ glossary:
 
 ## 能力注册表
 
-所有固化产物均登记到 `.cursor/capability-registry.md`：
+所有固化产物均登记到 `Skills_Library/skill-registry.json`：
 
 | 能力名 | 步骤数 | 产物类型 | 产物路径 | 创建日期 | 最近使用 |
 |--------|--------|---------|---------|---------|---------|
