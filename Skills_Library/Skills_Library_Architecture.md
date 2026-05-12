@@ -46,9 +46,17 @@ Skills_Library/
 
 ## 回滚机制
 
+### 获取阶段（试运行）
 - 通过 `git worktree` 隔离试运行
 - 试运行失败时 `git worktree remove` 回滚
 - 已部署但后续发现问题的技能：通过 `flow-skill-toggle.mdc` 禁用，可选移除
+
+### 执行阶段（运行时防护）
+- 执行前 `git rev-parse HEAD` 记录基线 commit 或 `git stash` 保存快照
+- 执行后 `git diff --stat` + 逐路径 diff 审查变更，分三类标注（预期/连锁/越权）
+- 有越权变更时强制 AskQuestion 确认
+- 回滚手段：`git checkout -- <越权文件>`（局部）或 `git reset --hard <基线>`（全量）
+- 详见 `flow-skill-execute.mdc`
 
 ## 与内核的交互
 

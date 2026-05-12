@@ -195,6 +195,7 @@
         "framework": ".cursor/rules/mod-skills-library-framework.mdc",
         "workflows": [
           ".cursor/rules/flow-skill-acquire.mdc",
+          ".cursor/rules/flow-skill-execute.mdc",
           ".cursor/rules/flow-skill-toggle.mdc"
         ]
       }

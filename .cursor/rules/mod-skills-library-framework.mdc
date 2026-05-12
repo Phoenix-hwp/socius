@@ -6,6 +6,7 @@ Created: 2026-05-12
 related:
   - external-dependency-boundary.mdc（外部依赖边界）
   - flow-skill-acquire.mdc（技能获取工作流）
+  - flow-skill-execute.mdc（技能执行工作流）
   - flow-skill-toggle.mdc（技能开关工作流）
 ---
 
