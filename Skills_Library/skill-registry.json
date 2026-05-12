@@ -226,6 +226,31 @@
           ".cursor/rules/flow-skill-toggle.mdc"
         ]
       }
+    },
+    {
+      "id": "skill-pretty-mermaid",
+      "name": "Pretty Mermaid 图渲染",
+      "source": "github",
+      "source_url": "https://github.com/imxv/Pretty-mermaid-skills",
+      "frequency": "低频",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-12",
+      "last_used": null,
+      "task_types": ["图表绘制"],
+      "performance_score": null,
+      "dependencies": ["Node.js >= 14", "beautiful-mermaid (npm)"],
+      "write_scope": ["Skills_Library/skills/pretty-mermaid/"],
+      "risk_signals": ["execSync auto-install (sandboxed to skill dir)"],
+      "entry": {
+        "framework": "Skills_Library/skills/pretty-mermaid/SKILL.md",
+        "workflows": [
+          "Skills_Library/skills/pretty-mermaid/scripts/render.mjs",
+          "Skills_Library/skills/pretty-mermaid/scripts/batch.mjs",
+          "Skills_Library/skills/pretty-mermaid/scripts/themes.mjs"
+        ]
+      }
     }
   ]
 }

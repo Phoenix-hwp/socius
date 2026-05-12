@@ -25,3 +25,4 @@
 .trash/
 *.pyc
 __pycache__/
+Skills_Library/skills/**/node_modules/

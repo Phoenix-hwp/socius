@@ -218,6 +218,7 @@ related:
 - 结果期望：图表清晰，语法正确可渲染，逻辑完整
 - 覆盖技能：
   - gardusig/cursor-skills（备选）
+  - skill-pretty-mermaid（外部，active）
 - **触发计数**：0
 - **历史中位轮次**：—
 - **历史中位 Token**：—
