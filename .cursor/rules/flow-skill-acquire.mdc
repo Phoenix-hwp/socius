@@ -6,6 +6,8 @@ Created: 2026-05-12
 related:
   - mod-skills-library-framework.mdc（Skills Library 框架）
   - external-dependency-boundary.mdc（外部依赖边界）
+  - flow-high-risk-safety.mdc（高风险操作防护：递归删除/强制杀进程约束）
+  - flow-skill-execute.mdc（技能执行工作流：§A 清洁度检查逻辑复用）
   - .cursor/method-reliability-registry.json（方法可靠性注册表）
 ---
 
@@ -58,11 +60,45 @@ related:
 
 ## §C 隔离试运行
 
+### C0 落锚（试运行前强制）
+
+> **定位**：试运行前必须建立可恢复基线。若试运行过程中发生任何文件系统级灾难（跨目录删除、进程级联崩溃等），此基线是一键恢复的唯一锚点。worktree 仅提供文件系统隔离，不提供进程级沙盒；落锚是安全网的最后一道防线。
+
+**步骤**：
+
+1. **清洁度检查**（复用 `flow-skill-execute.mdc` §A1 逻辑）：
+   ```
+   git status --porcelain
+   ```
+   - 工作区干净 → 进入步骤 2
+   - 工作区有未提交变更 → AskQuestion `[暂存后继续] [先提交再继续] [取消试运行]`
+     - `[暂存后继续]` → `git stash push -m "skill-trial-pre-<skill-name>"`
+     - `[先提交再继续]` → 引导用户完成提交后继续
+     - `[取消试运行]` → 终止
+
+2. **记录基线**：
+   ```
+   git rev-parse HEAD  # 记录基线 commit
+   ```
+   Agent 内部记录：`试运行基线: <commit_hash>`
+
+3. **验证基线存在**：
+   ```
+   git cat-file -t <commit_hash>
+   ```
+   确认返回 `commit`，否则中止并提示用户。
+
+4. **锁定原则**：落锚完成后，Agent 在任何后续步骤中**不得**执行 `git reset --hard`、`git clean -fdx` 等破坏性操作（这些操作留给用户决策或灾难恢复时使用）。
+
 ### C1 创建隔离环境
 ```bash
 # 在仓库根执行
 git worktree add .trash/skill-trial/<skill-name> HEAD
 cd .trash/skill-trial/<skill-name>
+
+# 进入隔离环境后立即确认当前目录
+echo 当前隔离环境: %CD%  (Windows cmd)
+# 或 pwd (Linux/macOS)
 ```
 
 ### C2 部署技能
@@ -96,7 +132,11 @@ AskQuestion：
 1. 将技能文件从试运行环境复制到实际 `Skills_Library/skills/<skill-name>/`
 2. 在 `Skills_Library/skill-registry.json` 中登记
 3. 更新 `Skills_Library/config.json`（默认启用）
-4. 清理试运行环境（`git worktree remove`）
+4. **清理试运行环境** — **唯一允许方式**：`git worktree remove .trash/skill-trial/<skill-name>`
+   - **强制**：清理前必须回显当前工作目录（`cd` / `pwd`）和即将执行的命令全文
+   - **禁止**：使用 `rmdir /s /q`、`Remove-Item -Recurse -Force`、`del /s`、`rm -rf` 等文件系统递归删除命令清理试运行目录
+   - **禁止**：使用 `taskkill /f /im node.exe`（通配进程名）等模糊杀进程命令
+   - 若 `git worktree remove` 失败（进程占用）：**不允许**强制杀进程后继续；必须 AskQuestion `[手动处理占用后重试] [放弃清理（留待手动处理）]`
 5. 回执部署成功 + 技能 ID
 
 ## §E 失败兜底
@@ -105,6 +145,57 @@ AskQuestion：
 - git worktree 创建失败 → 检查 git 版本（需 ≥2.5），磁盘空间
 - 依赖安装失败 → 展示错误日志，AskQuestion [跳过依赖（可能不可用）] [放弃]
 
+## §F 清理安全约束（强制）
+
+### F1 清理方式白名单
+
+| 操作 | 允许方式 | 禁止方式 |
+|:---|:---|:---|
+| 清理试运行 worktree | `git worktree remove <path>` | `rmdir /s /q`、`Remove-Item -Recurse -Force`、`rm -rf` |
+| 删除目录 | 先 `dir`/`ls` 确认内容 → AskQuestion → `rmdir`（非递归）或 `Remove-Item`（无 `-Recurse`） | 任何带 `-Recurse` / `/s` / `-rf` 的递归删除 |
+| 杀进程（被占用时） | `taskkill /pid <PID>`（精确 PID） | `taskkill /f /im node.exe`（通配进程名）、`killall node` |
+| 清理临时文件 | `del <具体文件名>` | `del /s *.*`（通配递归删除） |
+
+### F2 递归删除红色警戒（强制）
+
+触发条件：任何即将执行的命令包含以下模式之一：
+- `rm -rf` / `rm -r`
+- `Remove-Item` + `-Recurse` + `-Force`
+- `rmdir /s /q`
+- `del /s`
+- `rd /s /q`
+
+**红色警戒流程**：
+1. **立即暂停**：不得执行
+2. **回显完整命令**：逐字展示给用户
+3. **展示 CWD**：`cd` 或 `pwd`，确认当前工作目录在仓库范围内
+4. **展示影响范围**：`dir <目标路径>` 或 `ls -la <目标路径>` 预览将被删除的内容
+5. AskQuestion `[确认执行以上删除] [取消]`
+   - 选项文本中必须包含完整命令原文，不得缩写
+
+### F3 进程管理安全
+
+- 在试运行环境（worktree）中，所有 `npm install` / `pip install` 等依赖安装操作视为**有后台进程残留风险**
+- 清理试运行前，先确认无活跃的子进程：
+  ```
+  tasklist /fi "imagename eq node.exe"  (Windows)
+  # 或 ps aux | grep node  (Linux/macOS)
+  ```
+- 若发现占用，**禁止**使用 `taskkill /f /im node.exe`（会误杀 shim、Cursor 自身等），必须列 PID 后由用户手动处理或精确杀
+
+### F4 事后记录
+
+每次试运行清理完成后，记录到 `method-reliability-registry.json`：
+- 技能名称、试运行结果（成功/失败）
+- 清理方式（`git worktree remove` / 手动）
+- 是否有进程占用、是否手动处理
+
+---
+
 ## 与外部依赖边界的关系
 
 本工作流是 `external-dependency-boundary.mdc` 中「插拔式接入」的执行实现。Any deployment through this workflow guarantees the kernel layer remains untouched.
+
+## 横切引用
+
+- **高风险操作通用防护**：本工作流 §F 约束与 `flow-high-risk-safety.mdc` 互不替代。§F 是针对 Skill 试运行场景的特化约束；通用约束（跨模块适用）以 `flow-high-risk-safety.mdc` 为准。

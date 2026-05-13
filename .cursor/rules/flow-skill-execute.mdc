@@ -71,6 +71,19 @@ Read `Skills_Library/skills/<skill-name>/SKILL.md`，确认：
 - **禁止**写入：`.cursor/rules/`、`.cursor/hooks/`、`.cursor/hooks.json`、`.git/`、`10-Topics/Cursor-command-aliases.md`、`kernel-runtime.mdc`
 - **需确认**写入：`10-Topics/`（非别名表）、`Earth_Library/`、`Daily-Backups/`、项目目录
 
+### B1.1 禁止操作清单（强制）
+
+以下操作在技能执行期间**无条件禁止**，即使目标路径在允许范围内：
+
+| 禁止操作 | 示例命令 | 原因 |
+|:---|:---|:---|
+| 递归删除目录 | `rm -rf`、`rm -r`、`Remove-Item -Recurse -Force`、`rmdir /s /q`、`rd /s /q`、`del /s` | 错误 CWD 时级联删除风险（2026-05-12 事故） |
+| 通配进程名杀进程 | `taskkill /f /im node.exe`、`killall node`、`pkill node` | 可能误杀 shim、Cursor 自身进程，导致模型断连 |
+| 跨盘符递归操作 | 任何包含 `D:\`、`C:\` 等盘符的递归删除/移动 | 隔离失效时可波及整个盘 |
+| 清空 Git 历史 | `git reset --hard`、`git clean -fdx` | 破坏落锚基线，回滚锚点丢失 |
+
+**B1.1 拦截流程**：若技能或 Agent 准备执行以上任何操作 → 立即中断 → 输出 `⛔ 禁止操作: <命令全文>，原因: <匹配的禁止项>` → AskQuestion `[授权执行（已理解灾难风险）] [取消]` → 仅当用户明确授权后方可继续。
+
 ### B2 越权拦截
 
 若技能在运行时尝试写入禁止路径：
