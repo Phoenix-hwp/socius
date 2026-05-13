@@ -74,6 +74,18 @@
         "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
         "entry": "MEMO-003"
       }
+    },
+    {
+      "id": "P007",
+      "topic": "四个架构扩展方向深化讨论 — 能力虚拟化 / 语义关系图 / 决策偏好模型 / 任务排期",
+      "next_action": "1) 确认四个方向各自的第一阶段动作和排期；2) 判断是否需要为每个方向新建独立待办；3) 决策偏好模型的\"红线清单\"初步设计；4) 任务排期封装为 skill 的边界确认",
+      "planned_date": "2026-05-14",
+      "status": "pending",
+      "resume_keywords": ["能力虚拟化", "语义关系图", "决策偏好", "扩展方向", "Capability", "Semantic", "Decision", "任务排期", "Pending-Plan-Tracker", "MEMO-004"],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-004"
+      }
     }
   ],
   "archive": [
