@@ -29,11 +29,11 @@
     },
     {
       "id": "P003",
-      "topic": "数据治理宪法 — 中期迁移（cards.jsonl → .md + relations.jsonl 瘦身 + 格式统一）",
-      "next_action": "1) 写脚本将 cards.jsonl 的 body_md 外迁到 Earth_Library/cards/<id>.md；2) 清理 library_index.json 中 keywords 长句；3) 建立 relations.jsonl 瘦身策略（仅存人工高价值边，自动关联改为运行时计算）；4) 统一 .md frontmatter 命名规范",
+      "topic": "数据治理宪法 — 核心数据迁移（cards.jsonl → .md + relations.jsonl 瘦身 + library_index 清理）",
+      "next_action": "1) 写脚本将 cards.jsonl 的 body_md 外迁到 Earth_Library/cards/<id>.md；2) 清理 library_index.json 中 keywords 长句；3) 建立 relations.jsonl 瘦身策略（仅存人工高价值边，自动关联改为运行时计算）",
       "planned_date": "2026-05-25",
       "status": "pending",
-      "resume_keywords": ["cards.jsonl", "数据治理", "宪法", "迁移", "格式", "frontmatter"],
+      "resume_keywords": ["cards.jsonl", "数据治理", "宪法", "迁移", "relations.jsonl", "双轨"],
       "source_memo": {
         "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
         "entry": "MEMO-003"
@@ -49,6 +49,30 @@
       "source_memo": {
         "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
         "entry": "MEMO-002"
+      }
+    },
+    {
+      "id": "P005",
+      "topic": "数据治理宪法 — Behavior-Fit-Log.jsonl 双格式统一（legacy → compact）",
+      "next_action": "1) 审计 10-Topics/Behavior-Fit-Log.jsonl 中所有 legacy 格式行；2) 设计 compact 格式的完整字段集合（含可选字段用 null）；3) 迁移所有 legacy 行到 compact 行式；4) 更新 flow-behavior-auto-receipt.mdc 中写入逻辑保证后续统一",
+      "planned_date": "2026-05-16",
+      "status": "pending",
+      "resume_keywords": ["Behavior-Fit-Log", "格式统一", "legacy", "compact", "JSONL", "双格式"],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-003"
+      }
+    },
+    {
+      "id": "P006",
+      "topic": "数据治理宪法 — .md frontmatter 命名风格统一（title vs Title / created vs Created）",
+      "next_action": "1) 扫描全库 .md/.mdc 文件 frontmatter 字段命名，统计 title/Title、created/Created 等分布；2) 选定一种命名风格（建议首字母大写）；3) 批量统一所有文件 frontmatter 字段名；4) 更新所有规则中引用的 frontmatter 字段名",
+      "planned_date": "2026-05-16",
+      "status": "pending",
+      "resume_keywords": ["frontmatter", "命名", "统一", "title", "created", "大写"],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-003"
       }
     }
   ],

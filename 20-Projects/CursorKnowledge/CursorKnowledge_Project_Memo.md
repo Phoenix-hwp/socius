@@ -83,10 +83,13 @@ Created: 2026-05-13
 
 **落地计划**：
 
-| 阶段 | 动作 |
-|:---|:---|
-| **宪法落地**（本轮） | 创建 `data-governance-standards.mdc` |
-| **紧急修复**（本轮） | 修 `Round-Behavior-Log.jsonl` 格式错误 + 收束加 §5 兜底 |
-| **中期迁移**（后续） | cards.jsonl → `Earth_Library/cards/<id>.md`；relations.jsonl 瘦身 |
+| 阶段 | 动作 | 关联待办 |
+|:---|:---|:---|
+| **宪法落地**（本轮） | 创建 `data-governance-standards.mdc`（alwaysApply: true） | ✅ 已完成 |
+| **紧急修复**（本轮） | 修 `Round-Behavior-Log.jsonl` 格式错误 + 收束加 §5 兜底 | ✅ 已完成 |
+| **格式统一**（近期，5-16） | Behavior-Fit-Log.jsonl legacy→compact 格式统一 + .md frontmatter 命名风格统一 | P005, P006 |
+| **核心迁移**（中期，5-25） | cards.jsonl → `Earth_Library/cards/<id>.md`；relations.jsonl 瘦身；library_index.json keywords 清理 | P003 |
 
-**关联待办**：[P003]
+> **2026-05-13 调整说明**：原 P003 打包了所有数据治理迁移项，经回顾发现不合理的两点——(1) 格式统一（P005/P006）风险低且每天都在累积 tech debt，应提前执行而非等到 12 天后；(2) 核心数据迁移（P003 缩窄）依赖宪法规则稳定后再动手，5-25 排期合理。故拆分 P003 → P003(核心迁移) + P005(Behavior-Fit-Log) + P006(frontmatter)。
+
+**关联待办**：[P003, P005, P006]
