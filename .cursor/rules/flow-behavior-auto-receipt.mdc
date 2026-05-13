@@ -151,6 +151,88 @@ glossary:
 
 ---
 
+## 步骤 C+：技能表现评估（任务完成时）
+
+### 触发条件
+
+步骤 C 执行完毕后，检查本轮或本任务期间是否使用了 `Skills_Library/skills/` 或 `Skills_Library/scripts/` 中的技能完成了任务。
+
+> 触发范围：注册表中 `status: active` 的**外部技能**（注册表条目含 `source_url`）和**内部技能**（注册表条目无 `source_url` 但被本轮调用）。
+> 本轮如未使用任何技能 → 跳过 C+，直接进入步骤 D。
+
+### 评估来源
+
+1. 本轮对话的上下文（Agent 对表现的自评回忆）。
+2. 步骤 C 中已收集的快照数据（轮次、Token 消耗）。
+3. 用户的明确纠正反馈（如有）。
+
+### 评估流程
+
+#### C+1 识别本轮使用的技能
+
+- 搜索本轮对话中调用的技能路径（`Skills_Library/skills/<name>/` 或注册表 ID）。
+- 对照 `skill-registry.json` 确认技能 ID 和 `task_types`。
+
+#### C+2 自评五维
+
+按 `mod-skill-evaluation.mdc` §3 的五维评分标准自评：
+
+| 维度 | 评分 | 自评方式 |
+|:---|:---|:---|
+| `correctness`（0-5） | 正确性 | 参考 §3.1 用户纠正行为检测 |
+| `autonomy`（0-5） | 自主度 | 用户纠正次数 0→5，1次→4，2次→3，显著错误→2，3+次→1，完全失败→0 |
+| `side_effects`（0-5） | 副作用 | `git diff --stat` 检查是否产生了预期外写入；无→5，有小副作用但已清理→3，预期外且未清理→0 |
+| `efficiency_turns`（0-5） | 效率（轮次） | 参考 §3.2，首次使用时取 3（默认中位） |
+| `efficiency_tokens`（0-5） | 能耗（Token） | 参考 §3.2，首次使用时取 3（默认中位） |
+
+`total = correctness + autonomy + side_effects + efficiency_turns + efficiency_tokens`（满分 25）。
+
+#### C+3 AskQuestion 轻确认
+
+弹窗展示评估结果：
+- 标题：`技能表现评估 — <技能名称>`
+- prompt：展示五维得分 + total + 简短理由（1-2 句）
+- 选项：`[确认评估] [修改评估值]`
+  - `[确认评估]`：以当前得分写入日志。
+  - `[修改评估值]`：Agent 逐一询问用户需调整的维度（可单选或多选），修改后重新展示。
+
+若本任务使用了多个技能，逐技能弹出 AskQuestion（先全部自评完，再逐个确认）。
+
+#### C+4 写入表现日志
+
+追加一行 JSON 到 `Skills_Library/skill-performance-log.jsonl`：
+
+```json
+{"date":"<ISO>","skill_id":"<注册表ID>","task_type":"<任务类型>","correctness":<0-5>,"autonomy":<0-5>,"side_effects":<0-5>,"efficiency_turns":<0-5>,"efficiency_tokens":<0-5>,"total":<0-25>}
+```
+
+#### C+5 更新技能注册表
+
+在 `skill-registry.json` 中更新该技能条目：
+
+1. `last_used` → 当前 ISO 时间。
+2. `performance_history` 数组追加一条 `{"date":"<ISO>","task_type":"<类型>","total":<分数>}`。
+3. `performance_score` → 更新为 `performance_history` 中最近 5 次 `total` 的算术均值（< 5 次取全量）。见 `mod-skill-evaluation.mdc` §3.3。
+
+### 降级策略
+
+- **`skill-performance-log.jsonl` 不存在** → 创建该文件（含头部说明行）。
+- **同一技能在同任务中被多轮调用** → 仅在任务收束时合并评估一次（避免重复评分）。
+- **`git diff --stat` 不可用（非 Git 环境）** → `side_effects` 维度标记为 `null`，不参与 total 计算，total 满分降为 20。
+- **用户说「跳过评估」** → 本轮不写入日志，但 Agent 口头提醒「该技能缺少本轮表现数据」。
+
+### 与已有规则的关系
+
+| 规则 | 触发时机 | 分工 |
+|:---|:---|:---|
+| `mod-skill-evaluation.mdc` §3 | — | 五维评分标准定义 |
+| `mod-skill-evaluation.mdc` §8 | — | 本步骤的顶层设计 |
+| **本步骤（C+）** | **任务收束时** | **执行落地** |
+| `flow-skill-execute.mdc` | Skill 执行前/中/后 | 执行级安全约束 |
+| `flow-behavior-auto-receipt.mdc` 步骤 C | 任务完成时 | 行为快照合并与归档（C+ 的上游） |
+
+---
+
 ## 步骤 D：任务被取消时
 
 1. 在 `Active-Task-Tracker.json` 中将该任务从 `active` 移到 `archive`，状态=`取消`。

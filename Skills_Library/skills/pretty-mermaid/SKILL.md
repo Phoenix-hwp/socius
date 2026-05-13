@@ -497,7 +497,7 @@ Template files for quick diagram creation:
 - Use ASCII for quick previews
 
 ### Quality
-- Use `tokyo-night` or `github-dark` for technical docs
+- Use `nord-light` for Cursor SVG viewer compatibility（`tokyo-night` 和 `github-dark` 产生的黑底黑字在 Cursor 中不可读，需经 `fix_svg_vars.cjs` 修复后方可查看）
 - Add transparency for dark/light mode compatibility: `--transparent`
 - Test theme in target environment before batch rendering
 
@@ -511,3 +511,10 @@ Template files for quick diagram creation:
 - Use high-contrast themes for presentations
 - Add text labels to all connections
 - Avoid color-only information encoding
+
+### Cursor SVG Viewer Compatibility
+- **Known issue**：Cursor 内置 SVG 查看器不完全支持 CSS `var()` 函数，任何使用 CSS 自定义属性定义颜色的 SVG（不仅限于 `pretty-mermaid`，`mermaid-cli` / `d2` 等亦然）都可能出现文字/线条/背景不可见的问题。
+- **修复方式**：渲染完成后执行一次 `.cursor/tools/fix_svg_vars.cjs`（工具无关，自动从 SVG 中提取变量定义并替换为实色值）。
+  ```bash
+  node .cursor/tools/fix_svg_vars.cjs <svg-file-path>
+  ```

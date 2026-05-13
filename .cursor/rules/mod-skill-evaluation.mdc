@@ -245,10 +245,12 @@ Token分 = 5 - min(5, (本轮Token / 该类型历史中位Token - 1) × 5)
 当任务完成自动收束（步骤 C）触发时，嵌入选填评估步骤（新增步骤 C+）：
 
 1. 判断本轮是否使用了外部或内部技能完成任务
-2. 若是 → Agent 自评正确性、自主度、副作用、效率、能耗
+2. 若是 → 按 §3 五维标准自评正确性、自主度、副作用、效率、能耗
 3. AskQuestion 轻确认：`[确认评估] [修改评估值]`（默认确认自评，用户可手动调整任意维度）
-4. 写一行到 `skill-performance-log.jsonl`
-5. 更新 `skill-registry.json` 中该技能的 `last_used` 和 `performance_score`
+4. 写一行到 `Skills_Library/skill-performance-log.jsonl`
+5. 更新 `skill-registry.json` 中该技能的 `last_used`、`performance_history` 和 `performance_score`
+
+> 以上步骤落地为 `flow-behavior-auto-receipt.mdc` 步骤 C+（任务完成时触发）。具体执行顺序见该文件。
 
 ### 在 flow-skill-acquire 中的嵌入
 
