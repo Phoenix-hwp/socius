@@ -148,6 +148,22 @@ glossary:
 5. **标记已消费**：在 `Round-Behavior-Log.jsonl` 中将已消费的快照行 `consumed` 改为 `true`。
 6. **提示下游**：若有其他任务的依赖字段指向本任务，提示用户。
 7. **保留手动收束**：用户仍可用 `/收束` 触发完整版（含建议微调/采纳情况列）。
+8. **待办自动完成检测**（步骤 C 末尾，无论任务是否状态变更）：
+   1. Read `10-Topics/Pending-Plan-Tracker.json`，取所有 `status: "in_progress"` 的项。
+   2. 检查本轮对话是否涉及该待办的 `resume_keywords`。
+   3. 若命中 → Agent 自行判断 `next_action` 是否已实际完成（结合本轮 `special` 快照字段）。
+   4. 若判定完成 → AskQuestion `[确认完成 Pxxx] [仍进行中]`。
+   5. 确认后更新 tracker.json：`status: "completed"` + `completed_date: "<ISO日期>"`，从 `pending` 移到 `archive`。
+   6. **不做自动静默完成**（防误判），不自动写备忘文件。
+9. **§5 事后审查兜底**（步骤 C 末尾强制，无论任务是否状态变更）：
+   1. 检查本轮写入文件数（从本轮快照的 `special` 字段或 `git diff --stat` 推断）。
+   2. 若 ≥3 文件写入 → 回查 `pre-change-impact-enumeration.mdc` §5 是否完整执行：
+      - §5a：基线 commit 是否已记录？
+      - §5b：内核路径（`.cursor/rules/`、`10-Topics/`）的详细 diff 是否执行？
+      - §5c：三类展示（预期内/连锁影响/非预期）是否输出？
+      - §5d：确认回执是否给出？
+   3. 若任一缺失 → **阻断，补执行对应步骤后放行**。
+   4. 若全部执行 → 记录到本轮收束回执末尾「✅ §5 审查已通过」。
 
 ---
 

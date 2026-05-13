@@ -1,6 +1,6 @@
 ---
 description: Notion 模块全局前置条件 — 网络确认
-alwaysApply: true
+alwaysApply: false
 glossary:
   layer: 2-模块执行层
   module: Notion

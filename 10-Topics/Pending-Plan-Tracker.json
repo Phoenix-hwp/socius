@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "description": "待办计划追踪 — 支持备忘关联、sessionStart 到期提醒、自动完成检测",
+    "reminder_rules": {
+      "overdue": "planned_date <= 今天 + status=pending → sessionStart 主动提醒",
+      "upcoming": "planned_date 在未来 3 天 + status=pending → 轻提醒",
+      "keyword_match": "对话命中 resume_keywords → 关联提示",
+      "auto_complete": "收束时检测 in_progress 项是否完成 → AskQuestion 确认",
+      "manual_cancel": "'取消待办 Pxxx' → 标记 cancelled"
+    },
+    "memo_linkage": {
+      "direction": "备忘不主动生成待办；用户手动关联；多对一（多待办可指同一备忘）",
+      "cross_reference": "查看备忘时自动匹配 tracker.json source_memo.path，展示关联待办及其状态",
+      "no_auto_write": "待办完成不回写备忘文件，仅更新 tracker.json 状态"
+    }
+  },
+  "pending": [
+    {
+      "id": "P002",
+      "topic": "alwaysApply 规则分级 — phase2 安全级引入 severity+task_triggers",
+      "next_action": "设计 severity + task_triggers frontmatter 字段方案，落地到 7 个安全级规则；建立规则间 requires 依赖声明；更新 gateway-command-router.mdc 规则索引",
+      "planned_date": "2026-05-18",
+      "status": "pending",
+      "resume_keywords": ["severity", "task_triggers", "规则分级", "phase2", "安全级", "requires"],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-001"
+      }
+    },
+    {
+      "id": "P003",
+      "topic": "数据治理宪法 — 中期迁移（cards.jsonl → .md + relations.jsonl 瘦身 + 格式统一）",
+      "next_action": "1) 写脚本将 cards.jsonl 的 body_md 外迁到 Earth_Library/cards/<id>.md；2) 清理 library_index.json 中 keywords 长句；3) 建立 relations.jsonl 瘦身策略（仅存人工高价值边，自动关联改为运行时计算）；4) 统一 .md frontmatter 命名规范",
+      "planned_date": "2026-05-25",
+      "status": "pending",
+      "resume_keywords": ["cards.jsonl", "数据治理", "宪法", "迁移", "格式", "frontmatter"],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-003"
+      }
+    },
+    {
+      "id": "P004",
+      "topic": "§5 事后审查兜底 — 审计 P001 落盘中的遗漏并验证修复效果",
+      "next_action": "在下一次 ≥3 文件写入时，验证收束步骤 C #9（§5 兜底检查阻断）是否生效；若再次跳过则分析原因并加固",
+      "planned_date": "2026-05-19",
+      "status": "pending",
+      "resume_keywords": ["§5", "事后审查", "兜底", "pre-change-impact-enumeration", "遗漏"],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-002"
+      }
+    }
+  ],
+  "archive": [
+    {
+      "id": "P001",
+      "topic": "alwaysApply 规则分级 — phase1 条件级降级",
+      "next_action": "降级 3 个条件级规则（notion-precondition / notion-crud-framework / post-git-pull），alwaysApply: true → false",
+      "planned_date": "2026-05-13",
+      "status": "completed",
+      "completed_date": "2026-05-13",
+      "resume_keywords": ["alwaysApply", "规则分级", "审计", "条件级"],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-001"
+      }
+    }
+  ]
+}

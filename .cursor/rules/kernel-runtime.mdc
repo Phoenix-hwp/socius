@@ -42,6 +42,17 @@ replaces:
 
 - 同时 Read `10-Topics/Active-Task-Tracker.json`。按活跃任务策略续接：匹配关键词自动续接、展示列表等轻确认、直接新需求不展示列表。细则见 `flow-behavior-auto-receipt.mdc`。
 
+### 1.2b 待办计划检查（任务续接之后）
+
+在完成 1.2 任务续接后，Read `10-Topics/Pending-Plan-Tracker.json`，执行以下检查：
+
+1. **到期提醒**：遍历 `pending` 数组，筛选 `status: "pending"` 且 `planned_date <= 今天` 的项。若存在 → 在开场回执中列出「到期待办」，AskQuestion 不阻断。
+2. **即将到期**：`planned_date` 在未来 3 天内且 `status: "pending"` → 开场回执中轻提醒。
+3. **进行中项**：列出所有 `status: "in_progress"` 的项，确认是否继续。
+4. **备忘交叉匹配**：若本轮涉及查看项目备忘（`项目备忘录` 指令），匹配 `source_memo.path` 相同的待办，展示其状态。
+
+> 待办的自动完成检测在收束时执行（`flow-behavior-auto-receipt.mdc` 步骤 C），不在开端执行。
+
 ### 1.3 L3 闸门检查（续接任务之前）
 
 1. 读取 `10-Topics/Behavior-Fit-Log.jsonl`，统计 `format: "compact"` 的行数。

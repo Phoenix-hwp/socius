@@ -1,6 +1,6 @@
 ---
 description: git pull 或多设备等价场景并入远端约定后，在改规则/钩子/别名相关脚本前须重温网关与别名表，防冲突与分叉
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Git 拉取后与三层架构对齐（强制）

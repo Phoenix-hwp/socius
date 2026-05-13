@@ -1,0 +1,117 @@
+---
+description: 数据治理宪法 — 全库格式分配、权威源原则、命名规范、写入自检。所有新增/修改数据文件必须遵守。
+alwaysApply: true
+Lifecycle: 长期
+Created: 2026-05-13
+related:
+  - script-coding-constraints.mdc（脚本编码约束，互补）
+  - pre-change-impact-enumeration.mdc（变更前影响枚举，互补）
+  - kernel-runtime.mdc（内核约定，互补）
+---
+
+# 数据治理宪法
+
+## 适用范围
+
+凡对仓库中以下数据对象做**新增或实质修改**，须遵守本宪法三条原则：
+- `.json`（配置、注册表、索引、任务追踪）
+- `.jsonl`（日志、关联数据）
+- `.md` / `.mdc`（知识正文、规则、备忘、文档）
+- `.txt`（白名单、一次性说明）
+
+---
+
+## 原则 1：JSON 不存人类阅读的长文本
+
+### 规则
+
+- **JSON / JSONL 中任何字符串字段，若超过 50 个中文字或超过一句话的长度，必须外迁到独立 `.md` 文件**，JSON 仅保留短标识 + 文件指针。
+- JSON 数组字段仅存**原子值**（单个关键词、标签名、ID），不存句子。
+- JSON 正文字段（如 `body`、`content`、`description`）不超过 50 字；超过则引用 `.md` 路径。
+
+### 违规案例（审计发现）
+
+| 文件 | 字段 | 问题 |
+|:---|:---|:---|
+| `cards.jsonl` | `body_md` | 几千字 Markdown 嵌在 JSON 字符串中，人类不可读，Obsidian 不可见 |
+| `library_index.json` | `keywords` | 部分条目含 `"分析法又称为七问分析法"` 长句，污染关键词字段 |
+
+### 正确做法
+
+```
+cards.jsonl 中的 body_md → 外迁到 Earth_Library/cards/<id>.md
+JSON 仅保留: {"id":"xxx", "card_path":"Earth_Library/cards/xxx.md"}
+```
+
+---
+
+## 原则 2：一份数据只有一个权威源
+
+### 规则
+
+- **任何数据只在仓库中一处定义**。索引文件只存指针，不存正文。
+- **可运行时计算的数据不持久化**。派生数据、自动生成结果、中间缓存不入 Git。
+- 禁止同一份数据的两个副本同时存在（含重复目录、重复行、镜像文件）。
+
+### 违规案例（审计发现）
+
+| 文件 | 问题 |
+|:---|:---|
+| `cards.jsonl` ↔ `library_index.json` | 同一张卡的元数据在 JSONL 和 JSON 中各存一份，双写风险 |
+| `relations.jsonl`（83 万字符） | N×M 标签相交关系静态存储——可运行时计算 |
+| `.cursor/rules/rules/` | 疑似与 `.cursor/rules/` 路径重复 |
+
+### 正确做法
+
+- `library_index.json` 降级为运行时从 `cards.jsonl` 生成的缓存（不入 Git）
+- `relations.jsonl` 仅存**人工添加的高价值关系**（如 `precedes`、`prerequisite`），自动关联在检索时实时计算
+- 确认并清理重复目录/文件
+
+---
+
+## 原则 3：格式一致性是第一公民
+
+### 规则
+
+1. **同一文件内所有行共享同一字段集合**。可选字段用 `null` 表示不存在；不创建使用不同键集合的变体类型。
+2. **所有脚本生成的 JSON/JSONL 必须通过 schema 验证**后才写入磁盘。
+3. **`.md` frontmatter 字段命名统一**：使用首字母大写 `Title`/`Created`/`Updated`/`Lifecycle` 或全小写 `title`/`created`/`updated`，选定一种后全库统一。
+4. **JSONL 行式存储**：每行必须是合法的单行 JSON（不含换行符 `\n`），不跨行。
+
+### 违规案例（审计发现）
+
+| 文件 | 问题 |
+|:---|:---|
+| `Behavior-Fit-Log.jsonl` | `legacy` 和 `compact` 两种格式的行使用不同的字段集合（13 字段 vs 8 字段） |
+| `Round-Behavior-Log.jsonl` | `hot` 和 `warm` 行字段键完全不同（6 字段 vs 10 字段）；曾有 `\:` 转义破坏 JSON 有效性 |
+| `.md` 文件 frontmatter | `title` vs `Title`、`created` vs `Created` 混用 |
+
+### 正确做法
+
+- `Behavior-Fit-Log.jsonl`：统一为一种格式。`legacy` 行迁移到 `compact` 行式，可选字段用 `null`
+- `Round-Behavior-Log.jsonl`：所有行使用统一的字段全集，`warm` 特有的字段（`decomposition`、`cognitive_path` 等）设为 `null` 在 `hot` 行中
+- `.md` frontmatter：选一种命名风格后全库统一
+
+---
+
+## 格式分配表
+
+| 格式 | 适用场景 | 禁止 |
+|:---|:---|:---|
+| **JSON** | 配置、注册表、索引（仅指针）、任务追踪 — 字段可枚举、需程序检索 | 不存长文本（>50 字）、不存 Markdown |
+| **JSONL** | 行为日志、关联数据 — 行式追加，固定 schema，脚本写入 | 不混用多个 schema 变体、不存可运行时计算的数据、不跨行 |
+| **`.md` / `.mdc`** | 知识正文、规则、备忘、文档 — 需 AI 语义理解或人类阅读 | 不被 JSON 包裹；不在 JSON 字符串中存储完整 Markdown |
+| **`.txt`** | 白名单、一次性说明（如 `.gitignore` 列表） | 不替代 `.md` 的知识沉淀功能 |
+
+---
+
+## 写入自检清单
+
+任意脚本或 Agent 写入 JSON/JSONL 前，须确认：
+
+- [ ] 写入的字符串字段是否 >50 字？若是 → 是否外迁到 `.md`？
+- [ ] 写入的数据是否已在仓库中另一处存在？若是 → 是否违反原则 2？
+- [ ] 写入的 JSONL 行是否与已有行共享同一字段集合？若否 → 是否违反原则 3？
+- [ ] JSONL 每行是否为合法单行 JSON（无 `\n` 换行、无不合法转义 `\:`）？
+- [ ] 写入前是否通过 schema 验证（至少检查必填字段非空）
+- [ ] 派生数据是否应持久化？还是运行时计算即可？
