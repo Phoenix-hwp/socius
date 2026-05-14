@@ -83,11 +83,11 @@ replaces:
 
 ### 2.1 自动收束
 
-每轮对话结尾，Agent 按 `flow-behavior-auto-receipt.mdc` 执行轮级快照写入与纠偏检测。
+每轮对话结尾，Agent 按 `flow-behavior-auto-receipt.mdc` 执行：轮级快照 → 纠偏检测 → 经验提取 → 方法可靠性更新 → 设备规则自学习。
 
 ### 2.2 手动收束
 
-触发语：`/收束`、`结束会话`、`结束对话`、`结束` → 按 `flow-behavior-auto-receipt.mdc` 步骤 E 执行完整收束。
+触发语：`/收束`、`结束会话`、`结束对话`、`结束` → 按 `flow-behavior-auto-receipt.mdc` 步骤 E 执行完整收束（含经验提取检查，无论是否有任务状态变更）。
 
 ### 2.3 禁止
 

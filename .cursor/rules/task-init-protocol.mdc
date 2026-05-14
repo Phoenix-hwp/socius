@@ -9,9 +9,11 @@ glossary:
     mid: Step 1 必做，Step 4 Agent 自主，Step 3 仅复杂任务
     late: 高置信度跳过 Step 1，其余 Agent 自主
   downstream:
-    - Decomposition-Log.jsonl
-    - User-Knowledge-Registry.jsonl
-    - mod-decision-framework.mdc
+    - 10-Topics/Decomposition-Log.jsonl (⑤ 拆解决策记录)
+    - 10-Topics/User-Knowledge-Registry.jsonl (⑥ 用户经验注册)
+    - 10-Topics/Active-Task-Tracker.json (③ 任务树 parent/children/next_child)
+    - 10-Topics/Pending-Plan-Tracker.json (④ 待办 source_task)
+    - mod-decision-framework.mdc (① 决策框架 — 数据消费者)
 alwaysApply: false
 trigger: 用户发出非纯对话/非纯查询类的可执行任务
 ---
@@ -58,7 +60,10 @@ trigger: 用户发出非纯对话/非纯查询类的可执行任务
    - 复合任务（如"调研并输出 PPT"）→ 拆成 2-3 个子任务，每个子任务有独立产出物
 2. 子任务间若有依赖关系（A 产出是 B 输入），标注衔接点
 3. 拆解结果向用户确认（`AskQuestion`）
-4. 每个子任务完成后写入 `Decomposition-Log.jsonl`（source=manual_review）
+4. 拆解后同步写入数据层：
+   - `Active-Task-Tracker.json`：创建父任务条目，填充 `parent`/`children`/`next_child`
+   - `Pending-Plan-Tracker.json`：每个子任务对应的待办填入 `source_task` 指向父任务
+   - `Decomposition-Log.jsonl`：记录拆解决策（source=manual_review）
 
 **示例**：
 > "我打算分两步：
@@ -104,6 +109,7 @@ trigger: 用户发出非纯对话/非纯查询类的可执行任务
    - DOCX：检测段落/表格/图片混合布局、分栏结构
    - PDF：检测排版结构（双栏/单栏、字体、字号）、文本提取质量
    - Markdown：检测标题层级、代码块、表格、图片引用
+   - **I/O 约束扩展点**：新任务类型（代码/配置/数据库/前端组件等）首次出现时，归纳对应的探针维度并补入本列表。不提前穷举，碰一个补一个。
 3. 探针结果汇报——不等执行时才暴露问题：
    - 槽位不够 → 提前讨论微调方案
    - 结构复杂 → 提前讨论工具策略
