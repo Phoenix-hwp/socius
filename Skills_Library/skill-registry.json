@@ -251,6 +251,28 @@
           "Skills_Library/skills/pretty-mermaid/scripts/themes.mjs"
         ]
       }
+    },
+    {
+      "id": "skill-tts-speak",
+      "name": "TTS 语音朗读",
+      "source": "internal",
+      "source_url": "",
+      "frequency": "低频",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-14",
+      "last_used": null,
+      "task_types": ["语音输出"],
+      "performance_score": null,
+      "dependencies": ["pyttsx3", "Windows SAPI5 中文语音（慧慧）"],
+      "write_scope": [],
+      "risk_signals": [],
+      "entry": {
+        "scripts": [
+          "Skills_Library/scripts/speak.py"
+        ]
+      }
     }
   ]
 }

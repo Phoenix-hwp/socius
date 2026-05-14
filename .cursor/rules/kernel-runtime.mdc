@@ -42,16 +42,29 @@ replaces:
 
 - 同时 Read `10-Topics/Active-Task-Tracker.json`。按活跃任务策略续接：匹配关键词自动续接、展示列表等轻确认、直接新需求不展示列表。细则见 `flow-behavior-auto-receipt.mdc`。
 
-### 1.2b 待办计划检查（任务续接之后）
+### 1.2b 会话开端自动拉取与待办检查（任务续接之后）
 
-在完成 1.2 任务续接后，Read `10-Topics/Pending-Plan-Tracker.json`，执行以下检查：
+> **设计意图**：跨设备场景下，另一台设备创建的待办只有 pull 才能同步到本地；但本地昨天设的待办今天也需要提醒（无论远端是否有更新）。因此 sessionStart 自动执行 fetch/pull，然后做「每日首次」待办检查。
 
-1. **到期提醒**：遍历 `pending` 数组，筛选 `status: "pending"` 且 `planned_date <= 今天` 的项。若存在 → 在开场回执中列出「到期待办」，AskQuestion 不阻断。
-2. **即将到期**：`planned_date` 在未来 3 天内且 `status: "pending"` → 开场回执中轻提醒。
-3. **进行中项**：列出所有 `status: "in_progress"` 的项，确认是否继续。
-4. **备忘交叉匹配**：若本轮涉及查看项目备忘（`项目备忘录` 指令），匹配 `source_memo.path` 相同的待办，展示其状态。
+#### 步骤 1：自动对齐远端
 
-> 待办的自动完成检测在收束时执行（`flow-behavior-auto-receipt.mdc` 步骤 C），不在开端执行。
+1. 执行 `git fetch`（只读，不合并）。
+2. 检查远端是否有新提交（`git rev-list --count HEAD..origin/main`）。
+3. **若有新提交** → 执行 `git pull --ff-only`（处理 stash 如需），然后执行 `post-git-pull-three-layer-awareness.mdc` 的完整三步检查（A 回执新增规则、B 对齐别名、C 一致性检查）。**跳过本节的待办检查**（由 post-pull 步骤 C 统一处理）。
+4. **若无新提交** → 跳过 pull，直接进入下方的「每日首次待办检查」。
+
+#### 步骤 2：每日首次待办检查（交互式）
+
+待办扫描与交互流程与 `post-git-pull-three-layer-awareness.mdc` 步骤 C1-C3 完全一致，此处仅保留入口逻辑：
+
+1. Read `10-Topics/Pending-Plan-Tracker.json`，检查 `meta.last_reminded`：
+   - 若 `=== 今天` → **跳过**，本轮不做待办提醒。
+   - 若 `!== 今天` 或为 `null` → 执行步骤 C1-C3 的完整交互弹窗链（多选待办 → 逐项操作）。
+2. 流程结束后更新 `last_reminded` 为今天。
+
+> 手动 pull 后由 `post-git-pull-three-layer-awareness.mdc` 步骤 C 处理，同样交互式 + 每日去重。
+>
+> 待办的自动完成检测在收束时执行（`flow-behavior-auto-receipt.mdc` 步骤 C#8）。
 
 ### 1.3 L3 闸门检查（续接任务之前）
 

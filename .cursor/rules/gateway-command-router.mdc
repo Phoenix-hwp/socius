@@ -9,6 +9,7 @@ glossary:
     - mod-project-*
     - mod-conversation-*
     - mod-multi-round-*
+    - Skills_Library/scripts/speak.py
 alwaysApply: true
 ---
 
@@ -96,6 +97,9 @@ alwaysApply: true
 | `技能全关` / `禁用所有技能` | `flow-skill-toggle.mdc`（框架：`mod-skills-library-framework.mdc`） | 一键关闭所有外部技能，仅保留内核规则 |
 | `执行技能` / `运行技能` / `调用技能` | `flow-skill-execute.mdc`（框架：`mod-skills-library-framework.mdc`） | 执行前快照 → 写路径限制 → 执行后差异审查 → AskQuestion 确认/回滚 |
 | `评估技能` / `技能评估` / `技能巡检` | `mod-skill-evaluation.mdc`（框架：`mod-skills-library-framework.mdc`） | 中检：逐技能检查质量变化/风险变化/表现评分趋势 |
+| **语音朗读**：| | |
+| `语音` / `说` | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） | 设置 voice_mode=summary，本轮回复概要/结论/建议投喂 TTS 朗读 |
+| `说全文` / `全文` / `语音全文` | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） | 设置 voice_mode=full，本轮完整回复投喂 TTS 朗读 |
 
 ---
 

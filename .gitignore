@@ -26,3 +26,6 @@
 *.pyc
 __pycache__/
 Skills_Library/skills/**/node_modules/
+
+# Temp scripts and debug output
+temp/

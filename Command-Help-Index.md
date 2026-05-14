@@ -206,6 +206,9 @@ python "Earth_Library/scripts/library_optimize.py"
 | `.cursor/rules/flow-skill-toggle.mdc` | 技能开关工作流 |
 | `.cursor/rules/flow-high-risk-safety.mdc` | 高风险操作防护（递归删除/强制杀进程/跨盘符 — 通用红色警戒流程） |
 
+| `语音` / `说` | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） | 设置 voice_mode=summary，本轮回复概要/结论/建议投喂 TTS 朗读 |
+| `说全文` / `全文` / `语音全文` | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） | 设置 voice_mode=full，本轮完整回复投喂 TTS 朗读 |
+
 ### 频率分型
 
 | 分型 | 定义 | 保留策略 |
@@ -231,6 +234,17 @@ python "Earth_Library/scripts/library_optimize.py"
 | 手动收束（完整版） | `kernel-runtime.mdc` §2.2 | `/收束` / `结束对话` |
 | 续接 | `kernel-runtime.mdc` §1.2 | 会话开始 |
 | 维度注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 新增/启用/禁用时 |
+
+### 待办计划管理（交互式）
+
+| 指令 | 别名 | 说明 | 关联规则 |
+|:---|:---|:---|:---|
+| 待办 | 查看待办、调整待办 | 弹出两阶段 AskQuestion 链：多选待办 → 逐项操作（查看备忘/推迟/标记完成/标记进行中/跳过） | `post-git-pull-three-layer-awareness.mdc` 步骤 C1-C3 |
+
+自动触发：
+- **每日首次**：sessionStart 自动 fetch/pull 后 OR 手动 pull 后，弹出待办提醒弹窗（同日不再重复）
+- **关键词命中**：对话命中 `resume_keywords` 时，回复末尾追加「⏰ 待办关联」提示（加粗醒目，不阻断）
+- **收束完成检测**：收束时自动检测 `pending` + `in_progress` 项是否实际完成 → AskQuestion 确认
 
 ### 关键文件
 

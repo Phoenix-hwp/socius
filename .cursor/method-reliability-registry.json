@@ -1,13 +1,20 @@
 {
   "meta": {
-    "description": "方法可靠性注册表 — 记录每种「任务类型 → 方法路径」在当前设备上的成败统计",
+    "description": "方法可靠性注册表 — 记录每种「任务类型 → 方法路径」在当前设备上的成败统计。known_issues 字段记录方法在特定条件下的已知缺陷与规避方案（T1 硬事实），帮助决策框架做场景化判断而非简单跳过。",
     "thresholds": {
       "fail_downgrade": 3,
       "success_recover": 5,
       "disable_rate": 0.7,
       "disable_min_calls": 10
     },
-    "routing_hint": "网关路由层读取时仅匹配当前设备（hostname）记录"
+    "routing_hint": "网关路由层读取时仅匹配当前设备（hostname）记录。若方法为 ⚠ 降权，先查 known_issues 是否存在可规避条件——满足则重试，不满足才跳过。",
+    "known_issues_schema": {
+      "condition": "触发条件描述",
+      "symptom": "症状（错误码/异常类型）",
+      "mitigation": "规避方案",
+      "mitigation_success_rate": "规避成功次数/尝试次数",
+      "discovered": "发现日期"
+    }
   },
   "records": [
     {
@@ -41,7 +48,67 @@
       "consecutive_successes": 0,
       "last_status": "失败(超时)",
       "last_context": "2026-05-09 Win10",
-      "state": "⚠ 降权"
+      "state": "⚠ 降权",
+      "known_issues": []
+    },
+    {
+      "task_type": "文档生成",
+      "method": "docx2pdf(COM)",
+      "hostname": "Phoenix-TKPad",
+      "total_calls": 2,
+      "consecutive_fails": 2,
+      "consecutive_successes": 0,
+      "last_status": "失败(中文路径COM -2146824090)",
+      "last_context": "2026-05-14 Win11 简历修改",
+      "state": "⚠ 降权",
+      "known_issues": [
+        {
+          "condition": "DOCX 文件路径含中文字符",
+          "symptom": "COM SaveAs 返回 -2146824090，命令失败",
+          "mitigation": "将 DOCX 复制到纯 ASCII 路径（如 d:/Downloads/resume.docx）后重试",
+          "mitigation_success_rate": "1/1",
+          "discovered": "2026-05-14"
+        }
+      ]
+    },
+    {
+      "task_type": "文档生成",
+      "method": "win32com+ASCII路径",
+      "hostname": "Phoenix-TKPad",
+      "total_calls": 2,
+      "consecutive_fails": 0,
+      "consecutive_successes": 2,
+      "last_status": "成功",
+      "last_context": "2026-05-14 Win11 简历修改",
+      "state": "✅ 正常",
+      "known_issues": []
+    },
+    {
+      "task_type": "PPT模板填充",
+      "method": "python-pptx(shape遍历+文本替换)",
+      "hostname": "Phoenix-TKPad",
+      "total_calls": 1,
+      "consecutive_fails": 1,
+      "consecutive_successes": 0,
+      "last_status": "失败(GROUP嵌套不可达)",
+      "last_context": "2026-05-14 Win11 脱毛仪PPT模板套用",
+      "state": "⚠ 降权",
+      "known_issues": [
+        {
+          "condition": "模板含多层 GROUP 嵌套 + 描述区占位文本串联在同一文本框内",
+          "symptom": "shape.text_frame 对 GroupShape 抛异常；单个文本框内含重复的 '点击此处更换文本' 无法逐区替换",
+          "mitigation": "标题/关键词用 lxml 精确替换 <a:t>；描述区内容通过 python-pptx add_textbox() 新增独立文本框覆盖在模板原占位区上方",
+          "mitigation_success_rate": "0/0（尚未在大规模模板上验证）",
+          "discovered": "2026-05-14"
+        },
+        {
+          "condition": "python-pptx save() 在重排幻灯片顺序后执行",
+          "symptom": "ZIP 内含残影幻灯片文件，触发 Duplicate name 警告，部分被删除页的文本残留",
+          "mitigation": "纯 lxml + ZIP 层操作（不解包到 python-pptx 的 Presentation 对象）处理编排和文本替换",
+          "mitigation_success_rate": "1/1（v9 纯 lxml 方案清除所有残留文本）",
+          "discovered": "2026-05-14"
+        }
+      ]
     }
   ]
 }

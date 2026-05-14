@@ -149,9 +149,9 @@ glossary:
 6. **提示下游**：若有其他任务的依赖字段指向本任务，提示用户。
 7. **保留手动收束**：用户仍可用 `/收束` 触发完整版（含建议微调/采纳情况列）。
 8. **待办自动完成检测**（步骤 C 末尾，无论任务是否状态变更）：
-   1. Read `10-Topics/Pending-Plan-Tracker.json`，取所有 `status: "in_progress"` 的项。
+   1. Read `10-Topics/Pending-Plan-Tracker.json`，取所有 `status: "pending"` 或 `status: "in_progress"` 的项。
    2. 检查本轮对话是否涉及该待办的 `resume_keywords`。
-   3. 若命中 → Agent 自行判断 `next_action` 是否已实际完成（结合本轮 `special` 快照字段）。
+   3. 若命中 → Agent 自行判断 `next_action` 是否已实际完成（结合本轮 `special` 快照字段、写入文件内容）。
    4. 若判定完成 → AskQuestion `[确认完成 Pxxx] [仍进行中]`。
    5. 确认后更新 tracker.json：`status: "completed"` + `completed_date: "<ISO日期>"`，从 `pending` 移到 `archive`。
    6. **不做自动静默完成**（防误判），不自动写备忘文件。
@@ -164,6 +164,79 @@ glossary:
       - §5d：确认回执是否给出？
    3. 若任一缺失 → **阻断，补执行对应步骤后放行**。
    4. 若全部执行 → 记录到本轮收束回执末尾「✅ §5 审查已通过」。
+
+---
+
+## 步骤 C-bis：经验提取与入库（任务收束时强制，前期每轮执行）
+
+> 触发条件：步骤 C 执行完毕（无论任务是否状态变更）。前期强制每轮执行，后期可改为「无新经验类型 → 跳过」。
+
+### C-bis 总体原则
+
+Agent 扫描本轮对话，按三层策略提取经验：
+
+| 层级 | 名称 | 写入策略 | 判定标准 |
+|:---|:---|:---|:---|
+| **T1** | 硬事实 | 静默自动写入 | Agent 可独立验证因果 + 有错误码/异常类型 + 已被规避验证 |
+| **T2** | 轻经验 | 收束时一条 `AskQuestion` 批量确认 | 用户明确分享的操作经验/流程偏好，表达明确、已被任务验证 |
+| **T3** | 审慎经验 | 逐条 `AskQuestion` 确认 | 用户仍在探索的方法论/架构级认知、或表达不确定 |
+
+**T2/T3 判定信号**：
+- T2：用户语气斩钉截铁（"直接...最稳"、"一般我会..."、"先改...再..."）、正在纠正 Agent 操作、属工具操作/流程步骤/偏好声明领域、本轮任务中已被实际使用且成功
+- T3：用户语气试探（"可能..."、"我觉得..."、"我也很难讲明白"）、正在和 Agent 一起思考/讨论、属方法论/架构范式/认知模型领域、尚未落地验证或属于远期方向
+
+### C-bis.1 T1 硬事实 → 静默写入 `known_issues`
+
+1. 扫描本轮方法调用记录，识别满足以下全部条件的硬事实：
+   - 有明确的错误码/异常类型（如 COM -2146824090）
+   - 同一任务中换了方法/路径后成功
+   - Agent 可独立归因（非用户主观判断）
+2. 生成 `known_issues` 条目：`{condition, symptom, mitigation, mitigation_success_rate, discovered}`
+3. **静默写入** `method-reliability-registry.json` 对应方法记录的 `known_issues` 数组，**不弹窗确认**（Agent 编码层强项）
+4. 若对应方法记录不存在则先创建记录
+5. 写入后在回执末尾标注 `🧠 T1 硬事实 xN 已入库 known_issues`
+
+### C-bis.2 T2 轻经验 → 批量确认 → 写入 `User-Knowledge-Registry`
+
+1. 收集本轮所有 T2 类经验（用户明确分享的操作经验/流程偏好）
+2. 若 T2 列表非空 → 一条 `AskQuestion` 展示全部 T2 条目：
+   - 标题：`经验提取 — 轻经验（批量确认）`
+   - prompt：列出本轮所有 T2 条目（编号 + 摘要 + 领域），每条 1 行简述
+   - 选项：`[确认全部写入] [逐条查看] [跳过本轮]`
+3. `[确认全部写入]` → 逐条写入 `User-Knowledge-Registry.jsonl`（`type: "T2_轻经验"`，`source: "user_shared"` 或 `"task_review"`）
+4. `[逐条查看]` → 逐条弹出选项：`[写入此条] [跳过此条] [返回全选]`
+5. 写入后在回执末尾标注 `📝 T2 轻经验 xN 已入库 User-Knowledge-Registry`
+
+### C-bis.3 T3 审慎经验 → 逐条确认 → 写入 `User-Knowledge-Registry`
+
+1. 收集本轮所有 T3 类经验（用户仍在探索的方法论/架构级认知）
+2. 若 T3 列表非空 → 逐条弹出 `AskQuestion`：
+   - 标题：`经验提取 — 审慎经验 [N/M]`
+   - prompt：展示该条经验内容与上下文
+   - 选项：`[确认写入此条] [暂不记录] [跳过剩余全部]`
+3. `[确认写入此条]` → 写入 `User-Knowledge-Registry.jsonl`（`type: "T3_审慎经验"`；`validated` 按实际验证状态填写）
+4. 写入后在回执末尾标注 `🤔 T3 审慎经验 xN 已入库 User-Knowledge-Registry`
+
+### C-bis.4 任务拆解复盘 → 写入 `Decomposition-Log`
+
+1. 若本轮涉及**任务拆解**（Agent 将复杂任务分解为多步执行，且拆解步骤 ≥2）：
+   - 收集子任务序列、工具链、IO 约束
+   - 生成一条复盘拆解记录：`{source: "manual_review", task_type, io_constraint, subtasks, tools_used, iteration_count}`
+2. **若拆解由 Agent 复盘提取（非 Agent 自主拆解）** → 静默写入 `Decomposition-Log.jsonl`（复盘产物，不驱动自动行为，低风险）
+3. **若拆解为 Agent 自主拆解（远期 X1→X2）** → 走 AskQuestion 确认后写入（`source: "auto_decompose"`）
+4. 写入后在回执末尾标注 `🔧 任务拆解模式已入库 Decomposition-Log`
+
+### C-bis.5 回执汇总
+
+收束回执末尾追加经验提取汇总：
+```
+📊 本轮经验提取：
+  🧠 T1 硬事实 xN
+  📝 T2 轻经验 xN
+  🤔 T3 审慎经验 xN
+  🔧 任务拆解模式 x1
+  ⏭ 跳过 xN
+```
 
 ---
 

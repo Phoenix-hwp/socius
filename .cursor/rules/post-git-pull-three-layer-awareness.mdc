@@ -36,6 +36,92 @@ alwaysApply: false
 
 若远端变更了 **`10-Topics/Cursor-command-aliases.md`**，Agent 须在当轮回执中简短确认「别名表已更新」，并在执行 **任何** 短指令前 **重新 Read** 该文件对应段落。
 
+### C. 待办计划同步检查（交互式）
+
+> **每日去重**：待办提醒每日仅执行一次。提醒流程结束后更新 `Pending-Plan-Tracker.json` 的 `meta.last_reminded` 为今天日期，同日后续 pull 跳过。
+>
+> **交互流程**：从静态文本列表改为两阶段 `AskQuestion` 弹窗链 —— 第一阶段多选待办，第二阶段逐项操作（查看备忘/推迟/完成/跳过）。
+
+#### 步骤 C1：待办扫描与第一层弹窗
+
+1. Read `10-Topics/Pending-Plan-Tracker.json`，检查 `meta.last_reminded`：
+   - 若 `=== 今天` → **跳过**待办检查，进入一致性检查。结束本节。
+   - 若 `!== 今天` 或为 `null` → 继续。
+2. 遍历 `pending` 数组（排除 `status: "cancelled"`），构建两组合并列表：
+   - **到期**：`planned_date <= 今天`
+   - **即将到期**：`planned_date` 在未来 3 天内但不等于今天
+3. 若有到期或即将到期项 → 弹出 **第一层 AskQuestion**（`allow_multiple: true`）：
+
+```
+📋 待办提醒（pull 同步）
+
+prompt: "以下待办已到期或即将到期，选择要处理的项："
+
+options（按 planned_date 升序排列）：
+  [Pxxx] ◀ 今天 — <topic>
+  [Pxxx] 📅 <N>天后 — <topic>
+  [跳过全部] 稍后处理
+```
+
+- 若用户选了 `[跳过全部]` → 更新 `last_reminded` 为今天，写回 JSON，结束本节。
+- 若无到期也无即将到期 → 不弹窗，直接更新 `last_reminded`，结束本节。
+- 若用户选了一个或多个待办 → 进入步骤 C2。
+
+#### 步骤 C2：逐项操作弹窗
+
+对用户选中的每个待办，**依次**弹出 **第二层 AskQuestion**（`allow_multiple: true`）：
+
+```
+📋 <Pxxx> — <topic>
+
+prompt: "plan: <planned_date> | next_action: <全文（截断至 120 字）>"
+
+options：
+  [查看备忘] → 若 source_memo 存在
+  [标记完成]
+  [推迟一天] → planned_date += 1
+  [推迟三天] → planned_date += 3
+  [推迟一周] → planned_date += 7
+  [标记进行中] → status = "in_progress"
+  [跳过此项]
+```
+
+操作行为：
+
+| 选项 | 动作 |
+|:---|:---|
+| `[查看备忘]` | Read `source_memo.path` 对应 `entry` 段落，展示后在对话中说明「备忘已展示，请继续操作」，然后**重新弹出本项的操作弹窗**（不进入下一项） |
+| `[标记完成]` | 确认 → `status: "completed"` + `completed_date`，从 `pending` 移到 `archive`。若 `source_memo` 存在 → 提示「备忘文件未被修改（仅 tracker 更新）」 |
+| `[推迟 N 天]` | `planned_date` 按 N 天递增，写回 tracker.json |
+| `[标记进行中]` | `status: "in_progress"`，不修改 `planned_date` |
+| `[跳过此项]` | 不做改动，进入下一项（最后一个已选待办跳过即结束） |
+
+- 每项操作后立即写回 tracker.json（逐项落盘，防止链中断丢失）。
+- 全部已选待办处理完毕后，进入步骤 C3。
+
+#### 步骤 C3：结束
+
+更新 `meta.last_reminded` 为今天日期，写回 JSON。结束待办检查，进入一致性检查。
+
+---
+
+#### C-bis. 关键词命中提示（对话中进行）
+
+> 独立于 C1-C3，在任意对话回复的**末尾**，若本轮对话命中了某待办的 `resume_keywords`（且该待办 `status !== "completed"`），追加醒目标示：
+
+```
+> **⏰ 待办关联**：<Pxxx> — <topic>（plan: <planned_date>，状态：<pending|in_progress>）
+> 输入 `待办` 查看详情或调整
+```
+
+- 此提示不阻断、不弹窗，仅追加在回复末尾。
+- 不受 `last_reminded` 每日去重约束（关键词驱动，每次命中都提示）。
+- 若同时命中多个待办 → 逐行列出。
+
+---
+
+> **与 sessionStart 的分工**：sessionStart 自动 `git fetch` → 有远端更新则 pull（走本步骤 C）；无更新则 sessionStart §1.2b 兜底（同样走交互弹窗）。手动词「拉取git」触发 pull 后同样走本步骤 C。三者都受 `last_reminded` 每日去重约束。
+
 ---
 
 ## 在后续架构相关改动之前（强制执行）
