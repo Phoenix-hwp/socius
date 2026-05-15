@@ -1,9 +1,18 @@
 {
   "meta": {
-    "description": "任务类型注册表 — 建立「意图→已知模式」映射。为 P008 FSM 提供「什么是同类任务」的判定依据，支撑 L2→L1→L0 自动升级。也用于知识脑消费时匹配相关方法论。",
+    "description": "任务类型注册表 — 建立「意图→已知模式」映射。为 P008 FSM 提供「什么是同类任务」的判定依据，支撑 L2→L1→L0 自动升级。skills 字段作为外键指向 skill-registry.json，串联决策引擎与技能仓库。",
     "thresholds": {
       "migration_readiness": 5,
       "description": "连续成功 ≥5 次后标记 migration_ready，Agent 主动提议从命令级别名路由迁移到 P008 意图评估"
+    },
+    "skills_schema": {
+      "description": "skills 记录该任务类型下可用的能力资源。查询优先级：internal → external → candidates。全部不可用时标记 uncovered 缺口并触发 WebSearch/GitHub 检索。",
+      "fields": {
+        "internal": "内部固化技能（skill-registry.id，source=internal，status=active）",
+        "external": "外部已安装技能（skill-registry.id，source=github，status=active）",
+        "candidates": "备选候选（skill-candidates.md 中已评估但未安装的）",
+        "uncovered": "标记缺口（已知需要但尚未找到任何覆盖的技能方向）"
+      }
     }
   },
   "task_types": [
@@ -16,7 +25,8 @@
       "consecutive_successes": 1,
       "last_task": "2026-05-15",
       "migration_ready": false,
-      "related_knowledge": ["决策框架设计"]
+      "related_knowledge": ["决策框架设计"],
+      "skills": { "internal": [], "external": [], "candidates": [], "uncovered": [] }
     },
     {
       "type_id": "rule_file_modify",
@@ -27,29 +37,59 @@
       "consecutive_successes": 0,
       "last_task": null,
       "migration_ready": false,
-      "related_knowledge": ["决策框架演进"]
+      "related_knowledge": ["决策框架演进"],
+      "skills": { "internal": [], "external": [], "candidates": [], "uncovered": [] }
     },
     {
       "type_id": "docx_generate",
       "label": "文档生成",
-      "description": "生成 .docx 文件（简历/报告等），含排版约束的输出",
+      "description": "生成 .docx 文件（简历/报告等），含排版约束的输出。可用方法：python-docx 直接构建",
       "typical_dimensions": { "S": 0, "Rev": 0, "A": 1, "C": 1, "E": 0, "Auth": 0, "V": 1 },
       "typical_L": 1,
       "consecutive_successes": 0,
       "last_task": null,
       "migration_ready": false,
-      "related_knowledge": ["I/O 结构约束"]
+      "related_knowledge": ["I/O 结构约束"],
+      "skills": {
+        "internal": ["python-docx（直接构建）"],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      }
     },
     {
       "type_id": "ppt_template_fill",
       "label": "PPT 模板填充",
-      "description": "根据模板结构填入内容（结构探针 + 文本替换 + 文本框覆盖）",
+      "description": "根据现有模板结构填入内容（结构探针 → lxml 替换标题 + add_textbox 覆盖描述区）。已降权 — GROUP 嵌套是已知障碍",
       "typical_dimensions": { "S": 1, "Rev": 0, "A": 2, "C": 2, "E": 0, "Auth": 0, "V": 2 },
       "typical_L": 2,
       "consecutive_successes": 0,
       "last_task": null,
       "migration_ready": false,
-      "related_knowledge": ["PPT 模板套用教训", "结构探针前置原则"]
+      "related_knowledge": ["PPT 模板套用教训", "结构探针前置原则"],
+      "skills": {
+        "internal": ["python-pptx + lxml（模板填充）⚠ 降权"],
+        "external": [],
+        "candidates": [],
+        "uncovered": ["PPT 生成/模板填充 — 已有方法降权，外部能力未检索"]
+      }
+    },
+    {
+      "type_id": "ppt_generate",
+      "label": "PPT 直接生成",
+      "description": "从零用 python-pptx 搭建 PPT（自定义配色/版式/排版）。无 GROUP 嵌套问题，但美观度逊于专业模板",
+      "typical_dimensions": { "S": 1, "Rev": 0, "A": 1, "C": 2, "E": 0, "Auth": 0, "V": 1 },
+      "typical_L": 1,
+      "consecutive_successes": 1,
+      "last_task": "2026-05-15",
+      "migration_ready": false,
+      "related_knowledge": ["脱毛仪市场调研"],
+      "skills": {
+        "internal": ["python-pptx（直接生成）"],
+        "external": [],
+        "candidates": [],
+        "uncovered": ["专业美观的 PPT 生成 — 内部方法偏功能型，外部能力未检索"]
+      }
     },
     {
       "type_id": "git_commit",
@@ -60,7 +100,13 @@
       "consecutive_successes": 0,
       "last_task": null,
       "migration_ready": false,
-      "note": "远期候选：当前为命令级，达到迁移门槛后提交换到 P008"
+      "note": "远期候选：当前为命令级，达到迁移门槛后提交换到 P008",
+      "skills": {
+        "internal": ["skill-git-crud"],
+        "external": [],
+        "candidates": ["addyosmani/agent-skills（/ship 子能力）"],
+        "uncovered": []
+      }
     },
     {
       "type_id": "git_pull",
@@ -71,7 +117,13 @@
       "consecutive_successes": 0,
       "last_task": null,
       "migration_ready": false,
-      "note": "GUI 点击动作，永久保留别名路由"
+      "note": "GUI 点击动作，永久保留别名路由",
+      "skills": {
+        "internal": ["skill-git-crud"],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      }
     },
     {
       "type_id": "web_search_research",
@@ -82,7 +134,13 @@
       "consecutive_successes": 0,
       "last_task": null,
       "migration_ready": false,
-      "related_knowledge": ["脱毛仪市场调研"]
+      "related_knowledge": ["脱毛仪市场调研"],
+      "skills": {
+        "internal": ["WebSearch（内置）"],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      }
     },
     {
       "type_id": "knowledge_brain_learn",
@@ -93,7 +151,13 @@
       "consecutive_successes": 0,
       "last_task": null,
       "migration_ready": false,
-      "note": "特殊类型——知识脑生长任务，C3（高创意/原创理解），L2（确认后执行）"
+      "note": "特殊类型——知识脑生长任务，C3（高创意/原创理解），L2（确认后执行）",
+      "skills": {
+        "internal": ["Read（本地文件）", "FetchMcpResource（Notion）", "WebFetch（网页）"],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      }
     }
   ]
 }
