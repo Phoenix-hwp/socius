@@ -10,6 +10,7 @@ glossary:
     - mod-conversation-*
     - mod-multi-round-*
     - Skills_Library/scripts/speak.py
+    - Skills_Library/scripts/todo-reminder.py
 alwaysApply: true
 ---
 

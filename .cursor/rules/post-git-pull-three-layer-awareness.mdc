@@ -38,33 +38,31 @@ alwaysApply: false
 
 ### C. 待办计划同步检查（交互式）
 
-> **每日去重**：待办提醒每日仅执行一次。提醒流程结束后更新 `Pending-Plan-Tracker.json` 的 `meta.last_reminded` 为今天日期，同日后续 pull 跳过。
->
-> **交互流程**：从静态文本列表改为两阶段 `AskQuestion` 弹窗链 —— 第一阶段多选待办，第二阶段逐项操作（查看备忘/推迟/完成/跳过）。
+> **统一入口**：待办扫描与状态更新已封装为 `skill-todo-reminder`（Shell：`python Skills_Library/scripts/todo-reminder.py`）。本节仅保留触发逻辑，完整流程与内核 §1.2b 步骤 2 一致。
+
+> **每日去重**：每日仅执行一次。由 `todo-reminder.py --scan` 内置的 `last_reminded` 去重保证，同日后续 pull 自动跳过。
 
 #### 步骤 C1：待办扫描与第一层弹窗
 
-1. Read `10-Topics/Pending-Plan-Tracker.json`，检查 `meta.last_reminded`：
-   - 若 `=== 今天` → **跳过**待办检查，进入一致性检查。结束本节。
-   - 若 `!== 今天` 或为 `null` → 继续。
-2. 遍历 `pending` 数组（排除 `status: "cancelled"`），构建两组合并列表：
-   - **到期**：`planned_date <= 今天`
-   - **即将到期**：`planned_date` 在未来 3 天内但不等于今天
-3. 若有到期或即将到期项 → 弹出 **第一层 AskQuestion**（`allow_multiple: true`）：
+1. 执行 Shell：`python Skills_Library/scripts/todo-reminder.py --scan`，获取 JSON 输出。
+2. 若 `"skipped": true` → **跳过**待办检查，进入一致性检查。结束本节。
+3. 若 `"skipped": false`：
+   - 解析 `overdue`（到期）、`upcoming`（即将到期，days_until ∈ [1,3]）、`in_progress`（进行中）
+   - 三组合并，弹出 **第一层 AskQuestion**（`allow_multiple: true`）：
 
 ```
 📋 待办提醒（pull 同步）
 
 prompt: "以下待办已到期或即将到期，选择要处理的项："
 
-options（按 planned_date 升序排列）：
-  [Pxxx] ◀ 今天 — <topic>
+options（按 days_until 升序排列）：
+  [Pxxx] ◀ 今天/进行中 — <topic>
   [Pxxx] 📅 <N>天后 — <topic>
   [跳过全部] 稍后处理
 ```
 
-- 若用户选了 `[跳过全部]` → 更新 `last_reminded` 为今天，写回 JSON，结束本节。
-- 若无到期也无即将到期 → 不弹窗，直接更新 `last_reminded`，结束本节。
+- 若用户选了 `[跳过全部]` → 执行 Shell：`python Skills_Library/scripts/todo-reminder.py --set-reminded`，结束本节。
+- 若无到期也无即将到期 → 不弹窗，直接执行 Shell：`python Skills_Library/scripts/todo-reminder.py --set-reminded`，结束本节。
 - 若用户选了一个或多个待办 → 进入步骤 C2。
 
 #### 步骤 C2：逐项操作弹窗
@@ -88,20 +86,20 @@ options：
 
 操作行为：
 
-| 选项 | 动作 |
-|:---|:---|
-| `[查看备忘]` | Read `source_memo.path` 对应 `entry` 段落，展示后在对话中说明「备忘已展示，请继续操作」，然后**重新弹出本项的操作弹窗**（不进入下一项） |
-| `[标记完成]` | 确认 → `status: "completed"` + `completed_date`，从 `pending` 移到 `archive`。若 `source_memo` 存在 → 提示「备忘文件未被修改（仅 tracker 更新）」 |
-| `[推迟 N 天]` | `planned_date` 按 N 天递增，写回 tracker.json |
-| `[标记进行中]` | `status: "in_progress"`，不修改 `planned_date` |
-| `[跳过此项]` | 不做改动，进入下一项（最后一个已选待办跳过即结束） |
+|| 选项 | 动作 |
+||:---|:---|
+|| `[查看备忘]` | Read `source_memo.path` 对应 `entry` 段落，展示后重新弹出本项操作弹窗 |
+|| `[标记完成]` | Shell `python Skills_Library/scripts/todo-reminder.py --mark-done <Pxxx>` |
+|| `[推迟 N 天]` | Shell `python Skills_Library/scripts/todo-reminder.py --postpone <Pxxx> <new_date>` |
+|| `[标记进行中]` | Shell `python Skills_Library/scripts/todo-reminder.py --start <Pxxx>` |
+|| `[跳过此项]` | 不做改动，进入下一项 |
 
-- 每项操作后立即写回 tracker.json（逐项落盘，防止链中断丢失）。
+- 每项操作后立即执行 Shell 写回（逐项落盘，防止链中断丢失）。
 - 全部已选待办处理完毕后，进入步骤 C3。
 
 #### 步骤 C3：结束
 
-更新 `meta.last_reminded` 为今天日期，写回 JSON。结束待办检查，进入一致性检查。
+执行 Shell：`python Skills_Library/scripts/todo-reminder.py --set-reminded`。结束待办检查，进入一致性检查。
 
 ---
 

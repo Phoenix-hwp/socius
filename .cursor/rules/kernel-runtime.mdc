@@ -50,19 +50,33 @@ replaces:
 
 1. 执行 `git fetch`（只读，不合并）。
 2. 检查远端是否有新提交（`git rev-list --count HEAD..origin/main`）。
-3. **若有新提交** → 执行 `git pull --ff-only`（处理 stash 如需），然后执行 `post-git-pull-three-layer-awareness.mdc` 的完整三步检查（A 回执新增规则、B 对齐别名、C 一致性检查）。**跳过本节的待办检查**（由 post-pull 步骤 C 统一处理）。
+3. **若有新提交** → 执行 `git pull --ff-only`（处理 stash 如需），然后执行 `post-git-pull-three-layer-awareness.mdc` 的 A/B/C 步骤（C 步骤中的待办检查已统一走 Shell `skills_Library/scripts/todo-reminder.py`）。**跳过本节的待办检查**（由 post-pull 步骤 C 统一处理）。
 4. **若无新提交** → 跳过 pull，直接进入下方的「每日首次待办检查」。
 
 #### 步骤 2：每日首次待办检查（交互式）
 
-待办扫描与交互流程与 `post-git-pull-three-layer-awareness.mdc` 步骤 C1-C3 完全一致，此处仅保留入口逻辑：
+> **统一入口**：待办扫描与状态更新已封装为 `skill-todo-reminder`（Shell：`python Skills_Library/scripts/todo-reminder.py`）。内核仅负责触发入口，完整逻辑在 skill 内自闭环。
 
-1. Read `10-Topics/Pending-Plan-Tracker.json`，检查 `meta.last_reminded`：
-   - 若 `=== 今天` → **跳过**，本轮不做待办提醒。
-   - 若 `!== 今天` 或为 `null` → 执行步骤 C1-C3 的完整交互弹窗链（多选待办 → 逐项操作）。
-2. 流程结束后更新 `last_reminded` 为今天。
+1. 执行 Shell：`python Skills_Library/scripts/todo-reminder.py --scan`，获取 JSON 输出。
+2. 若 `"skipped": true` → **跳过**，本轮不做待办提醒。
+3. 若 `"skipped": false`：
+   - 解析 `overdue`（到期）、`upcoming`（即将到期，days_until ∈ [1,3]）、`in_progress`（进行中）
+   - 三组合并，弹出第一层 `AskQuestion`（`allow_multiple: true`）：
+     ```
+     📋 待办提醒（每日检查）
+     
+     prompt: "以下待办已到期或即将到期，选择要处理的项："
+     
+     options（按 days_until 升序排列）：
+       [Pxxx] ◀ 今天/进行中 — <topic>
+       [Pxxx] 📅 <N>天后 — <topic>
+       [跳过全部] 稍后处理
+     ```
+   - 若用户选了 `[跳过全部]` → 执行 Shell：`python Skills_Library/scripts/todo-reminder.py --set-reminded`，结束本节。
+   - 若用户选了一个或多个待办 → 进入逐项操作弹窗（同 post-git-pull 步骤 C2-C3）。
+4. 全部操作完成后，执行 Shell：`python Skills_Library/scripts/todo-reminder.py --set-reminded`。
 
-> 手动 pull 后由 `post-git-pull-three-layer-awareness.mdc` 步骤 C 处理，同样交互式 + 每日去重。
+> 手动 pull 后由 `post-git-pull-three-layer-awareness.mdc` 步骤 C 处理，同样通过 Shell 调用 `todo-reminder.py --scan`。
 >
 > 待办的自动完成检测在收束时执行（`flow-behavior-auto-receipt.mdc` 步骤 C#8）。
 

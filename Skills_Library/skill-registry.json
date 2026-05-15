@@ -3,7 +3,7 @@
     "description": "Skills Library 技能注册表 — 统一管理所有可插拔能力（内部固化 + 外部获取），按频率分型。",
     "version": "1.1.0",
     "created": "2026-05-12",
-    "updated": "2026-05-12"
+    "updated": "2026-05-15"
   },
   "frequency_tiers": {
     "常用": { "definition": "日常高频使用，常驻加载", "retention": "永久保留" },
@@ -249,6 +249,28 @@
           "Skills_Library/skills/pretty-mermaid/scripts/render.mjs",
           "Skills_Library/skills/pretty-mermaid/scripts/batch.mjs",
           "Skills_Library/skills/pretty-mermaid/scripts/themes.mjs"
+        ]
+      }
+    },
+    {
+      "id": "skill-todo-reminder",
+      "name": "待办计划提醒与状态管理",
+      "source": "internal",
+      "source_url": "",
+      "frequency": "常用",
+      "status": "active",
+      "locked": false,
+      "agent_scope": ["default"],
+      "acquired": "2026-05-15",
+      "last_used": null,
+      "task_types": ["待办提醒"],
+      "performance_score": null,
+      "dependencies": ["Python >= 3.10"],
+      "write_scope": ["10-Topics/Pending-Plan-Tracker.json"],
+      "risk_signals": [],
+      "entry": {
+        "scripts": [
+          "Skills_Library/scripts/todo-reminder.py"
         ]
       }
     },

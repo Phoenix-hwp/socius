@@ -2,7 +2,7 @@
 title: Cursor 指令别名清单
 type: cursor-command-aliases
 created: 2026-04-21
-updated: 2026-05-14 (新增待办、语音指令)
+updated: 2026-05-15 (待办指令更新：从 Read tracker 改为 Shell skill-todo-reminder)
 tags:
   - cursor
   - aliases
@@ -60,7 +60,7 @@ tags:
 | 技能全关 | 禁用所有技能、停用技能 | 一键关闭所有外部技能，仅保留内核规则 | `.cursor/rules/flow-skill-toggle.mdc` |
 | 执行技能 | 运行技能、调用技能 | 执行已部署的 Skill（执行前快照 → 写路径限制 → 差异审查 → 确认/回滚） | `.cursor/rules/flow-skill-execute.mdc`、`.cursor/rules/mod-skills-library-framework.mdc` |
 | 评估技能 | 技能评估、技能巡检 | 对备选和已安装技能执行中检：逐技能检查质量变化/风险变化/表现评分趋势 | `.cursor/rules/mod-skill-evaluation.mdc`、`Skills_Library/task-type-registry.md` |
-| 待办 | 查看待办、调整待办 | **待办计划交互管理**：Read `10-Topics/Pending-Plan-Tracker.json`，弹出两阶段 AskQuestion 链（多选待办 → 逐项操作：查看备忘/推迟/标记完成/标记进行中/跳过） | `post-git-pull-three-layer-awareness.mdc` 步骤 C1-C3 |
+| 待办 | 查看待办、调整待办 | **待办计划交互管理**：执行 `Skill-待办提醒`（Shell `python Skills_Library/scripts/todo-reminder.py --scan --skip-daily-check` → 解析 JSON → 弹出两阶段 AskQuestion 链（多选待办 → 逐项操作：查看备忘/推迟/标记完成/标记进行中/跳过）→ 用户选择后 Shell 写回） | `Skills_Library/scripts/todo-reminder.py`（技能：`skill-todo-reminder`） |
 | 语音 | 说、语音 | **语音朗读摘要**：设置 voice_mode=summary，Agent 回复时将概要/结论/建议投喂 TTS 朗读；文字仍完整显示在 UI | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） |
 | 说全文 | 全文、语音全文 | **语音朗读全文**：设置 voice_mode=full，Agent 回复时将完整内容投喂 TTS 朗读
 
