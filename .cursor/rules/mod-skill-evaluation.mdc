@@ -3,11 +3,14 @@ description: 技能评估体系 — 准入评分 + 表现评分 + 周期巡检 +
 alwaysApply: false
 Lifecycle: 长期
 Created: 2026-05-12
-related:
-  - mod-skills-library-framework.mdc（Skills Library 框架，第 G 阶段引用本规则）
-  - flow-skill-acquire.mdc（安全闸门引用本规则准入评分）
-  - flow-behavior-auto-receipt.mdc（任务收束时嵌入表现评分）
-  - Skills_Library/task-type-registry.md（任务类型注册表）
+glossary:
+  layer: 2-模块框架层
+  purpose: 技能评估体系 — 准入评分 + 表现评分 + 周期巡检 + 竞争替换 + 任务匹配
+  downstream:
+    - mod-skills-library-framework.mdc（Skills Library 框架）
+    - flow-skill-acquire.mdc（安全闸门引用本规则准入评分）
+    - flow-behavior-auto-receipt.mdc（任务收束时嵌入表现评分）
+    - Skills_Library/task-type-registry.md（任务类型注册表）
   - Skills_Library/skill-candidates.md（备选候选表）
   - Skills_Library/skill-registry.json（已安装技能注册表）
   - Skills_Library/skill-performance-log.jsonl（表现评分日志）

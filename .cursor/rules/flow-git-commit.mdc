@@ -39,7 +39,7 @@ glossary:
 
 ### 步骤 3：轮次收束写入（提交前纳入行为日志）
 
-在 `git add` 之前，确保当前轮次的行为快照已写入 `10-Topics/Round-Behavior-Log.jsonl`（按 `flow-behavior-auto-receipt.mdc` 步骤 A 执行），以便本轮日志行随本次提交一并推送，避免 push 后立即出现待处理修改。
+在 `git add` 之前，确保当前轮次的行为快照已写入 `10-Topics/Round-Behavior-Hot.jsonl` 或 `10-Topics/Round-Behavior-Warm.jsonl`（按 `flow-behavior-auto-receipt.mdc` 步骤 A 执行），以便本轮日志行随本次提交一并推送，避免 push 后立即出现待处理修改。
 
 ### 步骤 4：add 策略确认
 

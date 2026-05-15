@@ -1,6 +1,9 @@
 ---
 description: 内核运行规则 — 知识库约定 + 会话开端续接与收束 + 轮次确认 + 多轮长记忆
 alwaysApply: true
+glossary:
+  layer: 横切
+  purpose: 会话管理、知识库约定、多轮长记忆 — 覆盖网关未覆盖的默认运行逻辑
 replaces:
   - session-profile-workflow.mdc
   - round-start-checkpoint-confirmation.mdc

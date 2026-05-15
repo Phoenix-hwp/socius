@@ -1,7 +1,12 @@
 {
   "meta": {
-    "description": "Skills Library 技能注册表 — 统一管理所有可插拔能力（内部固化 + 外部获取），按频率分型。",
-    "version": "1.1.0",
+    "description": "Skills Library 技能注册表 — 统一管理所有可插拔能力（内部固化 + 外部获取），按频率分型。task_types 语义为「响应」——声明本技能能响应哪些任务类型。系统级（tier=system）可不声明 task_type。",
+    "version": "1.2.0",
+    "tier_schema": {
+      "system": "系统自身能力，管理仓库/规则/知识库/待办，被系统流程（sessionStart/pull/收束）调用",
+      "general": "通用能力，跨项目可复用",
+      "role": "领域能力，特定场景按需加载"
+    },
     "created": "2026-05-12",
     "updated": "2026-05-15"
   },
@@ -15,6 +20,7 @@
     {
       "id": "skill-notion-crud",
       "name": "Notion CRUD 套件",
+      "tier": "general",
       "source": "internal",
       "source_url": "",
       "frequency": "常用",
@@ -43,6 +49,7 @@
     {
       "id": "skill-git-crud",
       "name": "Git CRUD 套件",
+      "tier": "general",
       "source": "internal",
       "frequency": "常用",
       "status": "active",
@@ -50,7 +57,7 @@
       "agent_scope": ["default"],
       "acquired": "2026-05-12",
       "last_used": null,
-      "task_types": ["git_commit", "deployment"],
+      "task_types": ["git_commit", "git_pull", "deployment"],
       "performance_score": null,
       "dependencies": ["git >= 2.25"],
       "write_scope": ["仓库内所有文件", ".git/"],
@@ -68,6 +75,7 @@
     {
       "id": "skill-conversation",
       "name": "对话备份与恢复套件",
+      "tier": "general",
       "source": "internal",
       "frequency": "常用",
       "status": "active",
@@ -93,6 +101,7 @@
     {
       "id": "skill-earth-library",
       "name": "Earth Library 知识库套件",
+      "tier": "general",
       "source": "internal",
       "frequency": "常用",
       "status": "active",
@@ -118,6 +127,7 @@
     {
       "id": "skill-project-memo",
       "name": "项目备忘录套件",
+      "tier": "general",
       "source": "internal",
       "frequency": "高频",
       "status": "active",
@@ -141,6 +151,7 @@
     {
       "id": "skill-multi-round",
       "name": "多轮长记忆套件",
+      "tier": "general",
       "source": "internal",
       "frequency": "高频",
       "status": "active",
@@ -163,6 +174,7 @@
     {
       "id": "skill-behavior",
       "name": "行为偏好套件",
+      "tier": "system",
       "source": "internal",
       "frequency": "常用",
       "status": "active",
@@ -170,10 +182,10 @@
       "agent_scope": ["default"],
       "acquired": "2026-05-12",
       "last_used": null,
-      "task_types": ["behavior_learning"],
+      "task_types": null,
       "performance_score": null,
       "dependencies": [],
-      "write_scope": ["10-Topics/Round-Behavior-Log.jsonl", "10-Topics/Behavior-Fit-Log.jsonl", "10-Topics/Active-Task-Tracker.json"],
+      "write_scope": ["10-Topics/Round-Behavior-Hot.jsonl", "10-Topics/Round-Behavior-Warm.jsonl", "10-Topics/Behavior-Fit-Log.jsonl", "10-Topics/Active-Task-Tracker.json"],
       "risk_signals": [],
       "entry": {
         "framework": ".cursor/rules/mod-behavior-crud-framework.mdc",
@@ -185,6 +197,7 @@
     {
       "id": "skill-capability-encapsulate",
       "name": "能力封装",
+      "tier": "general",
       "source": "internal",
       "frequency": "低频",
       "status": "active",
@@ -206,6 +219,7 @@
     {
       "id": "skill-skills-library",
       "name": "Skills Library 管理套件",
+      "tier": "system",
       "source": "internal",
       "frequency": "低频",
       "status": "active",
@@ -213,7 +227,7 @@
       "agent_scope": ["default"],
       "acquired": "2026-05-12",
       "last_used": null,
-      "task_types": ["architecture_design"],
+      "task_types": null,
       "performance_score": null,
       "dependencies": ["git >= 2.5 (worktree)"],
       "write_scope": ["Skills_Library/", ".trash/Skills_Library/"],
@@ -230,6 +244,7 @@
     {
       "id": "skill-pretty-mermaid",
       "name": "Pretty Mermaid 图渲染",
+      "tier": "role",
       "source": "github",
       "source_url": "https://github.com/imxv/Pretty-mermaid-skills",
       "frequency": "低频",
@@ -255,6 +270,7 @@
     {
       "id": "skill-todo-reminder",
       "name": "待办计划提醒与状态管理",
+      "tier": "system",
       "source": "internal",
       "source_url": "",
       "frequency": "常用",
@@ -263,7 +279,7 @@
       "agent_scope": ["default"],
       "acquired": "2026-05-15",
       "last_used": null,
-      "task_types": ["todo_reminder"],
+      "task_types": null,
       "performance_score": null,
       "dependencies": ["Python >= 3.10"],
       "write_scope": ["10-Topics/Pending-Plan-Tracker.json"],
@@ -277,6 +293,7 @@
     {
       "id": "skill-tts-speak",
       "name": "TTS 语音朗读",
+      "tier": "role",
       "source": "internal",
       "source_url": "",
       "frequency": "低频",
@@ -285,7 +302,7 @@
       "agent_scope": ["default"],
       "acquired": "2026-05-14",
       "last_used": null,
-      "task_types": ["tts_speak"],
+      "task_types": null,
       "performance_score": null,
       "dependencies": ["pyttsx3", "Windows SAPI5 中文语音（慧慧）"],
       "write_scope": [],

@@ -1,0 +1,112 @@
+---
+description: 系统审计框架 — 全系统架构/数据/编码/技能健康检查，输出结构化报告
+Lifecycle: 长期
+glossary:
+  layer: 2-模块框架层
+  purpose: 周期审计系统整体健康度——覆盖架构规范、数据治理、注册表对齐、编码规范、过渡方案检查。输出结构化报告供讨论决策
+  trigger_points:
+    - "用户指令：系统检查 / 自检 / 审计 / 巡检系统 / 健康检查"
+    - "过渡方案登记文件中阈值触发项拉取后自动提示"
+  downstream:
+    - .cursor/rules/script-coding-constraints.mdc（编码规范参考）
+    - data-governance-standards.mdc（数据治理宪法）
+    - 10-Topics/Task-Type-Registry.json（注册表对齐）
+    - Skills_Library/skill-registry.json（技能健康检查）
+    - Transition-Plan-Registry.json（过渡方案检查）
+alwaysApply: false
+trigger: 用户输入 系统检查 / 自检 / 审计 时触发
+---
+
+# 系统审计框架
+
+## 触发词
+
+- 主指令：`系统检查`
+- 别名：`自检`、`审计`、`巡检系统`、`健康检查`
+
+## 意图
+
+对仓库进行一次全系统健康扫描，覆盖架构规范、数据治理、注册表对齐、编码规范、过渡方案五大维度，输出结构化报告与待处理项清单。
+
+---
+
+## 审计维度
+
+### D1：架构规范
+
+| 检查项 | 说明 | 数据源 |
+|:---|:---|:---|
+| layer 字段覆盖 | 所有规则文件是否声明 `layer`（横切规则同样需要） | `.cursor/rules/*.mdc` |
+| layer 命名一致 | L1/L2/L3 命名是否统一 | `.cursor/rules/*.mdc` |
+| 跨层耦合标注 | 双向引用的规则是否标注 `cross-layer-coupling: intentional` | `.cursor/rules/*.mdc` frontmatter |
+| frontmatter 完整性 | `Lifecycle` / `Created` / `glossary.layer` 等必填字段 | `.cursor/rules/*.mdc` |
+
+### D2：数据治理
+
+| 检查项 | 说明 | 数据源 |
+|:---|:---|:---|
+| JSONL schema 统一 | 同一文件内所有行共享同一字段集合（可选字段用 null） | 所有 `.jsonl` |
+| JSON 长文本 | 字符串字段 >50 字是否外迁到 `.md` | 所有 `.json` |
+| 权威源唯一 | 同一数据是否存在双写副本 | `library_index.json` ↔ `cards.jsonl` 等 |
+
+### D3：注册表对齐
+
+| 检查项 | 说明 | 数据源 |
+|:---|:---|:---|
+| Task-Type 双表对齐 | JSON 与 MD 的 type_id 是否一一对应 | `Task-Type-Registry.json` ↔ `task-type-registry.md` |
+| skill task_types | 技能声明的 task_type 是否在注册表中存在 | `skill-registry.json` ↔ 双表 |
+| type_id 孤儿 | 注册表中 type_id 有无技能覆盖（uncovered 标记） | 双表 `skills.uncovered` |
+
+### D4：编码规范
+
+| 检查项 | 说明 | 数据源 |
+|:---|:---|:---|
+| 硬编码路径 | 脚本内是否有绝对路径/固定盘符 | `.py`、`.mjs`、`.sh`、脚本文件 |
+| 跨目录导入 | 是否存在 `sys.path.insert` 动态跨目录导入 | `.py` |
+| 阈值硬编码 | 脚本内是否写死业务阈值（2000/10/50 等） | `.py`、`.mjs` |
+
+### D5：过渡方案
+
+| 检查项 | 说明 | 数据源 |
+|:---|:---|:---|
+| 阈值触发 | 过渡方案中 `current >= value` 的项是否已触发 | `Transition-Plan-Registry.json` |
+| stale 检测 | 长时间（>30天）未触发的过渡方案是否需要移除/调整 | `Transition-Plan-Registry.json` |
+
+### D6：技能健康
+
+| 检查项 | 说明 | 数据源 |
+|:---|:---|:---|
+| tier 覆盖 | 所有 skill 是否声明 `tier` | `skill-registry.json` |
+| 零记录检测 | `skill-performance-log.jsonl` 是否持续零记录 | `skill-performance-log.jsonl` |
+| 降权方法 | `method-reliability` 中降权禁用的方法 | `method-reliability-registry.json` |
+| 技能缺口 | Task-Type 注册表中 `uncovered` 的技能方向 | 双表 |
+
+---
+
+## 输出格式
+
+```
+## 系统审计报告（<日期>）
+
+| 维度 | 检查项数 | 通过 | 问题 | 严重 |
+|:---|:---|:---|:---|:---|
+| D1 架构规范 | N | N | N | N |
+| ... | ... | ... | ... | ... |
+
+### 严重项（阻断）
+- [ ] <问题描述> — <位置> — <修复建议>
+
+### 问题项
+- [ ] <问题描述> — <位置> — <修复建议>
+
+### 过渡方案触发
+- [ ] T01 — 阈值已满足（当前: N >= 3），建议讨论升级
+```
+
+---
+
+## 执行约束
+
+- 每次审计后输出结构化报告 + 待处理清单
+- 发现阻断级问题（如关键文件缺失、数据双写）立即提示，不自动修复
+- 非阻断问题由用户决策是否本轮修复

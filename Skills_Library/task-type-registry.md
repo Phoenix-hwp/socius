@@ -251,6 +251,51 @@ related:
 - **历史中位 Token**：—
 
 
+### 19. PPT 模板填充
+- type_id：ppt_template_fill
+- 父类型：办公编程
+- 触发关键词：套模板、模板填充
+- 结果期望：内容正确填入模板，GROUP 嵌套绕行通过
+- 覆盖技能：python-pptx + lxml（内部 ⚠ 降权）
+- **触发计数**：0 | **历史中位轮次**：— | **历史中位 Token**：—
+
+
+### 20. Git 拉取
+- type_id：git_pull
+- 父类型：—
+- 触发关键词：拉取git、拉取远端、直接拉取、pull
+- 结果期望：远端变更正确并入本地
+- 覆盖技能：skill-git-crud（内部，active）
+- **触发计数**：0 | **历史中位轮次**：— | **历史中位 Token**：—
+
+
+### 21. WebSearch 调研
+- type_id：web_search_research
+- 父类型：信息获取
+- 触发关键词：调研、搜索、查资料、WebSearch
+- 结果期望：公开数据结构化，引用来源清晰
+- 覆盖技能：WebSearch（内置）
+- **触发计数**：0 | **历史中位轮次**：— | **历史中位 Token**：—
+
+
+### 22. 知识脑学习
+- type_id：knowledge_brain_learn
+- 父类型：Agent 增强
+- 触发关键词：学习、Knowledge Brain、知识脑
+- 结果期望：结构化总结，逐点讨论固化
+- 覆盖技能：Read / FetchMcpResource / WebFetch
+- **触发计数**：0 | **历史中位轮次**：— | **历史中位 Token**：—
+
+
+### 23. 系统审计
+- type_id：system_audit
+- 父类型：Agent 增强
+- 触发关键词：系统检查、自检、审计、巡检系统、健康检查
+- 结果期望：全系统架构/数据/编码/技能健康扫描，结构化报告
+- 覆盖技能：待创建 mod-system-audit.mdc
+- **触发计数**：0 | **历史中位轮次**：— | **历史中位 Token**：—
+
+
 ---
 
 ## 维护约定

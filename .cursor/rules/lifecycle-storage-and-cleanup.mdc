@@ -1,6 +1,9 @@
 ---
 description: 生命周期分层存储与清理规则
 alwaysApply: true
+glossary:
+  layer: 横切
+  purpose: 文件生命周期管理 — 长期/阶段/临时三分级 + 软删除 + 模板定级确认
 ---
 
 # 文件生命周期规则

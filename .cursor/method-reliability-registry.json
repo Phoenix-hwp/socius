@@ -24,7 +24,7 @@
   },
   "records": [
     {
-      "task_type": "提交git",
+      "task_type": "git_commit",
       "method": "Shell(git)",
       "hostname": "DESKTOP-ABC123",
       "total_calls": 12,
@@ -35,7 +35,7 @@
       "state": "⚠ 降权"
     },
     {
-      "task_type": "提交git",
+      "task_type": "git_commit",
       "method": "Shell(gh)",
       "hostname": "DESKTOP-ABC123",
       "total_calls": 5,
@@ -46,7 +46,7 @@
       "state": "✅ 正常"
     },
     {
-      "task_type": "Notion创建",
+      "task_type": "notion_create",
       "method": "MCP",
       "hostname": "DESKTOP-ABC123",
       "total_calls": 20,
@@ -58,7 +58,7 @@
       "known_issues": []
     },
     {
-      "task_type": "文档生成",
+      "task_type": "docx_generate",
       "method": "docx2pdf(COM)",
       "hostname": "Phoenix-TKPad",
       "total_calls": 2,
@@ -78,7 +78,7 @@
       ]
     },
     {
-      "task_type": "文档生成",
+      "task_type": "docx_generate",
       "method": "win32com+ASCII路径",
       "hostname": "Phoenix-TKPad",
       "total_calls": 2,
@@ -90,7 +90,7 @@
       "known_issues": []
     },
     {
-      "task_type": "PPT模板填充",
+      "task_type": "ppt_template_fill",
       "method": "python-pptx(shape遍历+文本替换)",
       "hostname": "Phoenix-TKPad",
       "total_calls": 1,

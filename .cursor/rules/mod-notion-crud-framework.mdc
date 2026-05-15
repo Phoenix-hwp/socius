@@ -2,7 +2,7 @@
 description: Notion CRUD 统一框架 — 定义阶段结构，不含具体步骤
 alwaysApply: false
 glossary:
-  layer: 2-模块执行层
+  layer: 2-模块框架层
   module: Notion
   depends: [mod-notion-precondition]
 ---

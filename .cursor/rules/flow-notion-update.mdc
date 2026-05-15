@@ -2,7 +2,7 @@
 description: Notion「改」操作 — 更新页面内容的具体步骤
 alwaysApply: false
 glossary:
-  layer: 3-具体工作流
+  layer: 3-工作流执行层
   module: Notion
   operation: update
   depends: [mod-notion-precondition, mod-notion-crud-framework]

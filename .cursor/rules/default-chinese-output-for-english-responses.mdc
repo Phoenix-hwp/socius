@@ -1,6 +1,9 @@
 ---
 description: Default to Chinese when explanations are in English
 alwaysApply: true
+glossary:
+  layer: 横切
+  purpose: 默认中文输出 — 工具/命令英文说明自动转中文，保留技术标识原文
 ---
 
 # 默认中文输出（英文说明自动转中文）

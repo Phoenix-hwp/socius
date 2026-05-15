@@ -36,8 +36,8 @@ glossary:
    - 若本轮与某个活跃任务（`Active-Task-Tracker.json`）相关 → 归属该任务 ID。
    - 若与多个任务相关 → 归属主要任务。
    - 若无明确归属 → 归属 `其他`。
-4. 追加一行 JSON 到 `10-Topics/Round-Behavior-Log.jsonl`，字段：`{"type":"hot","date":"<ISO>","task":"<ID|null>","style":"<值>","confirm":"<值>","output_structure":"<值>","user_input":"<值>","tool_channel":"<值>","special":"<值>","consumed":false}`。
-   - 温快照同时追加一行 `{"type":"warm",...}`（见步骤 A.2）。
+4. 追加一行 JSON 到 `10-Topics/Round-Behavior-Hot.jsonl`，字段：`{"type":"hot","date":"<ISO>","task":"<ID|null>","style":"<值>","confirm":"<值>","output_structure":"<值>","user_input":"<值>","tool_channel":"<值>","special":"<值>","consumed":false}`。
+   - 温快照同时追加一行 `{"type":"warm",...}` 到 `10-Topics/Round-Behavior-Warm.jsonl`（见步骤 A.2）。
 
 ### 步骤 A.2：认知维度快照（每轮必须）
 
@@ -50,7 +50,7 @@ glossary:
      - `情感基调`：Agent 自问「我本轮回复的驱动力偏理性论证还是感性表达？」→ 取值 `逻辑` / `中性` / `情绪`。
    - B 组每个维度取值时**必须附带置信度**（`高` / `中` / `低`），由 Agent 自评本轮该维度信号是否足够明确。置信度为 `低` 的维度 L3 分析时跳过当轮。
 3. **冷启动标记**：检查温快照表中已完成快照行数：若 ≤3 行 → 整行标记 `sample_phase: warmup`，B 组维度强制置信度 `低`。从第 4 行起进入正常采集阶段。
-4. 追加一行 JSON 到 `10-Topics/Round-Behavior-Log.jsonl`（与热快照为同一文件），字段：`{"type":"warm","date":"<ISO>","task":"<ID|null>","decomposition":"<值>","cognitive_path":"<值>","language_style":"<值>","expression_density":"<值>","emotional_tone":"<值>","confidence":"<高|中|低>","sample_phase":"<warmup|active>","consumed":false}`。
+4. 追加一行 JSON 到 `10-Topics/Round-Behavior-Warm.jsonl`（与热快照分离存储），字段：`{"type":"warm","date":"<ISO>","task":"<ID|null>","decomposition":"<值>","cognitive_path":"<值>","language_style":"<值>","expression_density":"<值>","emotional_tone":"<值>","confidence":"<高|中|低>","sample_phase":"<warmup|active>","consumed":false}`。
    - 冷启动阶段 B 组维度强制置信度 `低`。
 
 ### 步骤 A+：方法可靠性注册表更新（每轮强制）
@@ -136,7 +136,7 @@ glossary:
 
 触发条件：`10-Topics/Active-Task-Tracker.json` 中任一任务状态从 `进行中` → `已完成`。
 
-1. **收集快照**：从 `Round-Behavior-Log.jsonl` 中筛选该任务 ID 的所有行（`type: "hot"`）。
+1. **收集快照**：从 `Round-Behavior-Hot.jsonl` 中筛选该任务 ID 的所有行（`type: "hot"`）。
 2. **合并归纳**：
    - 若该任务只有 1 轮 → 直接使用该轮快照。
    - 若跨多轮 → 合并为综合描述：各维度取多数值，特殊行为合并去重。
@@ -145,7 +145,7 @@ glossary:
    - 行为摘要格式：`指令风格 \| 确认模式 \| 输出结构 \| 用户输入 \| 工具通道 \| 特殊行为`
    - 契合度：对照档案 §3 评估偏差，高/中/低。
 4. **归档任务**：在 `Active-Task-Tracker.json` 中将该任务从 `active` 移到 `archive`。
-5. **标记已消费**：在 `Round-Behavior-Log.jsonl` 中将已消费的快照行 `consumed` 改为 `true`。
+5. **标记已消费**：在 `Round-Behavior-Hot.jsonl` 和 `Round-Behavior-Warm.jsonl` 中将已消费的快照行 `consumed` 改为 `true`。
 6. **提示下游**：若有其他任务的依赖字段指向本任务，提示用户。
 7. **保留手动收束**：用户仍可用 `/收束` 触发完整版（含建议微调/采纳情况列）。
 8. **待办自动完成检测**（步骤 C 末尾，无论任务是否状态变更）：
@@ -382,7 +382,7 @@ Agent 扫描本轮对话，按三层策略提取经验：
 
 **数据来源**：
 - **操作维度**：`Behavior-Fit-Log.jsonl` `format: "compact"` 行的 `behavior` 字段（六字段管道分隔格式）
-- **认知维度**：`Round-Behavior-Log.jsonl` `type: "warm"` 行
+- **认知维度**：`Round-Behavior-Warm.jsonl` `type: "warm"` 行
 
 **各维度独立阈值**：
 

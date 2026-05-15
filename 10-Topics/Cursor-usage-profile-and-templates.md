@@ -150,7 +150,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 
 ### 6. 工具与环境
 
-- **工作区 Git / Gitee**：口语 **`提交git`**（及别名 **Git同步** / **推仓库** / **提交远端**）走 **`10-Topics/Gitee-Workspace-Git-Workflow.md`** 与规则 **`git-workspace-commit.mdc`**；与 **Notion 写入**（默认对话内六步）相互独立。
+- **工作区 Git / Gitee**：口语 **`提交git`**（及别名 **Git同步** / **推仓库** / **提交远端**）走 **`10-Topics/Gitee-Workspace-Git-Workflow.md`** 与规则 **`flow-git-commit.mdc`**；与 **Notion 写入**（默认对话内六步）相互独立。
 - **工具使用**：尽量自己跑终端与读文件，少让我手动复制。
 - **钩子 / 脚本**：**新建命令型钩子及相关启动脚本时，默认须同时支持 Python 与 Node.js**（互备实现或统一启动器；Windows 为主要环境时可采用与本库 `session_start_profile_launch` 相同思路：`cmd /c python … || node …`；注入类输出保持 UTF-8 一行 JSON）。
 - **指令创建与别名**：**当我要求“创建指令”时，默认即创建执行级规则（`.cursor/rules/*.mdc`）并登记到 `10-Topics/Cursor-command-aliases.md`；执行需同时支持完整指令与别名触发，且每个别名长度为 2-10 个字。**

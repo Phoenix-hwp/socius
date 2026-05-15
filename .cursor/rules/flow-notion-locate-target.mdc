@@ -2,7 +2,7 @@
 description: Notion 共享定位子流程 — 删/改/查共用的目标定位细则
 alwaysApply: false
 glossary:
-  layer: 3-具体工作流
+  layer: 3-工作流执行层
   module: Notion
   operation: locate_target
   depends: [mod-notion-crud-framework, flow-notion-select-parent]

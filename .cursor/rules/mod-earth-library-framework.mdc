@@ -1,7 +1,7 @@
 ---
 description: Earth Library 统一框架 — 作为项目知识补充层的阶段结构
 glossary:
-  layer: 2-模块执行层
+  layer: 2-模块框架层
   module: EarthLibrary
 ---
 

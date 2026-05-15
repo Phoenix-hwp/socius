@@ -1,7 +1,7 @@
 ---
 description: 多轮长记忆项目统一框架 — 三方独立架构（日常备份/项目备忘/多轮主控）
 glossary:
-  layer: 2-模块执行层
+  layer: 2-模块框架层
   module: MultiRound
 ---
 

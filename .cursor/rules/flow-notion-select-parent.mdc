@@ -2,7 +2,7 @@
 description: Notion 阶段B — 目录落点（父级选择）完整操作细则
 alwaysApply: false
 glossary:
-  layer: 3-具体工作流
+  layer: 3-工作流执行层
   module: Notion
   operation: select_parent
   depends: [mod-notion-precondition, mod-notion-crud-framework]

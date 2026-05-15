@@ -229,7 +229,7 @@ python "Earth_Library/scripts/library_optimize.py"
 | 机制 | 文件 | 触发 |
 |:---|:---|:---|
 | 任务状态跟踪 | `10-Topics/Active-Task-Tracker.md` | 会话开始/结束 |
-| 轮级行为快照（六字段） | `10-Topics/Round-Behavior-Log.md` | 每轮结尾自动 |
+| 轮级行为快照（双文件） | `10-Topics/Round-Behavior-Hot.jsonl` + `Round-Behavior-Warm.jsonl` | 每轮结尾自动 |
 | 任务完成自动收束 | `flow-behavior-auto-receipt.mdc` | 任务 → 已完成时 |
 | 手动收束（完整版） | `kernel-runtime.mdc` §2.2 | `/收束` / `结束对话` |
 | 续接 | `kernel-runtime.mdc` §1.2 | 会话开始 |
@@ -242,6 +242,12 @@ python "Earth_Library/scripts/library_optimize.py"
 | 待办 | 查看待办、调整待办 | 弹出两阶段 AskQuestion 链：多选待办 → 逐项操作（查看备忘/推迟/标记完成/标记进行中/跳过） | `Skills_Library/scripts/todo-reminder.py` |
 | 学习 | 学习知识、阅读卡片 | 读取知识源（卡片/Notion/网页/PDF）→ 结构化总结 → 逐点讨论四个输出端（审视/操作/协议/融汇）→ 写入 `Candidate-Protocols/` 待验证 | `10-Topics/Knowledge-Brain.md` |
 
+### 系统审计
+
+| 指令 | 别名 | 用途 | 框架 | 工作流 |
+|:---|:---|:---|:---|:---|
+| 系统检查 | 自检、审计、巡检系统、健康检查 | 全系统六大维度（架构/数据/注册表/编码/过渡方案/技能）健康扫描，输出结构化报告 | `mod-system-audit.mdc` | — |
+
 自动触发：
 - **每日首次**：sessionStart 自动 fetch/pull 后 OR 手动 pull 后，弹出待办提醒弹窗（同日不再重复）
 - **关键词命中**：对话命中 `resume_keywords` 时，回复末尾追加「⏰ 待办关联」提示（加粗醒目，不阻断）
@@ -252,7 +258,7 @@ python "Earth_Library/scripts/library_optimize.py"
 | 类型 | 路径 | 说明 |
 |:---|:---|:---|
 | 任务跟踪 | `10-Topics/Active-Task-Tracker.md` | 活跃任务 + 归档，四状态流转 |
-| 行为快照 | `10-Topics/Round-Behavior-Log.md` | 每轮六字段摘要 |
+| 行为快照 | `10-Topics/Round-Behavior-Hot.jsonl` + `10-Topics/Round-Behavior-Warm.jsonl` | 每轮热/温双文件摘要 |
 | 维度定义 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度注册表，支持增/启/禁 |
 | 自动收束规则 | `.cursor/rules/flow-behavior-auto-receipt.mdc` | 双层记录工作流 |
 | 会话规则 | `.cursor/rules/kernel-runtime.mdc` | 开端续接 + 收束触发 |

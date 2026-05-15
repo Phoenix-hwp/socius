@@ -2,7 +2,7 @@
 description: Notion 模块全局前置条件 — 网络确认
 alwaysApply: false
 glossary:
-  layer: 2-模块执行层
+  layer: 2-模块框架层
   module: Notion
   depends: []
 ---

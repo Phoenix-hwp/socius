@@ -107,6 +107,8 @@ alwaysApply: true
 | **语音朗读**：| | |
 | `语音` / `说` | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） | 设置 voice_mode=summary，本轮回复概要/结论/建议投喂 TTS 朗读 |
 | `说全文` / `全文` / `语音全文` | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） | 设置 voice_mode=full，本轮完整回复投喂 TTS 朗读 |
+| **系统审计**：| | |
+| `系统检查` / `自检` / `审计` / `巡检系统` / `健康检查` | `mod-system-audit.mdc` | 全系统架构/数据/编码/技能健康扫描，输出结构化报告与待处理清单 |
 | `学习` / `学习知识` / `阅读卡片` | `10-Topics/Knowledge-Brain.md` | 读取知识源（Earth Library/Notion/网页/PDF）→ 结构化总结 → 逐点讨论四个输出端 → 写入 `Candidate-Protocols/` |
 
 ---

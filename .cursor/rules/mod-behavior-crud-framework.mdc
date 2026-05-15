@@ -34,7 +34,7 @@ glossary:
 | 横切 | `kernel-runtime.mdc` | 门户 — 委托到本框架与第三层 |
 | 注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度与值域定义 |
 | 跟踪 | `10-Topics/Active-Task-Tracker.json` | 任务状态持久化 |
-| 快照 | `10-Topics/Round-Behavior-Log.jsonl` | 轮级行为快照（热快照 + 温快照） |
+| 快照 | `10-Topics/Round-Behavior-Hot.jsonl` + `10-Topics/Round-Behavior-Warm.jsonl` | 轮级行为快照（热快照与温快照分离存储） |
 | 评估 | `mod-skill-evaluation.mdc` | 技能表现五维评分标准（供 C+ 调用） |
 | 评估数据 | `Skills_Library/skill-performance-log.jsonl` | 技能表现评分日志（C+ 写、§3.5 读） |
 

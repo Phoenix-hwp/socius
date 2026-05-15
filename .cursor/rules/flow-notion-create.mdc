@@ -2,7 +2,7 @@
 description: Notion「增」操作 — 创建页面/数据库行的具体步骤（6步标准流程）
 alwaysApply: false
 glossary:
-  layer: 3-具体工作流
+  layer: 3-工作流执行层
   module: Notion
   operation: create
   depends: [mod-notion-precondition, mod-notion-crud-framework]

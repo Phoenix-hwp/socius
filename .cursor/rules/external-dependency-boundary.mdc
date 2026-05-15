@@ -3,10 +3,13 @@ description: 外部依赖边界 — 内核安全隔离，Skills 插拔式接入
 alwaysApply: true
 Lifecycle: 长期
 Created: 2026-05-12
-related:
-  - kernel-runtime.mdc（内核运行规则）
-  - script-coding-constraints.mdc（编码约束）
-  - post-git-pull-three-layer-awareness.mdc（拉取后对齐）
+glossary:
+  layer: 横切
+  purpose: 外部依赖边界 — 内核安全隔离，Skills 插拔式接入
+  downstream:
+    - kernel-runtime.mdc（内核约定）
+    - script-coding-constraints.mdc（编码约束）
+    - post-git-pull-three-layer-awareness.mdc（拉取后对齐）
 ---
 
 # 外部依赖边界

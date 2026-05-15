@@ -1,6 +1,11 @@
 ---
 description: 脚本与规则编码约束 — 防耦合、防硬编码、保三层架构合规
 alwaysApply: true
+glossary:
+  layer: 横切
+  purpose: 脚本编码约束 — 共享模块优先、禁止运行时跨界耦合、禁止硬编码、三层架构合规自检
+  sequence: 3  # ①影响枚举 → ②脚本预告 → ③编码自检
+  consumes: [pre-edit-script-change-brief（预告中的验收口径→逐条自检）]
 ---
 
 # 脚本与规则编码约束
@@ -42,7 +47,7 @@ alwaysApply: true
 | 第三层（工作流） | `flow-*-*.mdc` | 逐步步骤、口令确认、通道选择 | 别名映射、跨模块协调原则 |
 | 横切规则 | 无固定前缀 | 原则性约束、边界说明、指针 | 操作细则、步骤流程、阈值 |
 
-- **alwaysApply 规则若仅为「触发摘要」**，必须存根化为指针（如 `git-workspace-commit.mdc`），不得重复罗列触发词与执行动作。
+- **alwaysApply 规则若仅为「触发摘要」**，必须存根化为指针，不得重复罗列触发词与执行动作。由网关 `gateway-command-router.mdc` 统一登记别名映射。
 - **新增指令**须同步登记到 `10-Topics/Cursor-command-aliases.md`，并在 `gateway-command-router.mdc` 中可见。
 
 ### 5. 新建文件 frontmatter 规范

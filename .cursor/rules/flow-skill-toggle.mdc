@@ -3,10 +3,13 @@ description: 技能开关工作流 — 单技能开关 / 全开全关 / 休眠 /
 alwaysApply: false
 Lifecycle: 长期
 Created: 2026-05-12
-related:
-  - mod-skills-library-framework.mdc（Skills Library 框架）
-  - Skills_Library/config.json（单 Agent 配置）
-  - Skills_Library/skill-registry.json（技能注册表）
+glossary:
+  layer: 3-工作流执行层
+  purpose: 技能开关工作流 — 单技能开关 / 全开全关 / 休眠 / 归档，通过 AskQuestion 面板交互
+  downstream:
+    - mod-skills-library-framework.mdc（Skills Library 框架）
+    - Skills_Library/config.json（单 Agent 配置）
+    - Skills_Library/skill-registry.json（技能注册表）
 ---
 
 # 技能开关工作流

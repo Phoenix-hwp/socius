@@ -1,7 +1,7 @@
 ---
 description: 项目备忘录统一框架 — 支持多项目独立备忘和背景
 glossary:
-  layer: 2-模块执行层
+  layer: 2-模块框架层
   module: ProjectMemo
 ---
 
