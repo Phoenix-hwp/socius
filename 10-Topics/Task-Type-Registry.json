@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "description": "任务类型注册表 — 建立「意图→已知模式」映射。为 P008 FSM 提供「什么是同类任务」的判定依据，支撑 L2→L1→L0 自动升级。也用于知识脑消费时匹配相关方法论。",
+    "thresholds": {
+      "migration_readiness": 5,
+      "description": "连续成功 ≥5 次后标记 migration_ready，Agent 主动提议从命令级别名路由迁移到 P008 意图评估"
+    }
+  },
+  "task_types": [
+    {
+      "type_id": "rule_file_create",
+      "label": "规则文件新建",
+      "description": "在 .cursor/rules/ 下创建新的 .mdc 规则文件并登记到别名表/help-index",
+      "typical_dimensions": { "S": 1, "Rev": 0, "A": 0, "C": 1, "E": 0, "Auth": 0, "V": 0 },
+      "typical_L": 1,
+      "consecutive_successes": 1,
+      "last_task": "2026-05-15",
+      "migration_ready": false,
+      "related_knowledge": ["决策框架设计"]
+    },
+    {
+      "type_id": "rule_file_modify",
+      "label": "规则文件修改",
+      "description": "修改已有 .cursor/rules/*.mdc 规则文件的内容",
+      "typical_dimensions": { "S": 1, "Rev": 0, "A": 0, "C": 1, "E": 0, "Auth": 0, "V": 0 },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "related_knowledge": ["决策框架演进"]
+    },
+    {
+      "type_id": "docx_generate",
+      "label": "文档生成",
+      "description": "生成 .docx 文件（简历/报告等），含排版约束的输出",
+      "typical_dimensions": { "S": 0, "Rev": 0, "A": 1, "C": 1, "E": 0, "Auth": 0, "V": 1 },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "related_knowledge": ["I/O 结构约束"]
+    },
+    {
+      "type_id": "ppt_template_fill",
+      "label": "PPT 模板填充",
+      "description": "根据模板结构填入内容（结构探针 + 文本替换 + 文本框覆盖）",
+      "typical_dimensions": { "S": 1, "Rev": 0, "A": 2, "C": 2, "E": 0, "Auth": 0, "V": 2 },
+      "typical_L": 2,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "related_knowledge": ["PPT 模板套用教训", "结构探针前置原则"]
+    },
+    {
+      "type_id": "git_commit",
+      "label": "Git 提交推送",
+      "description": "git add . → commit → pull --rebase → push。当前为命令级别名路由",
+      "typical_dimensions": { "S": 1, "Rev": 0, "A": 0, "C": 0, "E": 0, "Auth": 2, "V": 0 },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "远期候选：当前为命令级，达到迁移门槛后提交换到 P008"
+    },
+    {
+      "type_id": "git_pull",
+      "label": "Git 拉取",
+      "description": "git pull --rebase。GUI 点击动作，保留别名路由",
+      "typical_dimensions": { "S": 0, "Rev": 0, "A": 0, "C": 0, "E": 0, "Auth": 0, "V": 0 },
+      "typical_L": 0,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "GUI 点击动作，永久保留别名路由"
+    },
+    {
+      "type_id": "web_search_research",
+      "label": "WebSearch 调研",
+      "description": "用 WebSearch 收集公开数据并整理为结构化结论",
+      "typical_dimensions": { "S": 0, "Rev": 0, "A": 1, "C": 1, "E": 1, "Auth": 1, "V": 0 },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "related_knowledge": ["脱毛仪市场调研"]
+    },
+    {
+      "type_id": "knowledge_brain_learn",
+      "label": "知识脑学习",
+      "description": "读取 Earth Library / Notion 笔记 / PDF → 结构化总结 → 逐点讨论固化",
+      "typical_dimensions": { "S": 0, "Rev": 0, "A": 2, "C": 3, "E": 1, "Auth": 1, "V": 1 },
+      "typical_L": 2,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "特殊类型——知识脑生长任务，C3（高创意/原创理解），L2（确认后执行）"
+    }
+  ]
+}

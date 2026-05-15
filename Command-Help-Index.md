@@ -239,7 +239,8 @@ python "Earth_Library/scripts/library_optimize.py"
 
 | 指令 | 别名 | 说明 | 关联规则 |
 |:---|:---|:---|:---|
-| 待办 | 查看待办、调整待办 | 弹出两阶段 AskQuestion 链：多选待办 → 逐项操作（查看备忘/推迟/标记完成/标记进行中/跳过） | `post-git-pull-three-layer-awareness.mdc` 步骤 C1-C3 |
+| 待办 | 查看待办、调整待办 | 弹出两阶段 AskQuestion 链：多选待办 → 逐项操作（查看备忘/推迟/标记完成/标记进行中/跳过） | `Skills_Library/scripts/todo-reminder.py` |
+| 学习 | 学习知识、阅读卡片 | 读取知识源（卡片/Notion/网页/PDF）→ 结构化总结 → 逐点讨论四个输出端（审视/操作/协议/融汇）→ 写入 `Candidate-Protocols/` 待验证 | `10-Topics/Knowledge-Brain.md` |
 
 自动触发：
 - **每日首次**：sessionStart 自动 fetch/pull 后 OR 手动 pull 后，弹出待办提醒弹窗（同日不再重复）
