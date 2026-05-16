@@ -85,4 +85,4 @@ glossary:
 - 统一框架定义：`mod-git-crud-framework.mdc`
 - 直接拉取（不提交）：`flow-git-pull.mdc`
 - 审查式拉取：`flow-git-safe-pull.mdc`
-- 拉取后三层架构对齐：`post-git-pull-three-layer-awareness.mdc`
+- 拉取后规则文件分层对齐：`post-git-pull-three-layer-awareness.mdc`

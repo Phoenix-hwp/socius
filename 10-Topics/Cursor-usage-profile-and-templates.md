@@ -106,7 +106,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 
 ## 3. 行为偏好
 
-> **双端结构**：下列 **第 1–9 节** 与 Notion《行为偏好（供 Notion AI 参考）》及 `TMP_Behavior-Preferences-Unified-Template.md` **同级编号一致**。同步流程、锚点与检查清单见 **`10-Topics/Behavior-Preferences-Sync-Playbook.md`**。  
+> **双端结构**：下列 **第 1–9 节** 与 Notion《行为偏好（供 Notion AI 参考）》及 `10-Topics/TEMP_Behavior-Preferences-Unified-Template.md` **同级编号一致**。同步流程、锚点与检查清单见 **`10-Topics/Behavior-Preferences-Sync-Playbook.md`**。  
 > **优先级**：用户当轮明确指令 > 静态偏好。
 
 ### 1. 使用说明与冲突处理

@@ -1,5 +1,6 @@
 ---
 description: 对话备份与恢复统一框架 — 定义阶段结构，不含具体步骤。备份落点按归属路由。
+Lifecycle: 长期
 glossary:
   layer: 2-模块框架层
   module: Conversation
@@ -15,7 +16,7 @@ glossary:
 
 **归属路由**：备份落点由 `mod-multi-round-framework.mdc` 的归属判断决定：
 - 无归属 → `Daily-Backups/`（临时，15天自动清理）
-- 有项目归属 → `<P>/对话备份/`（阶段，手动清理）
+- 有项目归属 → `<P>/对话备份/`（临时，15天自动清理）
 
 ---
 
@@ -104,14 +105,14 @@ glossary:
 |:---|:---|
 | 目录 | `<P>/对话备份/` |
 | 文件名 | `YYYY-MM-DD_时段_主题.md` |
-| Lifecycle | `阶段`（多轮完结后手动清理） |
+| Lifecycle | `临时`（15 天自动清理） |
 | 索引 | 由 `<P>/<P>_Master_Control.md` 轮次日志替代 |
 
 ### 明细文件 frontmatter（必须）
 
 ```yaml
 ---
-Lifecycle: 临时  # 或 阶段
+Lifecycle: 临时
 date: YYYY-MM-DD
 time: HH:MM
 period: 上午/下午/晚上
@@ -129,7 +130,9 @@ topic: 简短主题
 
 ---
 
-## 三层架构速查
+## 规则文件内部分层（三层）
+
+> 此表描述 `.cursor/rules/` 内部的文件组织约定，与系统四层能力架构（网关层/能力层/执行层/认知层）正交。四层架构定义见 `Knowledge-Brain/framework.md` §一。
 
 | 层级 | 文件 | 职责 |
 |:---:|:---|:---|

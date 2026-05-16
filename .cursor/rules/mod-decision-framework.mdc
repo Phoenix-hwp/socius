@@ -184,7 +184,7 @@ L_C = map(C→L)   // 独立轨道
 
 | 查什么 | 去哪查 | 影响哪个维度 |
 |--------|--------|-------------|
-| 领域方法论（B端产品链路、用例图规范等） | `Earth_Library/cards.jsonl` + 关联 Notion 原文 + `10-Topics/Knowledge-Brain.md` | A ↓（有方法论锚定，模糊度降低）、C ↓（有框架参考，创意自由度不需全开） |
+| 领域方法论（B端产品链路、用例图规范等） | `Earth_Library/cards.jsonl` + 关联 Notion 原文 + `Knowledge-Brain/framework.md` | A ↓（有方法论锚定，模糊度降低）、C ↓（有框架参考，创意自由度不需全开） |
 | 操作经验/流程偏好 | `User-Knowledge-Registry.jsonl` | Rev ↑/↓（知道什么路径风险高） |
 | 同类型任务历史 | `Task-Type-Registry.json` → P008 FSM + Decomposition-Log | A ↓（知道上次怎么拆的）、FSM 升级/降级判定 |
 | 方法可靠性与已知参数 | `method-reliability-registry.json`（含 `known_issues` + `known_params`） | Rev ↑/↓（方法是否可靠）、C ↓（有参数模版可用） |

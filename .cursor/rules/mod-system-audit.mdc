@@ -41,6 +41,20 @@ trigger: 用户输入 系统检查 / 自检 / 审计 时触发
 | 跨层耦合标注 | 双向引用的规则是否标注 `cross-layer-coupling: intentional` | `.cursor/rules/*.mdc` frontmatter |
 | frontmatter 完整性 | `Lifecycle` / `Created` / `glossary.layer` 等必填字段 | `.cursor/rules/*.mdc` |
 
+### D1b：系统四层能力架构
+
+> 与 D1（规则文件内部分层 gateway/mod/flow）正交。四层定义见 `Knowledge-Brain/framework.md` §一。
+
+| 检查项 | 说明 | 数据源 |
+|:---|:---|:---|
+| 四层文件覆盖 | 每层必须有一个以上落地文件 | 四层定义文件 |
+| 网关层入口 | `gateway-command-router.mdc` + `kernel-runtime.mdc` 存在 | 文件存在性检查 |
+| 能力层入口 | `task-type-registry.md` + `skill-registry.json` + `mod-decision-framework.mdc` 存在 | 文件存在性检查 |
+| 执行层入口 | `Skills_Library/` 非空 + `skill-registry.json` 有已注册技能 | 目录 + 注册表 |
+| 认知层入口 | `Knowledge-Brain/` 六大子文件存在（classifier / extract-templates / template-generator / concept-anchor / activation / concept-tree.json） | 文件存在性检查 |
+| 层间接口引用 | 能力层引用认知层（如 `activation.md` ↔ `task-init-protocol.mdc`）的链路是否断裂 | 跨文件关键词搜索 |
+| 层命名一致性 | 四层命名是否统一（网关层/能力层/执行层/认知层） | `Knowledge-Brain/framework.md` |
+
 ### D2：数据治理
 
 | 检查项 | 说明 | 数据源 |

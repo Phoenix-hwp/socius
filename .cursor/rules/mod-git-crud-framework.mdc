@@ -85,7 +85,9 @@ glossary:
 
 ---
 
-## 三层架构速查
+## 规则文件内部分层（三层）
+
+> 此表描述 `.cursor/rules/` 内部的文件组织约定，与系统四层能力架构（网关层/能力层/执行层/认知层）正交。四层架构定义见 `Knowledge-Brain/framework.md` §一。
 
 | 层级 | 文件 | 职责 |
 |:---:|:---|:---|
@@ -103,4 +105,4 @@ glossary:
   - 第三层：`flow-git-pull.mdc`（直接拉取：git pull --rebase，不做审查）
   - 第三层：`flow-git-safe-pull.mdc`（审查式拉取：fetch → 展示差异 → 选覆盖/合并/保留）
   - 第三层：`flow-git-clone-to-custom-path.mdc`（新路径克隆）
-  - 横切：`post-git-pull-three-layer-awareness.mdc`（拉取后重温三层架构与别名表，防重复规则/脚本）
+  - 横切：`post-git-pull-three-layer-awareness.mdc`（拉取后重温规则文件分层与别名表，防重复规则/脚本）

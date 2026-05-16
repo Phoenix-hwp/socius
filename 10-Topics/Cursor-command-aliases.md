@@ -62,7 +62,7 @@ tags:
 | 评估技能 | 技能评估、技能巡检 | 对备选和已安装技能执行中检：逐技能检查质量变化/风险变化/表现评分趋势 | `.cursor/rules/mod-skill-evaluation.mdc`、`Skills_Library/task-type-registry.md` |
 | 待办 | 查看待办、调整待办 | **待办计划交互管理**：执行 `Skill-待办提醒`（Shell `python Skills_Library/scripts/todo-reminder.py --scan --skip-daily-check` → 解析 JSON → 弹出两阶段 AskQuestion 链（多选待办 → 逐项操作：查看备忘/推迟/标记完成/标记进行中/跳过）→ 用户选择后 Shell 写回） | `Skills_Library/scripts/todo-reminder.py`（技能：`skill-todo-reminder`） |
 | 系统检查 | 自检、审计、巡检系统、健康检查 | **全系统健康扫描**：覆盖 D1 架构规范、D2 数据治理、D3 注册表对齐、D4 编码规范、D5 过渡方案、D6 技能健康，输出结构化报告与待处理清单 | `.cursor/rules/mod-system-audit.mdc` |
-| 学习 | 学习知识、阅读卡片 | **知识脑学习**：Agent 读取指定知识源（Earth Library 卡片/Notion 笔记/网页/PDF）→ 结构化总结核心思维模型 → 逐点和用户讨论四个输出端（审视现有系统 / 操作转化 / 新协议 / 融汇创新）→ 讨论结论写入 `Candidate-Protocols/`（标注 `[待验证]`）→ 实践验证后迁移到正式规则 | `10-Topics/Knowledge-Brain.md`（框架：`mod-decision-framework.mdc` 大系统级递归自相似） |
+| 学习 | 学习知识、阅读卡片 | **知识脑学习**：Agent 读取指定知识源（Earth Library 卡片/Notion 笔记/网页/PDF）→ 结构化总结核心思维模型 → 逐点和用户讨论四个输出端（审视现有系统 / 操作转化 / 新协议 / 融汇创新）→ 讨论结论写入 `Knowledge-Brain/protocols/`（标注 `[待验证]`）→ 实践验证后按协议归宿路由迁移 | `Knowledge-Brain/framework.md`（概念总纲：`10-Topics/Knowledge-Brain.md`） |
 | 语音 | 说、语音 | **语音朗读摘要**：设置 voice_mode=summary，Agent 回复时将概要/结论/建议投喂 TTS 朗读；文字仍完整显示在 UI | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） |
 | 说全文 | 全文、语音全文 | **语音朗读全文**：设置 voice_mode=full，Agent 回复时将完整内容投喂 TTS 朗读
 

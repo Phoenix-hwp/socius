@@ -23,7 +23,7 @@ tags:
 | Cursor 主档案 | `10-Topics/Cursor-usage-profile-and-templates.md`（**§3** 下 **第 1–9 节** 与 Notion 对齐） |
 | 错别字与语义 | 同上 **§2**（**主本**，见下文「错别字表同步」）；Notion 第 **4** 节常因长文档编辑而更全，同步时 **对比合并** |
 | 会话契合度日志 | 同上 **§6**（仅 Cursor；Notion 不强制镜像） |
-| 结构模板（临时） | `10-Topics/TMP_Behavior-Preferences-Unified-Template.md` + Notion 子页 [TMP 模板](https://www.notion.so/TMP_-34c299d05ba8816997fddbff1eceadef) |
+| 结构模板（临时） | `10-Topics/TEMP_Behavior-Preferences-Unified-Template.md` + Notion 子页 [TMP 模板](https://www.notion.so/TMP_-34c299d05ba8816997fddbff1eceadef) |
 | Notion 正式行为偏好 | [行为偏好（供 Notion AI 参考）](https://www.notion.so/Notion-AI-4c207a961fd642d08556cf2e6f565721)（父级：`Notion_Knowledge`） |
 
 ---
@@ -65,7 +65,7 @@ tags:
 
 ## 4. 何时用临时模板页
 
-- **大改版式**或**合并历史冗长块**时：先对照 `TMP_Behavior-Preferences-Unified-Template.md` / Notion TMP 页，由 **Notion AI** 按模板第 10 节清单整理正式页。  
+- **大改版式**或**合并历史冗长块**时：先对照 `10-Topics/TEMP_Behavior-Preferences-Unified-Template.md` / Notion TMP 页，由 **Notion AI** 按模板第 10 节清单整理正式页。  
 - 整理完成后：**正式页**与 **Cursor §3** 按第 2 节表格再对拍一次；**删除或归档** TMP Notion 页（可选保留本地 MD 作备份）。
 
 ---

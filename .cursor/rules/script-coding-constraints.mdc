@@ -1,9 +1,9 @@
 ---
-description: 脚本与规则编码约束 — 防耦合、防硬编码、保三层架构合规
+description: 脚本与规则编码约束 — 防耦合、防硬编码、保规则文件内部分层（gateway/mod/flow）合规
 alwaysApply: true
 glossary:
   layer: 横切
-  purpose: 脚本编码约束 — 共享模块优先、禁止运行时跨界耦合、禁止硬编码、三层架构合规自检
+  purpose: 脚本编码约束 — 共享模块优先、禁止运行时跨界耦合、禁止硬编码、规则文件内部分层合规自检
   sequence: 3  # ①影响枚举 → ②脚本预告 → ③编码自检
   consumes: [pre-edit-script-change-brief（预告中的验收口径→逐条自检）]
 ---
@@ -38,7 +38,7 @@ glossary:
 - **禁止**写死目录层级假设（如 `Path(__file__).parents[2]` 作为仓库根）。应优先读取环境变量 `CURSOR_PROJECT_DIR`，其次用运行时推导，并在注释中标注假设。
 - **禁止**写死盘符或固定父目录结构（如 `D:\\Phoenix\\Cursor_Knowledge`）。
 
-### 4. 规则文件须符合三层架构职责边界
+### 4. 规则文件须符合规则文件内部分层（gateway/mod/flow）
 
 | 层级 | 命名前缀 | 允许内容 | 禁止内容 |
 |:---:|:---|:---|:---|
@@ -52,8 +52,8 @@ glossary:
 
 ### 5. 新建文件 frontmatter 规范
 
-- 所有 `.md`（规则、知识库卡片、文档）须在 frontmatter 中声明 `Lifecycle: 长期` / `阶段` / `临时`。
-- 临时文件推荐前缀 `TMP_`，阶段文件推荐前缀 `STAGE_`。
+- 所有 `.md`（规则、知识库卡片、文档）须在 frontmatter 中声明 `Lifecycle: 瞬态` / `临时` / `阶段` / `长期`。
+- 瞬态文件推荐前缀 `TEMP_`，临时文件推荐前缀 `TMP_`，阶段文件推荐前缀 `STAGE_`。
 
 ### 6. 改动预告同步
 

@@ -114,7 +114,7 @@ alwaysApply: true
 | `说全文` / `全文` / `语音全文` | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） | 设置 voice_mode=full，本轮完整回复投喂 TTS 朗读 |
 | **系统审计**：| | |
 | `系统检查` / `自检` / `审计` / `巡检系统` / `健康检查` | `mod-system-audit.mdc` | 全系统架构/数据/编码/技能健康扫描，输出结构化报告与待处理清单 |
-| `学习` / `学习知识` / `阅读卡片` | `10-Topics/Knowledge-Brain.md` | 读取知识源（Earth Library/Notion/网页/PDF）→ 结构化总结 → 逐点讨论四个输出端 → 写入 `Candidate-Protocols/` |
+| `学习` / `学习知识` / `阅读卡片` | `Knowledge-Brain/framework.md`（概念总纲：`10-Topics/Knowledge-Brain.md`） | 读取知识源 → 结构化总结 → 逐点讨论四个输出端 → 写入 `Knowledge-Brain/protocols/` |
 
 ---
 
@@ -172,7 +172,9 @@ alwaysApply: true
 
 ---
 
-## 三层架构速查
+## 规则文件内部分层（gateway/mod/flow）
+
+> 此表描述 `.cursor/rules/` 内部的文件组织约定，与系统四层能力架构（网关层/能力层/执行层/认知层）正交，互不替代。四层架构定义见 `Knowledge-Brain/framework.md` §一。
 
 | 层级 | 前缀 | 职责 | 示例 |
 |:---:|:---|:---|:---|
@@ -180,7 +182,7 @@ alwaysApply: true
 | 第二层 | `mod-*-*.mdc` | 模块通用规则、异常边界 | `mod-notion-crud-framework.mdc` |
 | 第三层 | `flow-*-*.mdc` | 具体场景步骤 | `flow-notion-create.mdc` |
 
-**横切规则**（不按上表前缀命名、不绑定单一业务模块）：如 `kernel-runtime.mdc`（**内核运行：知识库约定 + 会话开端/收束 + 轮次确认 + 多轮长记忆**）、`pre-edit-script-change-brief.mdc`、`pre-change-impact-enumeration.mdc`（**变更前搜全库引用**）、`git-cross-device-and-secrets.mdc`、`post-git-pull-three-layer-awareness.mdc`（**pull 并入远端更新后**重温三层架构与别名表，避免重复新增规则/脚本）、`script-coding-constraints.mdc`（**脚本编码约束：防耦合、防硬编码、保三层架构合规，含钩子双运行时规范**）等 — 与域模块 **松耦合**；业务步骤仍落在对应 `mod-*` / `flow-*`，避免在横切文件中重复写操作细则。
+**横切规则**（不按上表前缀命名、不绑定单一业务模块）：如 `kernel-runtime.mdc`（**内核运行：知识库约定 + 会话开端/收束 + 轮次确认 + 多轮长记忆**）、`pre-edit-script-change-brief.mdc`、`pre-change-impact-enumeration.mdc`（**变更前搜全库引用**）、`git-cross-device-and-secrets.mdc`、`post-git-pull-three-layer-awareness.mdc`（**pull 并入远端更新后**重温规则文件分层与别名表，避免重复新增规则/脚本）、`script-coding-constraints.mdc`（**脚本编码约束：防耦合、防硬编码、保规则文件分层合规，含钩子双运行时规范**）等 — 与域模块 **松耦合**；业务步骤仍落在对应 `mod-*` / `flow-*`，避免在横切文件中重复写操作细则。
 
 ---
 

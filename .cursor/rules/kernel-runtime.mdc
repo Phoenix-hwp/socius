@@ -27,7 +27,7 @@ replaces:
 
 ### 建议目录
 
-- `00-Inbox/`：临时捕获
+- `00-Inbox/`：临时捕获（`Lifecycle: 临时`，15 天自动清理）
 - `10-Topics/`：主题笔记
 - `20-Projects/`：项目长期上下文
 - `90-Templates/`：模板

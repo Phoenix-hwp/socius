@@ -1,0 +1,19 @@
+{
+  "_description": "概念树运行时索引。随协议消化渐进生长，不做人工预建全量树。每次新建协议或发现新概念时更新。",
+  "_schema": {
+    "<concept_anchor>": {
+      "parent": "<parent_concept_anchor or null>",
+      "children": ["<child_concept_anchor>"],
+      "siblings": ["<sibling_concept_anchor>"],
+      "related": ["<cross-domain_concept_anchor>"],
+      "protocols": ["<CP-xxx>"],
+      "first_seen": "<YYYY-MM-DD>"
+    }
+  },
+  "_growth_rules": {
+    "new_concept": "创建新条目，parent=已知则填写，否则null",
+    "new_sibling": "同一parent下积≥2个子概念时，自动填充siblings",
+    "new_child": "创建子概念时，回填parent的children列表",
+    "cross_domain": "人工添加related字段，跨域概念桥接"
+  }
+}
