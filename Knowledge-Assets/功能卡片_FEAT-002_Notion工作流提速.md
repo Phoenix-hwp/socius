@@ -1,7 +1,7 @@
 ---
 Lifecycle: 长期
-title: 功能卡片 FEAT-002 Notion工作流提速
-updated: 2026-05-01
+Title: 功能卡片 FEAT-002 Notion工作流提速
+Updated: 2026-05-01
 ---
 
 # 功能卡片 FEAT-002：Notion 工作流性能优化

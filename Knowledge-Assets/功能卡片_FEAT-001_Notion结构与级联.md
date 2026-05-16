@@ -1,7 +1,7 @@
 ---
 Lifecycle: 长期
-title: 功能卡片 FEAT-001 Notion结构与级联
-updated: 2026-05-01
+Title: 功能卡片 FEAT-001 Notion结构与级联
+Updated: 2026-05-01
 ---
 
 # 功能卡片 FEAT-001：Notion 结构拉取与级联枚举

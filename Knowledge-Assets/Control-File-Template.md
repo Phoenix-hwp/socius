@@ -1,9 +1,9 @@
 ---
-title: 主控文件通用模板
+Title: 主控文件通用模板
 type: long-memory-master-template
 Lifecycle: 长期
-created: 2026-04-23
-updated: 2026-04-23
+Created: 2026-04-23
+Updated: 2026-04-23
 tags:
   - 长记忆
   - 主控

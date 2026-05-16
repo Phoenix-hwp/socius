@@ -1,8 +1,8 @@
 ---
-title: 行为偏好双端同步操作手册
+Title: 行为偏好双端同步操作手册
 Lifecycle: 长期
-created: 2026-04-24
-updated: 2026-04-24
+Created: 2026-04-24
+Updated: 2026-04-24
 tags:
   - notion
   - cursor

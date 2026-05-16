@@ -1,7 +1,7 @@
 ---
 Lifecycle: 临时
-title: 日常备忘（临时捕获）
-updated: 2026-05-07
+Title: 日常备忘（临时捕获）
+Updated: 2026-05-07
 ---
 
 # 日常备忘

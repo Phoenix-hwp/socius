@@ -1,7 +1,7 @@
 ---
-title: 行为偏好双端统一结构模板（临时）
+Title: 行为偏好双端统一结构模板（临时）
 Lifecycle: 临时
-created: 2026-04-24
+Created: 2026-04-24
 purpose: 供 Cursor 工作区与 Notion《行为偏好》共用同一套章节结构；Notion AI 可按本模板整理正式页后删除本临时文件/页面。
 notion_parent: Notion_Knowledge
 notion_page_url: https://www.notion.so/TMP_-34c299d05ba8816997fddbff1eceadef

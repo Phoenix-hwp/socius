@@ -78,7 +78,7 @@ JSON 仅保留: {"id":"xxx", "card_path":"Earth_Library/cards/xxx.md"}
 
 1. **同一文件内所有行共享同一字段集合**。可选字段用 `null` 表示不存在；不创建使用不同键集合的变体类型。
 2. **所有脚本生成的 JSON/JSONL 必须通过 schema 验证**后才写入磁盘。
-3. **`.md` frontmatter 字段命名统一**：使用首字母大写 `Title`/`Created`/`Updated`/`Lifecycle` 或全小写 `title`/`created`/`updated`，选定一种后全库统一。
+3. **`.md` frontmatter 字段命名统一**：全库统一使用**首字母大写** `Title`/`Created`/`Updated`/`Lifecycle`（已于 2026-05-16 完成 18 文件统一）。
 4. **JSONL 行式存储**：每行必须是合法的单行 JSON（不含换行符 `\n`），不跨行。
 
 ### 违规案例（审计发现）
@@ -87,13 +87,13 @@ JSON 仅保留: {"id":"xxx", "card_path":"Earth_Library/cards/xxx.md"}
 |:---|:---|
 | `Behavior-Fit-Log.jsonl` | 曾有 `legacy` 和 `compact` 两种格式的行使用不同的字段集合（已修复：2026-05-15 全部迁移到 compact） |
 | `Round-Behavior-Log.jsonl` | 曾有 `hot` 和 `warm` 行字段键完全不同（已修复：2026-05-15 拆分为 `Round-Behavior-Hot.jsonl` + `Round-Behavior-Warm.jsonl`） |
-| `.md` 文件 frontmatter | `title` vs `Title`、`created` vs `Created` 混用 |
+| `.md` 文件 frontmatter | `title` vs `Title`、`created` vs `Created` 混用（已修复：2026-05-16 全库统一为首字母大写） |
 
 ### 正确做法
 
 - `Behavior-Fit-Log.jsonl`：统一为 compact 格式（已完成 2026-05-15）。legacy 独有字段归档到 `Behavior-Fit-Log_legacy_archive.jsonl`
 - `Round-Behavior-Log`：hot 与 warm 字段零交集，拆分为 `Round-Behavior-Hot.jsonl` + `Round-Behavior-Warm.jsonl`（已完成 2026-05-15）
-- `.md` frontmatter：选一种命名风格后全库统一
+- `.md` frontmatter：统一为首字母大写 `Title`/`Created`/`Updated`/`Lifecycle`（已完成 2026-05-16）
 
 ---
 

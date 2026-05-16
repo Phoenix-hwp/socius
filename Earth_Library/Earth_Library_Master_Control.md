@@ -1,9 +1,9 @@
 ---
-title: Earth Library · 多轮主控
+Title: Earth Library · 多轮主控
 type: multi-round-master-control
 Lifecycle: 阶段
-created: 2026-05-09
-updated: 2026-05-09
+Created: 2026-05-09
+Updated: 2026-05-09
 tags:
   - Earth_Library
   - 主控

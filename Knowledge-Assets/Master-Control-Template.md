@@ -1,9 +1,9 @@
 ---
-title: 多轮主控文件通用模板
+Title: 多轮主控文件通用模板
 type: multi-round-master-control-template
 Lifecycle: 阶段
-created: 2026-05-09
-updated: 2026-05-09
+Created: 2026-05-09
+Updated: 2026-05-09
 tags:
   - 长记忆
   - 主控

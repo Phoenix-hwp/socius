@@ -51,3 +51,4 @@
 {"date": "2026-05-11", "topic": "自学习体系落地（T002）", "behavior": "直接执行 | 跳过确认 | 分段叙述 | 直接文本 | 文件操作 | Notion二期;A+B1注册表封装;AskQuestion横切;续接清理;B2待二期", "fit": "高", "format": "compact"}
 {"date": "2026-05-11", "topic": "认知维度扩展 + 格式迁移（JSONL）", "behavior": "方案先于执行 | 逐步确认 | 表格化 | 混合 | 文件操作 | 认知维度6→12扩展;L3闸门阻断;行为日志JSONL迁移;Earth Library卡片JSONL迁移", "fit": "高", "format": "compact"}
 {"date": "2026-05-12", "topic": "GitHub外部能力接入方案备忘", "behavior": "直接执行 | 跳过确认 | 分段叙述 | 直接文本 | 文件操作 | 用户说'先提交再备忘'→Agent先提交了;正确理解:应先完成本地改动再一起提交;时序指令需合并理解而非逐字顺序", "fit": "中", "format": "compact"}
+{"date": "2026-05-16", "topic": "待办指令意图理解纠偏 — 同日跳过扫描后误读 Active-Task-Tracker 而非 Pending-Plan-Tracker", "behavior": "用户说待办→Agent 执行 todo-reminder.py --scan 被同日跳过→错误回退读取 Active-Task-Tracker.json（已全归档）→下结论无活跃任务→遗漏 P006；用户纠正后 Agent 识别根因：未走网关别名路由 + 错误替换数据源；纠正：改读 Pending-Plan-Tracker.json + 强制扫描找回所有待办", "fit": "中", "format": "compact"}

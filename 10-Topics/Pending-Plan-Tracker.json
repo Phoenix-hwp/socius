@@ -78,26 +78,6 @@
         "entry": "MEMO-002"
       },
       "source_task": null
-    },
-    {
-      "id": "P006",
-      "topic": "数据治理宪法 — .md frontmatter 命名风格统一（title vs Title / created vs Created）",
-      "next_action": "1) 扫描全库 .md/.mdc 文件 frontmatter 字段命名，统计 title/Title、created/Created 等分布；2) 选定一种命名风格（建议首字母大写）；3) 批量统一所有文件 frontmatter 字段名；4) 更新所有规则中引用的 frontmatter 字段名",
-      "planned_date": "2026-05-16",
-      "status": "pending",
-      "resume_keywords": [
-        "frontmatter",
-        "命名",
-        "统一",
-        "title",
-        "created",
-        "大写"
-      ],
-      "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
-        "entry": "MEMO-003"
-      },
-      "source_task": null
     }
   ],
   "archive": [
@@ -193,6 +173,27 @@
       },
       "source_task": null,
       "completed_date": "2026-05-15"
+    },
+    {
+      "id": "P006",
+      "topic": "数据治理宪法 — .md frontmatter 命名风格统一（title vs Title / created vs Created）",
+      "next_action": "1) 扫描全库 .md/.mdc 文件 frontmatter 字段命名，统计 title/Title、created/Created 等分布；2) 选定一种命名风格（建议首字母大写）；3) 批量统一所有文件 frontmatter 字段名；4) 更新所有规则中引用的 frontmatter 字段名",
+      "planned_date": "2026-05-16",
+      "status": "completed",
+      "resume_keywords": [
+        "frontmatter",
+        "命名",
+        "统一",
+        "title",
+        "created",
+        "大写"
+      ],
+      "source_memo": {
+        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "entry": "MEMO-003"
+      },
+      "source_task": null,
+      "completed_date": "2026-05-16"
     }
   ]
 }

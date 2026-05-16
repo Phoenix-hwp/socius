@@ -1,8 +1,8 @@
 ---
-title: Notion 统一入口规范
+Title: Notion 统一入口规范
 type: workflow
-created: 2026-04-25
-updated: 2026-05-02
+Created: 2026-04-25
+Updated: 2026-05-02
 tags:
   - notion
   - cursor

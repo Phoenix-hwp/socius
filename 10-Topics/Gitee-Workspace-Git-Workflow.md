@@ -1,9 +1,9 @@
 ---
-title: 工作区 Git / Gitee 同步备忘
+Title: 工作区 Git / Gitee 同步备忘
 Lifecycle: 阶段
-updated: 2026-05-04
+Updated: 2026-05-04
 purpose: 工作区 Git/Gitee 备忘；口语「提交git」时 Agent 与本机操作对齐用
-updated: 2026-05-05
+Updated: 2026-05-05
 ---
 
 # 工作区 Git / Gitee 同步备忘

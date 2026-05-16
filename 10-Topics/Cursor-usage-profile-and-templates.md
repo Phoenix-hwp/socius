@@ -1,8 +1,8 @@
 ---
-title: Cursor 个人使用档案与快捷话术
+Title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
-created: 2026-04-18
-updated: 2026-05-09（会话收束：多轮备份架构重构 ①→⑧ 执行完毕 + 审计修复 5 项）
+Created: 2026-04-18
+Updated: 2026-05-09（会话收束：多轮备份架构重构 ①→⑧ 执行完毕 + 审计修复 5 项）
 sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor

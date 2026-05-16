@@ -1,8 +1,8 @@
 ---
-title: Cursor 指令别名清单
+Title: Cursor 指令别名清单
 type: cursor-command-aliases
-created: 2026-04-21
-updated: 2026-05-15 (新增学习指令 + 待办指令更新)
+Created: 2026-04-21
+Updated: 2026-05-15 (新增学习指令 + 待办指令更新)
 tags:
   - cursor
   - aliases

@@ -1,8 +1,8 @@
 ---
-title: 脚本选项 ID 目录（Git · Notion）
+Title: 脚本选项 ID 目录（Git · Notion）
 Lifecycle: 阶段
-created: 2026-05-02
-updated: 2026-05-03
+Created: 2026-05-02
+Updated: 2026-05-03
 purpose: 对话与规则中用稳定 ID 指代脚本动作；避免仅靠自然语言触发歧义
 ---
 
