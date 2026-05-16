@@ -18,7 +18,17 @@
     "known_params_schema": {
       "description": "记录方法在不同 task 类型下的成功/失败参数组合。Agent 调用时查此表，自动填入 success 参数，避免重试已知失败参数",
       "example": {
-        "UML渲染": { "success": { "encoding": "utf-8", "theme": "default", "scale": 2 }, "failed": ["theme=dark"], "note": "dark 主题中文乱码" }
+        "UML渲染": {
+          "success": {
+            "encoding": "utf-8",
+            "theme": "default",
+            "scale": 2
+          },
+          "failed": [
+            "theme=dark"
+          ],
+          "note": "dark 主题中文乱码"
+        }
       }
     }
   },
@@ -115,6 +125,17 @@
           "discovered": "2026-05-14"
         }
       ]
+    },
+    {
+      "task_type": "git_commit",
+      "method": "Shell(gh)",
+      "hostname": "Phoenix-ASUS",
+      "total_calls": 1,
+      "consecutive_fails": 0,
+      "consecutive_successes": 1,
+      "last_status": "成功",
+      "last_context": "2026-05-16 Win10",
+      "state": "✅ 正常"
     }
   ]
 }

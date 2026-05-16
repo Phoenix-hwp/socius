@@ -10,7 +10,7 @@ target_notion_page: 行为偏好（供 Notion AI 参考）
 
 > 正文来自 Cursor 档案按双端手册截取替换写入。**未包含**：§4 常用话术表、§5 迭代记录、§6 会话契合度日志。  
 > **优先级**：用户当轮明确指令 > 静态偏好。  
-> **双端结构说明**：第 1–9 节与 `TMP_Behavior-Preferences-Unified-Template.md` 对齐；流程见 `Behavior-Preferences-Sync-Playbook.md`。
+> **双端结构说明**：第 1–9 节与 `TEMP_Behavior-Preferences-Unified-Template.md` 对齐；流程见 `Behavior-Preferences-Sync-Playbook.md`。
 
 ## 1. 使用说明与冲突处理
 
