@@ -55,7 +55,7 @@ git pull --rebase origin <BRANCH>
 
 ## 拉取后对齐
 
-若实际并入远端新提交，回执末尾须指向 `post-git-pull-three-layer-awareness.mdc`，并按其中「拉取完成后的立即动作 A/B」回执新增规则/脚本摘要。
+若实际并入远端新提交，回执末尾须指向 `post-git-pull-three-layer-awareness.mdc`，并按其中「拉取完成后的立即动作 A/B/C」执行全部拉取后对齐流程。
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "待办计划追踪 — 支持备忘关联、每日首次提醒（sessionStart 自动拉取 + 手动 pull）、自动完成检测",
-    "last_reminded": "2026-05-15",
+    "last_reminded": "2026-05-16",
     "reminder_rules": {
       "overdue": "planned_date <= 今天 + status=pending → 每日首次交互弹窗（多选待办 → 逐项操作：查看备忘/推迟/完成/标记进行中）；sessionStart 自动 fetch/pull 后触发，或手动 pull 后触发，同日跳过",
       "upcoming": "planned_date 在未来 3 天 + status=pending → 每日首次交互弹窗合并展示",
