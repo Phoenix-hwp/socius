@@ -174,7 +174,9 @@ activation:
 |:---|:---|:---|:---|
 | 1 | 搭架构架子 | `Knowledge-Brain/` + `framework.md` + `protocols/` | ✅ 2026-05-16 |
 | 2 | 知识脑五子能力落地 | `classifier.md` + `extract-templates.md` + `template-generator.md` + `concept-anchor.md` + `activation.md` + `concept-tree.json` | ✅ 2026-05-16 |
-| 3 | 消化现有卡片（首批试点） | 知识脑驱动 1-3 张 card，走完整管线（分类→提炼→激活→生成） | ⏳ 下一步 |
+| 3 | 消化现有卡片（首批试点） | 知识脑驱动 9 张 card → 产 CP-001~CP-009 | ✅ 2026-05-16 |
+| 3a | **新增**：源分解（Step 0） | `classifier.md` §三 新增源分解——P0~P4 信号 + 合并/拆分策略 | ✅ 2026-05-16 |
+| 3b | **新增**：整书消化（首次实战） | 消化《如何阅读一本书》关键 10 章 → 产 CP-010~CP-019，概念树 Reading 域覆盖 10 个子概念 | ✅ 2026-05-16 |
 | 4 | 嵌入激活点到任务启动协议 | `task-init-protocol.mdc` Step 2-3 间插入知识脑前置查询 | ⏳ |
 | 5 | 消化全部 Earth Library 卡片 | 批量驱动 `cards.jsonl`（跳过 Domain_Overview 5 张） | — |
 | 6 | 嵌入激活点到收束 | `flow-behavior-auto-receipt.mdc` §C#10/§C#11 激活 | — |

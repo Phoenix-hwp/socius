@@ -15,5 +15,238 @@
     "new_sibling": "同一parent下积≥2个子概念时，自动填充siblings",
     "new_child": "创建子概念时，回填parent的children列表",
     "cross_domain": "人工添加related字段，跨域概念桥接"
+  },
+
+  "BPMN.activity": {
+    "parent": "BPMN",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-001"],
+    "first_seen": "2026-05-16"
+  },
+  "BPMN": {
+    "parent": null,
+    "children": ["BPMN.activity"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "BusinessModel.Canvas": {
+    "parent": "BusinessModel",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-002"],
+    "first_seen": "2026-05-16"
+  },
+  "BusinessModel": {
+    "parent": null,
+    "children": ["BusinessModel.Canvas"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "ProductValidation.PMF": {
+    "parent": "ProductValidation",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-003"],
+    "first_seen": "2026-05-16"
+  },
+  "ProductValidation": {
+    "parent": null,
+    "children": ["ProductValidation.PMF"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "Strategy.SWOT": {
+    "parent": "Strategy",
+    "children": [],
+    "siblings": [],
+    "related": ["BusinessModel.Canvas"],
+    "protocols": ["CP-004"],
+    "first_seen": "2026-05-16"
+  },
+  "Strategy": {
+    "parent": null,
+    "children": ["Strategy.SWOT"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "Company.Lifecycle": {
+    "parent": "Company",
+    "children": [],
+    "siblings": [],
+    "related": ["BusinessModel.Canvas", "Strategy.SWOT"],
+    "protocols": ["CP-005"],
+    "first_seen": "2026-05-16"
+  },
+  "Company": {
+    "parent": null,
+    "children": ["Company.Lifecycle"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "ProductDecision.KANO": {
+    "parent": "ProductDecision",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-006"],
+    "first_seen": "2026-05-16"
+  },
+  "ProductDecision.IdeaFilter": {
+    "parent": "ProductDecision",
+    "children": [],
+    "siblings": ["ProductDecision.KANO"],
+    "related": ["ProductValidation.PMF"],
+    "protocols": ["CP-009"],
+    "first_seen": "2026-05-16"
+  },
+  "ProductDecision": {
+    "parent": null,
+    "children": ["ProductDecision.KANO", "ProductDecision.IdeaFilter"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "B2BProduct.Evolution": {
+    "parent": "B2BProduct",
+    "children": [],
+    "siblings": [],
+    "related": ["Company.Lifecycle"],
+    "protocols": ["CP-007"],
+    "first_seen": "2026-05-16"
+  },
+  "B2BProduct": {
+    "parent": null,
+    "children": ["B2BProduct.Evolution"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "RequirementAnalysis.13Elements": {
+    "parent": "RequirementAnalysis",
+    "children": [],
+    "siblings": [],
+    "related": ["ProductDecision.KANO"],
+    "protocols": ["CP-008"],
+    "first_seen": "2026-05-16"
+  },
+  "RequirementAnalysis": {
+    "parent": null,
+    "children": ["RequirementAnalysis.13Elements"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
+  },
+
+  "Reading.Levels": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-010"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.ActiveQuestions": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-011"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Classification": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-012"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Structure": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-013"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Terminology": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-014"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Propositions": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-015"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Criticism": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-016"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Disagreement": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Syntopical", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-017"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Syntopical": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Growth"],
+    "related": [],
+    "protocols": ["CP-018"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading.Growth": {
+    "parent": "Reading",
+    "children": [],
+    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical"],
+    "related": [],
+    "protocols": ["CP-019"],
+    "first_seen": "2026-05-16"
+  },
+  "Reading": {
+    "parent": null,
+    "children": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [],
+    "related": [],
+    "protocols": [],
+    "first_seen": "2026-05-16"
   }
 }
