@@ -191,6 +191,37 @@ glossary:
    4. 删除后回执末尾标注 `🗑 瞬态文件 xN 已清理（全库扫描）`。
    > **设计意图**：瞬态文件不限存放路径，靠 frontmatter `Lifecycle: 瞬态` 标记识别；收束时自动清空，避免散落堆积。
 
+13. **协议有效性反馈**（步骤 C 末尾强制，无论任务是否状态变更）：
+   1. 从本轮对应的 `Decision-Log.jsonl` 条目中读取 `kb_protocols_activated` 字段。
+   2. 若为空或不存在 → 跳过，标注 `📋 KB 协议无激活，跳过有效性评估`。
+   3. 若非空 → 对每条激活协议执行四态判断：
+
+   | 状态 | 判定信号 | 结果 | 动作 |
+   |------|----------|------|------|
+   | ① 有效 | 任务 `result: "success"` + Agent 在执行中参考了该协议 + 无用户纠正涉及该协议的主张 | `effective: true` | 写入 `activation-log.jsonl`，该协议 `effective_count += 1` |
+   | ② 协议错误 | 用户纠正了 Agent，且纠正内容**直接反驳**协议核心主张（如协议说「用 A 标准判断」，用户说「不对，应该用 B」） | `effective: false, miscue: "protocol"` | 写入 `activation-log.jsonl`，记录 `miscue_type: "protocol_wrong"`，附 `pended_review: true` |
+   | ③ 场景误用 | 用户纠正了 Agent，但纠正的是**场景选择**（如「这个场景不该用这份协议」），而非协议内容本身 | `effective: false, miscue: "scene"` | 写入 `activation-log.jsonl`，记录 `miscue_type: "scene_mismatch"`，附 `pended_review: true` |
+   | ④ 不确定 | 协议被激活但难以判定是否有用（无明确纠正信号，但任务中未明显参考该协议） | `effective: null` | 写入 `activation-log.jsonl`，`effective: null`，不做计数变更 |
+
+   4. **②/③ 的区分规则**（Agent 自判，不弹窗）：
+      - Agent 检查用户纠正发生时，该协议是否处于激活触发态（activation engine 标记）
+      - 在触发态 + 用户纠正直接反驳协议主张 → ②（协议错误）
+      - 在触发态 + 用户纠正的是操作方式而非主张 → ③（场景误用）
+      - 不在触发态 → ③（场景误用，协议未被正确激活）
+   5. **②/③ 统一标记 `pended_review: true`**，不在本轮自动定案。下次对话开头轻问一条：
+      ```
+      > 💡 上次执行中协议 [CP-xxx] 被标记为 `pended_review`：[简述纠正内容]。
+      > 是协议本身有问题，还是我用错了场景？
+      ```
+   6. **写入 `Knowledge-Brain/activation-log.jsonl`**（新建或追加一行）：
+      ```json
+      {"date":"<ISO>","task_id":"<ID>","protocol_id":"<CP-xxx>","task_type":"<type>","concept_anchor":"<anchor>","effective":<true|false|null>,"miscue_type":<null|"protocol_wrong"|"scene_mismatch">,"pended_review":<false|true>,"note":"<≤30字简述>"}
+      ```
+   7. 全部协议评估完毕后，更新 `Decision-Log.jsonl` 对应条目：
+      - `kb_effective`：全部协议 `effective=true` → `true`；任一 `effective=false` → `false`；全部 `effective=null` → `null`
+      - `kb_miscued`：`effective=false` 的协议 ID 列表
+   8. 评估后在回执末尾标注 `📊 KB 协议反馈 xN 已写入 activation-log`。
+
 ---
 
 ## 步骤 C-bis：经验提取与入库（任务收束时强制，前期每轮执行）
@@ -261,6 +292,7 @@ Agent 扫描本轮对话，按三层策略提取经验：
   📝 T2 轻经验 xN
   🤔 T3 审慎经验 xN
   🔧 任务拆解模式 x1
+  📊 KB 协议反馈 xN（含 pended_review xM）
   ⏭ 跳过 xN
 ```
 

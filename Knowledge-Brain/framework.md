@@ -11,12 +11,14 @@ glossary:
     - 决策框架（mod-decision-framework.mdc）
     - 系统收束（flow-behavior-auto-receipt.mdc）
   sub_abilities:
-    - classifier.md（六类分类器）
+    - classifier.md（六类分类器 + Step S 全域巡检 + 七 P3 闸门）
     - extract-templates.md（六类提炼模板）
     - template-generator.md（程序性知识的执行路由表）
     - concept-anchor.md（概念锚规范 + 概念树）
     - activation.md（知识脑运行时引擎：三源认知 + 双向通道 + 三层过滤 + 小注仲裁 + 窗口管理）
     - concept-tree.json（概念树运行时索引）
+    - synthesizer.md（P3 主题阅读合成器：跨协议矛盾检测/空白标注/核心主张/融汇建议）
+    - activation-log.jsonl（运行时激活日志：追踪每条协议的 activated/effective）
 ---
 
 # Knowledge-Brain 架构框架
@@ -145,17 +147,19 @@ activation:
 
 ---
 
-## 六、五个子能力（MEMO-006 迭代）
+## 六、六个子能力（MEMO-006 迭代）
 
 | # | 子能力 | 优先级 | 产出 | 落地文件 |
 |:---|:---|:---:|:---|:---|
-| ① 知识类型识别器 | P0 ✅ | 六类分类 + 主/辅分类 + 自动路由 | `classifier.md` |
+| ① 知识类型识别器 | P0 ✅ | 六类分类 + 主/辅分类 + 自动路由 + Step S 全域巡检 + P3 闸门 | `classifier.md` |
 | ② 提炼模板 | P0 ✅ | 六类知识的结构化提炼骨架 | `extract-templates.md` |
 | ③ 方法模板生成器 | P0 ✅ | 程序性知识的执行路由表（L1/L2/L3 分流） | `template-generator.md` |
 | ④ 概念锚系统 | P1 ✅ | 概念锚规范 + 概念树生长规则 + 概念空间碰撞检测 | `concept-anchor.md` + `concept-tree.json` |
 | ⑤ 自描述激活 | P1 ✅ | 知识脑运行时引擎：三源认知 + 双向通道 + 三层过滤 + 小注仲裁 + 窗口管理 | `activation.md` |
+| ⑥ 主题阅读合成器 | P1 ✅ | 同域 >=5 协议触发：全景速览/矛盾检测/空白标注/核心主张/融汇建议 | `synthesizer.md` |
+| ⑦ 激活日志 | P0 ✅ | 运行时追踪每条协议的 activated/effective，供 P008 决策层联动 + 置信度计算 | `activation-log.jsonl` |
 
-**分类→路由链**：概念性→③新协议 / 程序性→③模板生成器 → L1/L2/L3 / 框架性→③新协议+①审视 / 策略性→③新协议+①P008 / 经验性→③新协议 / 规则性→③新协议+①审视
+**分类→路由链**：概念性→③新协议 / 程序性→③模板生成器 → L1/L2/L3 / 框架性→③新协议+①审视 / 策略性→③新协议+①P008 / 经验性→③新协议 / 规则性→③新协议+①审视。代理≥5后自动P3→④融汇创新
 
 ---
 
@@ -177,9 +181,11 @@ activation:
 | 3 | 消化现有卡片（首批试点） | 知识脑驱动 9 张 card → 产 CP-001~CP-009 | ✅ 2026-05-16 |
 | 3a | **新增**：源分解（Step 0） | `classifier.md` §三 新增源分解——P0~P4 信号 + 合并/拆分策略 | ✅ 2026-05-16 |
 | 3b | **新增**：整书消化（首次实战） | 消化《如何阅读一本书》关键 10 章 → 产 CP-010~CP-019，概念树 Reading 域覆盖 10 个子概念 | ✅ 2026-05-16 |
-| 4 | 嵌入激活点到任务启动协议 | `task-init-protocol.mdc` Step 2-3 间插入知识脑前置查询 | ⏳ |
+| 3c | **新增**：P0-P2 + Step S 改造落地 | P0 诠释自检 / P1 评断验证 / P2 四问闸门 / 概念自述 / Step S 全域巡检 — 全部写入 `classifier.md` + `extract-templates.md` | ✅ 2026-05-17 |
+| 3d | **新增**：P3 主题阅读合成落地 | 新建 `synthesizer.md` + `classifier.md` §七 P3 闸门 + `framework.md` 子能力表扩充为 ⑥。同域 ≥5 协议自动触发 | ✅ 2026-05-17 |
+| 4 | 嵌入激活点到任务启动协议 | `task-init-protocol.mdc` Step 2-KB 插入知识脑前置查询 → P008 A/C 降级 | ✅ 2026-05-17 |
 | 5 | 消化全部 Earth Library 卡片 | 批量驱动 `cards.jsonl`（跳过 Domain_Overview 5 张） | — |
-| 6 | 嵌入激活点到收束 | `flow-behavior-auto-receipt.mdc` §C#10/§C#11 激活 | — |
+| 6 | 嵌入激活点到收束 | `flow-behavior-auto-receipt.mdc` §C#13 协议有效性四态判断 + `activation-log.jsonl` | ✅ 2026-05-17 |
 | 7 | 方法评分系统落地 | 已有 Skill 评分体系基础上叠加 KB 协议评分 | — |
 | 8 | 能力虚拟化落地 | Skill 标准接口声明 → 打通 template-generator 的 L2/L3 | —（见备忘） |
 | 9 | 移除 Earth Library | 卡片消化完毕 → 清理 5 个专属规则 + 别名 + 目录 | — |
@@ -191,7 +197,9 @@ activation:
 | 现有规则 | 知识脑的角色 | 接口方式 |
 |:---|:---|:---|
 | `gateway-command-router.mdc` | 别名「学习」→ 路由到知识脑学习流程 | 别名映射 |
-| `flow-behavior-auto-receipt.mdc` §C#10 | 知识脑缺口复盘（收束时触发） | 指针引用 — 见本文件 §C#10 |
-| `flow-behavior-auto-receipt.mdc` §C#11 | 周期知识脑轻问 | 指针引用 — 见本文件 §C#11 |
+| `task-init-protocol.mdc` Step 2-KB | 任务启动时知识脑前置查询 → P008 A/C 降级 | 指针引用 — 见 `task-init-protocol.mdc` Step 2-KB |
+| `mod-decision-framework.mdc` §二 | KB 预载入后 A/C 维度各降一级（仅认知维度，不涉及物理风控维度） | 指针引用 — 见 `mod-decision-framework.mdc` §二「知识脑预载入降噪」 |
+| `flow-behavior-auto-receipt.mdc` §C#13 | 任务收束时协议有效性四态判断 → 写入 `activation-log.jsonl` | 指针引用 — 见 `flow-behavior-auto-receipt.mdc` §C#13 |
 | `mod-decision-framework.mdc` | A≥A2 且无覆盖时追加缺口提示 | 指针引用 — 见本文件 §四 |
+| `classifier.md` §六 Step S | 每次消化完成后，以新知为探针扫描全库（规则/决策/能力/概念树/数据/架构），标记冲突/盲区/补强点。与 `mod-system-audit` 互补——前者周期静态，后者知识驱动动态 | 指针引用 — 见 `classifier.md` §六 |
 | `task-type-registry.md` | 知识脑学习作为任务类型锚点 | `type_id: knowledge_brain` |

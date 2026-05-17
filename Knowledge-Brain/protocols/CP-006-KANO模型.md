@@ -12,15 +12,22 @@ applicable_roles: []
 source_origin: "personal"
 source_access: "public"
 sources:
-  - { system: "earth_library", card_id: "20260508-210611_KANO模型" }
   - { system: "webpage", title: "KANO模型", url: "https://www.notion.so/KANO-ac4299d05ba883bbbfad01e6abf592dc" }
 
 activation:
+  self_recital: "KANO五类功能：基础/亮点/期望/无差别/反向，按实现度-满意度曲线排序"
   task_types: ["product-management", "feature-prioritization", "iteration-planning"]
-  concept_anchor: "ProductDecision.KANO"
+  concept_anchor: "PM.KANO"
   decision_signal: "版本迭代规划时需要对候选功能清单做优先级排序，或资源有限时判断「必须做」vs「锦上添花」时"
   anti_pattern: "所有功能一视同仁地排优先级，不区分基础/亮点/期望类型"
   capability_hint: "产品决策与功能优先级排序"
+judgment:
+  verdict: "可信"
+  self_check: "LLM 自检通过，五类功能定义与KANO经典模型一致"
+  web_check: null
+  doubts_resolved: []
+  note: null
+
 ---
 
 # KANO 模型：功能优先级决策

@@ -248,5 +248,86 @@
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
+  },
+  "PyramidPrinciple.structure": {
+    "description": "任何结构化输出都应结论先行、以上统下、归类分组、逻辑递进——不限于文章，也包括代码架构、任务拆解、方案设计",
+    "parent": null,
+    "children": ["PyramidPrinciple.scqa", "PyramidPrinciple.reasoning", "PyramidPrinciple.construction", "PyramidPrinciple.logic-order", "PyramidPrinciple.summarizing", "PyramidPrinciple.problem-definition", "PyramidPrinciple.structured-analysis", "PyramidPrinciple.written-presentation"],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-045"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.scqa": {
+    "description": "SCQA讲故事——让任何听众在30秒内理解'为什么是现在、为什么是这个问题、要回答什么'。不限于商务写作，也适用于技术方案、教学、bug说明",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": ["PyramidPrinciple.reasoning", "PyramidPrinciple.construction"],
+    "related": [],
+    "protocols": ["CP-046"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.reasoning": {
+    "description": "关键句层次优先用归纳法，演绎推理放低层且不超过4步",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": ["PyramidPrinciple.scqa", "PyramidPrinciple.construction"],
+    "related": [],
+    "protocols": ["CP-047"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.construction": {
+    "description": "构建金字塔先尝试自上而下(主题→疑问→回答)，不清时自下而上(列要点→找关系→得结论)",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": ["PyramidPrinciple.scqa", "PyramidPrinciple.reasoning"],
+    "related": [],
+    "protocols": ["CP-048"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.logic-order": {
+    "description": "每组思想只三种逻辑顺序：时间(步骤)、结构(空间)、程度(重要性)",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-049"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.summarizing": {
+    "description": "概括时避免'缺乏思想的句子'，要说出这组思想的共同含义",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-050"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.problem-definition": {
+    "description": "界定问题的框架：切入点/背景→困扰/冲突→现状R1→目标R2→疑问→解决方案",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-051"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.structured-analysis": {
+    "description": "用诊断框架+逻辑树+是非问题分析，将复杂问题系统化拆解",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-052"],
+    "first_seen": "2026-05-17"
+  },
+  "PyramidPrinciple.written-presentation": {
+    "description": "书面呈现用多级标题/下划线/编号/缩进让读者30秒看清结构。PPT演示你是明星，幻灯片是辅助",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": [],
+    "related": [],
+    "protocols": ["CP-053"],
+    "first_seen": "2026-05-17"
   }
 }

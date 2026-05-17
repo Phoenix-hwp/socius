@@ -12,15 +12,22 @@ applicable_roles: []
 source_origin: "personal"
 source_access: "public"
 sources:
-  - { system: "earth_library", card_id: "20260508-205952_BPMN流程建模指南-3-活动的常见错误" }
   - { system: "webpage", title: "BPMN流程建模指南（3）活动的常见错误", url: "https://www.notion.so/8eb299d05ba882bdadf781d5de2af664" }
 
 activation:
+  self_recital: ""
   task_types: ["diagramming", "process-modeling"]
   concept_anchor: "BPMN.activity"
   decision_signal: "选择活动节点类型（任务 vs 子流程 vs 调用活动）或判断活动建模是否正确时"
   anti_pattern: "用复杂度、步骤数量、画布空间来决定活动类型"
   capability_hint: "流程建模"
+judgment:                           # P1
+  verdict: ""
+  self_check: ""
+  web_check: null
+  doubts_resolved: []
+  note: null
+
 ---
 
 # CP-001：BPMN 活动常见错误

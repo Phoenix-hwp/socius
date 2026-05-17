@@ -8,13 +8,13 @@
   "search_scopes": [
     {
       "group": "脚本（Python）",
-      "globs": [".cursor/mcp/**/*.py", ".cursor/hooks/**/*.py", ".cursor/tools/**/*.py", "Earth_Library/scripts/**/*.py"],
+      "globs": [".cursor/mcp/**/*.py", ".cursor/hooks/**/*.py", ".cursor/tools/**/*.py"],
       "keywords": ["import", "from", "file_path", "card_path", "path", "DIR", "DEFAULT", "load", "open"],
       "note": "路径字面量、import/from 引用、函数调用、文件读写路径"
     },
     {
       "group": "脚本（Node.js）",
-      "globs": [".cursor/mcp/**/*.mjs", ".cursor/hooks/**/*.mjs", "Earth_Library/scripts/**/*.mjs"],
+      "globs": [".cursor/mcp/**/*.mjs", ".cursor/hooks/**/*.mjs"],
       "keywords": ["require", "import", "readFile", "writeFile", "join", "resolve"],
       "note": "require/import 引用、fs 文件路径"
     },
@@ -30,24 +30,14 @@
       "keywords": ["路径", "path", "文件索引", "`*.py`", "`*.json`", "Skill", "MCP"],
       "note": "规则文件中的路径引用、指令映射、模块依赖声明"
     },
-    {
-      "group": "Agent 模板",
-      "globs": ["Earth_Library/Templates/**/*.md"],
-      "keywords": ["第二步", "第三步", "检索", "搜索", "读取", "写入", "cards.jsonl", "library_index"],
-      "note": "QnA 模板中的步骤引用、路径引用、数据文件引用"
-    },
+    
     {
       "group": "数据文件",
       "globs": ["**/*.json", "**/*.jsonl"],
       "keywords": ["card_path", "file_path", "path", "domain", "source", "references"],
       "note": "字段名定义、索引路径、结构定义"
     },
-    {
-      "group": "文档（Earth Library）",
-      "globs": ["Earth_Library/*.md", "Earth_Library/**/*.md"],
-      "keywords": ["Knowledge_Cards", "cards.jsonl", "library_index", "模板", "路径", "格式"],
-      "note": "架构文档、README、Memo 中的路径与格式描述"
-    },
+    
     {
       "group": "文档（10-Topics）",
       "globs": ["10-Topics/**/*.md"],

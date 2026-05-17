@@ -27,7 +27,7 @@ glossary:
 ## 状态字段（强制）
 
 - 新增或改写生命周期文件时，必须在 frontmatter 中声明 `Lifecycle: 瞬态` / `临时` / `阶段` / `长期`。
-- 瞬态文件推荐前缀 `TEMP_`，临时文件推荐前缀 `TMP_`，阶段文件推荐前缀 `STAGE_`。
+- 瞬态文件推荐前缀 `TEMP_`，临时文件推荐前缀 `TEMP_`（与瞬态同前缀，区分靠 `Lifecycle` frontmatter），阶段文件推荐前缀 `STAGE_`。
 
 ## 删除策略
 

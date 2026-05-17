@@ -4,9 +4,9 @@
 架构分工（高内聚 / 松耦合）：
 - **notion_drill**：仅负责 API 遍历与 DrillNode 树，不依赖本模块。
 - **本模块**：仅做「树 → Markdown」的纯函数式呈现，不调用 Notion、不写库。
-- **notion_drill_earth_library**：编排层（drill → 本模块渲染 → Earth Library `store_to_library` flow）。
+- **notion_drill_earth_library**：编排层（drill → 本模块渲染 → `Skills_Library/scripts/store_to_library` flow）。
 
-对应工作区「第三层 flow」时，入库步骤仍以 `Earth_Library/scripts/store_to_library.py` 为准；
+对应工作区「第三层 flow」时，入库步骤仍以 `Skills_Library/scripts/store_to_library.py` 为准；
 本文件不属于 `.cursor/rules`，仅为 MCP 侧可复用呈现层。
 """
 from __future__ import annotations

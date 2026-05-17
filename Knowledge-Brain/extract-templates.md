@@ -401,9 +401,10 @@ validated_count: 0
 source_origin: "personal"         # personal / enterprise / project / public
 source_access: "public"
 sources:
-  - { system: "earth_library", card_id: "20260508-205952_BPMN流程建模指南-3-活动的常见错误" }
+  - { system: "knowledge_source", card_id: "20260508-205952_BPMN流程建模指南-3-活动的常见错误" }
 
 activation:
+  self_recital: "BPMN 活动类型区分不看复杂度看可分解性"
   task_types: [diagramming, process-modeling]
   decision_signal: "选择活动节点类型或判断活动建模是否正确时"
   anti_pattern: "用复杂度、步骤数量、画布空间来决定活动类型"
@@ -417,6 +418,61 @@ activation:
 - [ ] 提炼产物的结构化字段是否覆盖该知识类型的核心骨架（§二~§六）
 - [ ] 是否写入了分类结果（`cp_type` + `cp_subtypes`）
 - [ ] 是否填写了 `concept_anchor`
-- [ ] 是否填写了 `activation` 块（`decision_signal` + `anti_pattern` 至少填写其一）
+- [ ] 是否填写了 `activation` 块（`self_recital` 必填，`decision_signal` + `anti_pattern` 至少填写其一）
 - [ ] 是否保留了溯源链接
 - [ ] 正文是否「骨架化」（去掉了例子和背景叙述，留下可复用结构）
+
+---
+
+## 九、提炼后评断验证（P1）
+
+> 目的：提炼完成不等于正确。在协议落盘前，对提炼产物做轻量验证，防止错误知识固化为「未验证协议」后被当成事实引用。
+
+### 9.1 验证步骤
+
+提炼产物产出后、写入 `protocols/CP-xxx.md` 前，执行以下验证：
+
+#### Step V1：LLM 自检（必做，同步）
+
+用大模型自身知识对提炼产物做交叉检查：
+
+| 检查项 | 问题 | 不合格标记 |
+|:---|:---|:---|
+| 事实一致性 | 提炼骨架中的定义、关系、边界与大模型已知知识一致吗？ | `judgment: “质疑 — <具体疑点>”` |
+| 逻辑自洽 | 提炼产物内部要素之间是否自相矛盾？ | `judgment: “矛盾 — <冲突描述>”` |
+| 兜底归因 | 提炼产物未触及大模型已知盲区的知识类型（如实时数据、内部制度）？ | `judgment: “可信”` |
+
+#### Step V2：网搜交叉验证（可选，异步非阻塞）
+
+触发条件（满足任一条即触发网搜）：
+- V1 中 `judgment` 为 `“质疑”` 或 `“矛盾”`
+- 知识来源为 `public` 且 `validated_count: 0`（首次遇到该领域的公开知识）
+- 用户明确要求验证
+
+网搜结果写入验证注释段，不修改协议正文。若网搜结果与提炼产物一致 → `judgment` 升级为 `“可信+网搜一致”`；若不一致 → 保持 `“质疑”` 并附网搜摘要。
+
+#### Step V3：评断注释段格式
+
+每条协议 frontmatter 中增加 `judgment` 注释段（不替代协议正文，独立于正文之外）：
+
+```yaml
+judgment:
+  verdict: "可信"                  # 可信 / 质疑 — <疑点> / 矛盾 — <冲突描述>
+  self_check: "LLM 自检通过，定义与已知 BPMN 标准一致"
+  web_check: null                  # 或 "2026-05-17 网搜一致: [关键词]"
+  doubts_resolved: ["子流程与调用活动的边界"]  # 从 P0 诠释自检的 doubts 中已澄清的项
+  note: null                       # 保留的已知局限或边界说明
+```
+
+### 9.2 验证结果对协议状态的影响
+
+| verdict | 协议 `status` | `validated_count` | 使用时标注 |
+|:---|:---|:---|:---|
+| `“可信”` | candidate → 保持不变 | +1 | 无特殊标注 |
+| `“可信+网搜一致”` | candidate → active（直接升级） | +2 | 无特殊标注 |
+| `“质疑”` | candidate（待修订） | 0 | 运行时前置 `⚠ 待验证` |
+| `“矛盾”` | candidate（待修订） | 0 | 运行时前置 `⚠ 存疑 — <冲突描述>` |
+
+### 9.3 与 P0 诠释自检的衔接
+
+P0（`classifier.md` Step 1.5）中的 `doubts` 字段传入此处，若提炼过程中解答了困惑 → 填入 `judgment.doubts_resolved`；若仍未解答 → 填入 `judgment.note` 并标注 `“理解尚不完全”`。

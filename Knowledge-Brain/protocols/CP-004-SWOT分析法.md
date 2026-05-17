@@ -5,22 +5,29 @@ Created: 2026-05-16
 status: candidate
 cp_type: "strategic"
 cp_subtypes: ["structural"]
-concept_anchor: "Strategy.SWOT"
+  concept_anchor: "CS.SWOT"
 validated_count: 0
 capability_id: ""
 applicable_roles: []
 source_origin: "personal"
 source_access: "public"
 sources:
-  - { system: "earth_library", card_id: "20260508-205831_SWOT分析法" }
   - { system: "webpage", title: "SWOT分析法", url: "https://www.notion.so/177299d05ba8839ca4e0012b8aa41889" }
 
 activation:
+  self_recital: "SWOT四象限：S+O进攻/W+O借势/S+T防御性进攻/W+T防守，交叉出四种战略方向"
   task_types: ["strategic-planning", "competitive-analysis", "career-planning"]
-  concept_anchor: "Strategy.SWOT"
+  concept_anchor: "CS.SWOT"
   decision_signal: "需要做态势分析、战略方向选择或竞品对比时"
   anti_pattern: "列出20条因素但每一条给同样重视——清单式罗列、缺乏优先级排序"
   capability_hint: "战略分析与决策"
+judgment:                           # P1
+  verdict: "可信"
+  self_check: "LLM 自检通过，四维+四象限交叉分析与源卡一致"
+  web_check: null
+  doubts_resolved: []
+  note: null
+
 ---
 
 # SWAT矩阵：SWOT 战略方向选择

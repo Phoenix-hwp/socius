@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Earth Library consumer for NotionDrillIngestor（编排层）.
+"""Drill-to-library consumer for NotionDrillIngestor（编排层）.
 
 分层：
 - **notion_drill**：遍历 API，产出 DrillNode（与呈现、入库无关）。
@@ -35,7 +35,7 @@ def _run_rollup_url_dedupe(card_rel_posix: str) -> dict[str, Any]:
     使用 subprocess 调用 CLI，避免运行时篡改 sys.path 与直接 import。
     """
     root = Path(os.environ.get("CURSOR_PROJECT_DIR", _SCRIPT_DIR.parents[1]))
-    dedupe_script = root / "Earth_Library" / "scripts" / "merge_rollups_redundant_notion_cards.py"
+    dedupe_script = root / "Skills_Library" / "scripts" / "merge_rollups_redundant_notion_cards.py"
     if not dedupe_script.exists():
         return {"ok": False, "error": f"dedupe script not found: {dedupe_script}"}
 
@@ -123,9 +123,9 @@ def _store_to_library(
     notion_page_id: str = "",
     dry_run: bool = False,
 ) -> dict[str, Any]:
-    """Delegate to Earth_Library/scripts/store_to_library.py."""
+    """Delegate to Skills_Library/scripts/store_to_library.py."""
     root = Path(os.environ.get("CURSOR_PROJECT_DIR", _SCRIPT_DIR.parents[1]))  # workspace root
-    store_script = root / "Earth_Library" / "scripts" / "store_to_library.py"
+    store_script = root / "Skills_Library" / "scripts" / "store_to_library.py"
 
     if not store_script.exists():
         raise FileNotFoundError(f"store_to_library.py not found at {store_script}")

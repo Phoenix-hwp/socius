@@ -198,6 +198,15 @@ BPMN.flow_element                    ← 抽象基类
 3. **是否需要细分到子概念？** → 确定 SubTerm
 4. **与什么概念是父子/同级关系？** → 填写 parent / siblings
 
+### 填写概念 description
+
+每个概念节点在 `concept-tree.json` 中须填写 `description` 字段：
+
+- **来源**：P0 诠释自检（`classifier.md` Step 1.5）的 `self_recital`
+- **长度**：≤30 字中文
+- **作用**：为 `activation.md` 的语义匹配提供概念层级的可读描述，Agent 可以快速理解「这个概念在说什么」，无需展开协议全文
+- **示例**：`BPMN.activity` → `"BPMN 中执行工作单元的图形符号，含任务/子流程/调用活动三层次"`
+
 ### 不确定时
 
 若概念边界不清晰，在协议标注 `concept_anchor_confidence: medium`，并注记疑惑点。后续通过经验层反馈校准。
@@ -214,14 +223,15 @@ BPMN.flow_element                    ← 抽象基类
 
 ```yaml
 activation:
-  task_types: [diagramming, process-modeling]   # L1 任务级——什么任务用到我
-  concept_anchor: "BPMN.activity"               # 概念锚——我在哪个概念空间
-  decision_signal: "选择活动节点类型时"          # L2 决策级——什么决策点触发我
-  anti_pattern: "用复杂度决定活动类型"            # 反模式——看到这个就触发
-  capability_hint: "流程建模"                    # L3 能力级——执行什么能力时参考
+  self_recital: "BPMN 活动类型区分不看复杂度看可分解性"  # L0 理解级——协议说了什么
+  task_types: [diagramming, process-modeling]           # L1 任务级——什么任务用到我
+  concept_anchor: "BPMN.activity"                       # 概念锚——我在哪个概念空间
+  decision_signal: "选择活动节点类型时"                  # L2 决策级——什么决策点触发我
+  anti_pattern: "用复杂度决定活动类型"                    # 反模式——看到这个就触发
+  capability_hint: "流程建模"                            # L3 能力级——执行什么能力时参考
 ```
 
-`task_types` + `concept_anchor` 共同决定 L1 预加载的命中率。`decision_signal` + `anti_pattern` 决定 L2 执行中的触发精度。
+`self_recital` + `task_types` + `concept_anchor` 共同决定 L1 预加载的命中率与 Agent 的快速判断。`decision_signal` + `anti_pattern` 决定 L2 执行中的触发精度。
 
 ---
 

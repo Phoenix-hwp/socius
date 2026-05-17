@@ -60,7 +60,7 @@ glossary:
 
 若 `<项目目录>/` 下已有历史备份文件（`.md`），迁移到 `<项目目录>/对话备份/`。
 
-若存在 `Earth_Library/` 对话备份目录（历史遗留），可选择：
+若存在 `` 对话备份目录（历史遗留），可选择：
 - [1] 保留不动（引用原路径）
 - [2] 迁移到 `<项目目录>/对话备份/`
 
@@ -91,13 +91,13 @@ glossary:
 
 ---
 
-## 示例：Earth Library 升级
+## 示例：项目升级
 
 ```
-项目目录：Earth_Library/
-主控文件：Earth_Library/Earth_Library_Master_Control.md
-备忘录：  Earth_Library/Earth_Library_Project_Memo.md
-备份目录：Earth_Library/对话备份/
+项目目录：<YourProject>/
+主控文件：<YourProject>_Master_Control.md
+备忘录：  <YourProject>_Project_Memo.md
+备份目录：对话备份/
 ```
 
 ---

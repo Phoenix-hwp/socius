@@ -51,8 +51,9 @@ trigger: 用户输入 系统检查 / 自检 / 审计 时触发
 | 网关层入口 | `gateway-command-router.mdc` + `kernel-runtime.mdc` 存在 | 文件存在性检查 |
 | 能力层入口 | `task-type-registry.md` + `skill-registry.json` + `mod-decision-framework.mdc` 存在 | 文件存在性检查 |
 | 执行层入口 | `Skills_Library/` 非空 + `skill-registry.json` 有已注册技能 | 目录 + 注册表 |
-| 认知层入口 | `Knowledge-Brain/` 六大子文件存在（classifier / extract-templates / template-generator / concept-anchor / activation / concept-tree.json） | 文件存在性检查 |
-| 层间接口引用 | 能力层引用认知层（如 `activation.md` ↔ `task-init-protocol.mdc`）的链路是否断裂 | 跨文件关键词搜索 |
+| 认知层入口 | `Knowledge-Brain/` 八大子文件存在（classifier / extract-templates / template-generator / concept-anchor / activation / concept-tree.json / synthesizer / activation-log.jsonl） | 文件存在性检查 |
+| 认知层接口链路 | 能力层引用认知层的链路是否断裂（`activation.md` ↔ `task-init-protocol.mdc` Step 2-KB 预载入 ↔ `mod-decision-framework.mdc` A/C 降级 ↔ `flow-behavior-auto-receipt.mdc` §C#13 反馈） | 跨文件关键词搜索 |
+| 认知层 Step S | `classifier.md` §六 Step S 的描述是否存在（全域巡检维度 S1-S6） | Read 文件——确认从「管线内审」升级为「全域知识驱动巡检」 |
 | 层命名一致性 | 四层命名是否统一（网关层/能力层/执行层/认知层） | `Knowledge-Brain/framework.md` |
 
 ### D2：数据治理

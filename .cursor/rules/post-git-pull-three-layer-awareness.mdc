@@ -7,7 +7,6 @@ alwaysApply: false
 
 ## 目的
 
-远端或其它设备可能已新增 **规则（`.cursor/rules`）**、**钩子（`.cursor/hooks`）**、**仓库根或 `.cursor` 下的自动化脚本**、**`Earth_Library/scripts`** 等与「指令路由、模块流程」相关的约定。若在 **未重新阅读** 当前仓库中的规则文件分层（gateway/mod/flow）与别名说明前，又在本地新建重叠能力的规则或脚本并推送，易导致 **合并冲突、功能冗余或行为分叉**。
 
 > **注**：本文中「分层」指 `.cursor/rules/` 内部的文件组织约定（gateway/mod/flow），与系统四层能力架构（网关层/能力层/执行层/认知层）正交。四层架构定义见 `Knowledge-Brain/framework.md` §一。
 
@@ -131,7 +130,6 @@ options：
 - `.cursor/rules/**/*.mdc`
 - `.cursor/hooks*`、`hooks.json` 及其垫片/启动脚本
 - 被 **`Cursor-command-aliases.md`** 或 **`Command-Help-Index.md`** 引用的仓库脚本路径
-- `Earth_Library/scripts/` 内与 **入库 / 检索 / 巡检 / 启停** 指令链路相关的脚本
 
 ### 必读文档（最小集合）
 
@@ -181,7 +179,6 @@ options：
    - 重命名的文件
 3. 对每个关键词，执行一次全库搜索：
    - **优先用 Grep 工具**（内置，速度最快）。
-   - 搜索范围：`.cursor/rules/**/*.mdc`、`Earth_Library/**/*.md`、`**/*.py`、`**/*.mjs`、`10-Topics/**/*.md`。
 4. 排除以下「有意保留」的引用：
    - `.trash/` 下的文件
    - `Daily-Backups/` 下的对话备份/复盘文件（历史记录，无需回改）
@@ -193,7 +190,7 @@ options：
 
 | 关键词 | 残留引用数 | 位置 | 处理 |
 |:---|:---|:---|:---|
-| Knowledge_Cards | 2 | .cursor/rules/xxx.mdc L42, Earth_Library/Templates/QnA_xxx.md L15 | 需同步修改 |
+| Knowledge_Cards | 2 | .cursor/rules/xxx.mdc L42, 90-Templates/QnA_xxx.md L15 | 需同步修改 |
 | card_path | 0 | — | ✅ 无残留 |
 
 ### 需同步

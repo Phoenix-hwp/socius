@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "待办计划追踪 — 支持备忘关联、每日首次提醒（sessionStart 自动拉取 + 手动 pull）、自动完成检测",
-    "last_reminded": "2026-05-16",
+    "last_reminded": "2026-05-17",
     "reminder_rules": {
       "overdue": "planned_date <= 今天 + status=pending → 每日首次交互弹窗（多选待办 → 逐项操作：查看备忘/推迟/完成/标记进行中）；sessionStart 自动 fetch/pull 后触发，或手动 pull 后触发，同日跳过",
       "upcoming": "planned_date 在未来 3 天 + status=pending → 每日首次交互弹窗合并展示",
@@ -35,28 +35,8 @@
         "requires"
       ],
       "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "path": "System-Capabilities/Rules-Framework/Rules_Memo.md",
         "entry": "MEMO-001"
-      },
-      "source_task": null
-    },
-    {
-      "id": "P003",
-      "topic": "数据治理宪法 — 核心数据迁移（cards.jsonl → .md + relations.jsonl 瘦身 + library_index 清理）",
-      "next_action": "1) 写脚本将 cards.jsonl 的 body_md 外迁到 Earth_Library/cards/<id>.md；2) 清理 library_index.json 中 keywords 长句；3) 建立 relations.jsonl 瘦身策略（仅存人工高价值边，自动关联改为运行时计算）",
-      "planned_date": "2026-05-25",
-      "status": "pending",
-      "resume_keywords": [
-        "cards.jsonl",
-        "数据治理",
-        "宪法",
-        "迁移",
-        "relations.jsonl",
-        "双轨"
-      ],
-      "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
-        "entry": "MEMO-003"
       },
       "source_task": null
     },
@@ -74,13 +54,96 @@
         "遗漏"
       ],
       "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "path": "System-Capabilities/Rules-Framework/Rules_Memo.md",
         "entry": "MEMO-002"
+      },
+      "source_task": null
+    },
+    {
+      "id": "P010",
+      "topic": "知识脑管线验证 — 消化首批 1-3 张 Earth Library 卡片，走完整管线",
+      "next_action": "取 1-3 张 cards.jsonl 中的卡片（非 Domain_Overview），走完整管线：Step0 源分解 -> Step1.5 诠释自检 -> 分类 -> 提炼 -> P1 评断 -> P2 四问闸门 -> Step S 收束自检。验证管线是否顺畅",
+      "planned_date": null,
+      "status": "pending",
+      "resume_keywords": [
+        "管线验证",
+        "消化卡片",
+        "P0",
+        "P1",
+        "P2",
+        "Step S",
+        "Earth Library"
+      ],
+      "source_memo": {
+        "path": "System-Capabilities/Knowledge-Brain/KB_Memo.md",
+        "entry": "MEMO-007"
+      },
+      "source_task": null
+    },
+    {
+      "id": "P011",
+      "topic": "嵌入知识脑前置查询到 task-init-protocol.mdc Step 2-3 之间",
+      "next_action": "在 task-init-protocol.mdc Step 2（结构探针）和 Step 3（方案提案）之间，插入知识脑前置查询步骤：按 task_type + domain 查 activation filter 1 -> 注入相关协议到上下文",
+      "planned_date": null,
+      "status": "pending",
+      "resume_keywords": [
+        "task-init-protocol",
+        "知识脑前置查询",
+        "activation",
+        "Step 2",
+        "Step 3",
+        "嵌入"
+      ],
+      "source_memo": {
+        "path": "System-Capabilities/Knowledge-Brain/KB_Memo.md",
+        "entry": "MEMO-007"
+      },
+      "source_task": null
+    },
+    {
+      "id": "P012",
+      "topic": "审查能力虚拟化方案 — 打通 template-generator 的 L2/L3",
+      "next_action": "1) 审查 Skill 标准接口声明方案（input_schema / output_schema / side_effects / dependencies）；2) 确认 skill-registry.json 改造范围；3) 确定 L2/L3 自动生成的触发条件和映射规则",
+      "planned_date": null,
+      "status": "pending",
+      "resume_keywords": [
+        "能力虚拟化",
+        "Capability Virtualization",
+        "L2",
+        "L3",
+        "template-generator",
+        "skill-registry",
+        "标准接口"
+      ],
+      "source_memo": {
+        "path": "System-Capabilities/Knowledge-Brain/KB_Memo.md",
+        "entry": "MEMO-007"
       },
       "source_task": null
     }
   ],
   "archive": [
+    {
+      "id": "P003",
+      "topic": "数据治理宪法 — 核心数据迁移（cards.jsonl → .md + relations.jsonl 瘦身 + library_index 清理）",
+      "next_action": "取消原因：卡片体系已迁移为知识脑协议，Earth Library 目录已被移除",
+      "planned_date": "2026-05-25",
+      "status": "cancelled",
+      "resume_keywords": [
+        "cards.jsonl",
+        "数据治理",
+        "宪法",
+        "迁移",
+        "relations.jsonl",
+        "双轨"
+      ],
+      "source_memo": {
+        "path": "System-Capabilities/Data-Governance/DG_Memo.md",
+        "entry": "MEMO-003"
+      },
+      "source_task": null,
+      "completed_date": "2026-05-17"
+    },
     {
       "id": "P001",
       "topic": "alwaysApply 规则分级 — phase1 条件级降级",
@@ -95,7 +158,7 @@
         "条件级"
       ],
       "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "path": "System-Capabilities/Rules-Framework/Rules_Memo.md",
         "entry": "MEMO-001"
       },
       "source_task": null
@@ -120,7 +183,7 @@
         "MEMO-004"
       ],
       "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "path": "System-Capabilities/Decision-Framework/DF_Memo.md",
         "entry": "MEMO-004"
       },
       "source_task": null
@@ -148,7 +211,7 @@
         "child"
       ],
       "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "path": "System-Capabilities/Decision-Framework/DF_Memo.md",
         "entry": "MEMO-004"
       },
       "source_task": null
@@ -168,7 +231,7 @@
         "双格式"
       ],
       "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "path": "System-Capabilities/Data-Governance/DG_Memo.md",
         "entry": "MEMO-003"
       },
       "source_task": null,
@@ -189,7 +252,7 @@
         "大写"
       ],
       "source_memo": {
-        "path": "20-Projects/CursorKnowledge/CursorKnowledge_Project_Memo.md",
+        "path": "System-Capabilities/Data-Governance/DG_Memo.md",
         "entry": "MEMO-003"
       },
       "source_task": null,

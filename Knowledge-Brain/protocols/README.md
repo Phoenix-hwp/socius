@@ -23,16 +23,23 @@ applicable_roles: []
 source_origin: ""
 source_access: ""
 sources:
-  - { system: "earth_library", card_id: "..." }
   - { system: "webpage", title: "...",  url: "..." }
   - { system: "notion",  title: "...",  url: "..." }
 
 activation:
+  self_recital: ""                  # P0 诠释自检产出，≤30 字
   task_types: []
   concept_anchor: ""
   decision_signal: ""
   anti_pattern: ""
   capability_hint: ""
+
+judgment:                           # P1 评断验证产出
+  verdict: ""
+  self_check: ""
+  web_check: null
+  doubts_resolved: []
+  note: null
 ```
 
 ## 协议生命周期

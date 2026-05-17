@@ -10,11 +10,10 @@ glossary:
     - 对话事件流（话题切换/修正信号/经验信号）
   output: 激活决策（触发 + 小注 / 标记 / 忽略）
   downstream:
-    - task-init-protocol.mdc Step 2.5（知识脑前置查询）
-    - flow-behavior-auto-receipt.mdc §C#10（收束时复盘激活效果）
-    - Behavior-Fit-Log.jsonl（经验层记录激活误触发/漏触发）
-    - method-reliability-registry.json（评分系统权重）
-    - concept-tree.json（一级索引）
+    - task-init-protocol.mdc Step 2-KB（知识脑前置查询）
+    - mod-decision-framework.mdc §二（KB 预载入 → 维度降级标记）
+    - flow-behavior-auto-receipt.mdc §C#13（收束时协议有效性反馈）
+    - Knowledge-Brain/activation-log.jsonl（运行时激活日志：追踪每条协议的 activated/effective）
   runtime_features:
     - 三源认知模型（大模型主持 + 网络核查 + 知识脑提醒）
     - 对话双向通道（向下消费/向上反馈/向上写入）
@@ -49,6 +48,9 @@ glossary:
 
 ```yaml
 activation:
+  # === L0：理解级（消化时填写，运行时读取） ===
+  self_recital: "..."              # 一句话说出协议说了什么（≤30字），来自 P0 诠释自检
+
   # === L1：任务级（预加载时过滤） ===
   task_types: [string]             # 什么任务类型会用到我
   concept_anchor: "Domain.Term"   # 概念锚（核心路由字段）
@@ -65,11 +67,33 @@ activation:
 
 | 字段 | 层级 | 类型 | 必填 | 用途 | 示例 |
 |:---|:---|:---|:---|:---|:---|
+| `self_recital` | L0 理解级 | 自然语言（≤30 字） | 是 | 一句话概括协议说了什么，供 Agent 快速评估与我有关吗 | `"BPMN 活动类型区分不看复杂度看可分解性"` |
 | `task_types` | L1 任务级 | 字符串数组 | 是 | 匹配任务类型，决定预加载时是否注入 | `[diagramming, process-modeling]` |
 | `concept_anchor` | L1 任务级 | 字符串 | 是 | 概念空间碰撞检测的主键 | `BPMN.activity` |
 | `decision_signal` | L2 决策级 | 自然语言 | 至少 1 个 | Agent 做具体决策时的提醒信号 | `"选择活动节点类型时"` |
 | `anti_pattern` | L2 决策级 | 自然语言 | 至少 1 个 | 错误行为的触发信号 | `"用复杂度决定活动类型"` |
 | `capability_hint` | L3 能力级 | 自然语言 | 否 | 调用能力时的补充参考 | `"流程建模"` |
+
+### self_recital 写作规范
+
+- **来源**：P0 诠释自检（`classifier.md` Step 1.5），由 Agent 在消化时填写，运行时只读
+- **长度**：≤30 字中文
+- **写法**：用自己的话概括协议的核心主张，不是复述标题
+  - `"BPMN 活动类型区分不看复杂度看可分解性"` ✅
+  - `"BPMN 活动的三大常见错误"` ❌（复述标题，没含量）
+- **用途**：Agent 扫描候选协议时最快判断「这条跟我有关吗」，无需展开全文
+- **与 decision_signal 的区别**：`self_recital` 管「我到底说了什么」，`decision_signal` 管「什么时候该想起我」
+
+示例：
+```yaml
+activation:
+  self_recital: "BPMN 活动类型区分不看复杂度看可分解性"
+  task_types: [diagramming, process-modeling]
+  concept_anchor: "BPMN.activity"
+  decision_signal: "选择活动节点类型（任务 vs 子流程 vs 调用活动）时"
+  anti_pattern: "用复杂度、步骤数量、画布空间来决定活动类型"
+  capability_hint: "流程建模"
+```
 
 ### decision_signal 写作规范
 
@@ -176,6 +200,13 @@ Step 2: 精筛 — concept_anchor 概念空间碰撞
   当前 domain = "process-modeling" → 概念空间 = BPMN.*
   → 过滤粗筛结果中 concept_anchor 在 BPMN.* 空间内的协议
 
+Step 2.5: 快筛 — self_recital 语义匹配
+  取 Step 2 精筛结果中每条协议的 self_recital
+  → Agent 用 self_recital 快速判断「这条跟我有关吗」（无需展开全文）
+  → self_recital 与当前子操作明显无关 → 降为备选（不注入上下文，仅保留 1 行摘要）
+  → self_recital 明确相关 → 保持注入
+  注：self_recital 的语义匹配也可借助 concept-tree.json 节点的 description 做概念层级对齐
+
 Step 3: 排序 — 匹配度
   - concept_anchor 精确匹配 > 上位概念匹配 > 同级概念匹配
   - decision_signal 与当前子操作相关 > 不相关
@@ -190,18 +221,18 @@ Step 4: 截断 — 单任务 ≤5 条协议注入上下文
 
 **触发时机**：过滤器 1 的候选池产出后
 
-**数据源**：`Behavior-Fit-Log.jsonl` 中 `type: "activation_miscalibration"` 的记录
+**数据源**：`Knowledge-Brain/activation-log.jsonl` 中该协议的历史激活记录
 
 **校准逻辑**：
 
 ```
 对候选池中每条协议:
-  查 Behavior-Fit-Log:
-    上次在类似子场景触发 → 用户纠正？
-      YES → 降权或排除（标注原因）
+  查 activation-log.jsonl:
+    该 task_type 下上次触发时 effective = false 且 miscue_type = "scene_mismatch"？
+      YES → 降权或排除（标注原因："上次同场景误用"）
       NO → 保持优先级
-    上次在该场景该触发但没触发？
-      YES → 提升优先级（该场景的漏报修复）
+    该 task_type 下上次触发时 effective = true？
+      YES → 提升优先级（该场景已验证有效）
 ```
 
 **输出**：校准后的优先级排序 + 风险标注
@@ -216,11 +247,12 @@ Step 4: 截断 — 单任务 ≤5 条协议注入上下文
 
 ```
 对候选池中每条协议:
-  查历史评分:
-    validated_count ≥ 3 → 置信度：高（✅ 直接使用）
-    validated_count = 1-2 → 置信度：中（⚠ 标注风险，Agent 执行时关注）
-    validated_count = 0 → 置信度：低（🔶 仅作参考，Agent 自主判断）
-    连续纠正 ≥ 2 次 → 置信度：已降权（⛔ 不在该场景激活，标记待修正）
+  查 activation-log.jsonl 中的有效记录:
+    effective_count ≥ 3 → 置信度：高（✅ 直接使用）
+    effective_count = 1-2 → 置信度：中（⚠ 标注风险，Agent 执行时关注）
+    effective_count = 0 且 activated_count ≥ 1 → 置信度：低（🔶 仅作参考，Agent 自主判断）
+    effective_count = 0 且 activated_count = 0 → 置信度：未验证（🔶 新协议，待实战检验）
+    miscue_type = "protocol_wrong" 且 pended_review 已确认 ≥ 2 次 → 置信度：已降权（⛔ 不在该场景激活，标记待修正）
 ```
 
 **输出**：带置信度的最终激活协议列表
@@ -231,11 +263,11 @@ Step 4: 截断 — 单任务 ≤5 条协议注入上下文
 
 | 时机 | 触发点 | 查什么 | 动作 |
 |:---|:---|:---|:---|
-| **任务启动** | task-init-protocol Step 2.5 | 程序性 + 框架性 + 经验性协议（按 task_type + domain 筛选） | 预加载注入上下文（≤5 条） |
+| **任务启动** | task-init-protocol Step 2-KB | 程序性 + 框架性 + 经验性协议（按 task_type + domain 筛选） | 预加载注入上下文（≤5 条），产出 `kb_protocols_activated` 列表 |
 | **任务执行中 - 决策点** | Agent 要做微观判断时 | 策略性 + 经验性协议（按 decision_signal/anti_pattern 匹配） | 上下文中的协议自然浮现；若无上下文但有 high-confidence 外部匹配 → 提示 |
 | **任务执行中 - 能力调用** | 能力层调度 Skill 执行前 | Skill 的 activation 字段 | 筛选候选 Skill + 参数上下文指导 |
 | **任务执行中 - 闯入** | Agent 即将违反已知规则性协议 | 规则性协议（按约束对象匹配） | 强制中断并提醒 |
-| **任务收束** | flow-behavior-auto-receipt §C#10 | 本轮激活过的协议的验证状态 | 更新 validated_count + 记录使用场景 |
+| **任务收束** | flow-behavior-auto-receipt §C#13 | 本轮激活过的协议（`kb_protocols_activated`） | 四态有效性判断 → 写入 `activation-log.jsonl`（effective_count / activated_count 更新） |
 
 ---
 
@@ -508,19 +540,21 @@ Stale（话题切换，N+10 轮后）
 | `✅ 已验证` | 已验证 ≥3 次 | 直接采纳为结论 |
 | `⛔ 已降权` | 连续纠正 ≥2 次 | 不在该场景激活 |
 
-### 4b. 验证状态时间衰减
+### 4b. 验证状态时间衰减（过渡方案）
 
-`validated_count` 附带时间戳。超过 6 个月未再次激活的协议，置信度自动降一级：
+`effective_count`（来自 `activation-log.jsonl`）附带时间戳。超过 6 个月未再次有效激活的协议，置信度自动降一级：
 
 ```
-CP-xxx: validated_count: 1, last_validated: 2026-01-15
+CP-xxx: effective_count: 1, last_effective: 2026-01-15
 
 当前日期: 2026-08-15（距今 7 个月）
   → 置信度：从「⚠ 需关注」降为「🔶 未验证」
-  → 注入时标注：⏳ 上次验证：2026-01（已过 7 个月）
+  → 注入时标注：⏳ 上次有效验证：2026-01（已过 7 个月）
 ```
 
 **不删除协议**——只降置信度。下次重新验证后恢复原级。
+
+> **远期演进**：此处的简单时间衰减将在 P1 五层演化模型（补充/优化/迭代/证伪/同义冗余）落地后被替代。见 `00-Inbox/存疑_知识脑与决策层联动_2026-05-17.md` 的 D/E 存疑点。
 
 ## 十三、自检清单
 
@@ -539,7 +573,7 @@ CP-xxx: validated_count: 1, last_validated: 2026-01-15
 - [ ] 注入上下文的协议是否 ≤5 条？
 - [ ] 注入时是否标注了置信度标记（🔶/⚠/✅/⛔）？
 - [ ] 同 concept_anchor 下命中多条时是否执行了小注式矛盾仲裁？
-- [ ] 激活后的协议在收束时是否记录了使用结果？
+- [ ] 激活后的协议在收束时是否通过 §C#13 写入了 `activation-log.jsonl`？
 
 ### 对话中检查
 

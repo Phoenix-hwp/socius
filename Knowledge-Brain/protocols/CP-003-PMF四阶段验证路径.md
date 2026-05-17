@@ -5,22 +5,29 @@ Created: 2026-05-16
 status: candidate
 cp_type: "procedural"
 cp_subtypes: ["structural"]
-concept_anchor: "ProductValidation.PMF"
+  concept_anchor: "CS.PMF"
 validated_count: 0
 capability_id: ""
 applicable_roles: []
 source_origin: "personal"
 source_access: "public"
 sources:
-  - { system: "earth_library", card_id: "20260508-205830_精益画布-PMF" }
   - { system: "webpage", title: "精益画布&PMF", url: "https://www.notion.so/943299d05ba8826ebf0c814ed8fc9d14" }
 
 activation:
+  self_recital: "PMF四阶段：概念→原型→MVP→PMF，逐步验证假设，精益画布为前置工具"
   task_types: ["product-validation", "startup-planning", "investment-evaluation"]
-  concept_anchor: "ProductValidation.PMF"
+  concept_anchor: "CS.PMF"
   decision_signal: "启动新项目需要验证产品假设，或判断当前处于概念/原型/MVP/PMF 哪一阶段时"
   anti_pattern: "没有经过任何验证就直接投入大量资源开发完整产品"
   capability_hint: "产品验证与创业规划"
+judgment:                           # P1
+  verdict: "可信"
+  self_check: "LLM 自检通过，四阶段+精益画布与源卡一致，含完成标准"
+  web_check: null
+  doubts_resolved: []
+  note: null
+
 ---
 
 # CP-003：PMF 四阶段验证路径

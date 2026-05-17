@@ -42,8 +42,6 @@ glossary:
 ### 正确做法
 
 ```
-cards.jsonl 中的 body_md → 外迁到 Earth_Library/cards/<id>.md
-JSON 仅保留: {"id":"xxx", "card_path":"Earth_Library/cards/xxx.md"}
 ```
 
 ---

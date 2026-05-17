@@ -112,7 +112,7 @@
       "task_types": ["knowledge_ingest"],
       "performance_score": null,
       "dependencies": [],
-      "write_scope": ["Earth_Library/"],
+      "write_scope": ["Knowledge-Brain/"],
       "risk_signals": [],
       "entry": {
         "framework": ".cursor/rules/mod-earth-library-framework.mdc",

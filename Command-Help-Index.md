@@ -127,7 +127,6 @@ help
 | 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | 工作区根运行 `bootstrap-on-pull.cmd`；占位、环境、Shim、ngrok、API Key 检测与汇总；详见 `模型配置说明.md` | `git-cross-device-and-secrets.mdc` | — |
 | git到新设备 | 克隆到新路径、同步到新位置 | 确认后，将 Git 仓库拉取到用户指定的自定义路径（支持新设备初始化）。包含路径选择、冲突处理、失败兜底。 | `flow-git-clone-to-custom-path.mdc` | `flow-git-clone-to-custom-path.mdc` |
 
-## 10) Earth Library（地球图书馆）（三层架构）
 
 > 定位：为本工作区所有项目提供**知识参考补充层**，作为网络信息的辅助与沉淀。
 
@@ -136,44 +135,29 @@ help
 | 层级 | 来源 | 优先级 |
 |:---|:---|:---:|
 | 主层 | 模型知识 + 网络实时信息 | 1 |
-| **补充层** | **Earth Library** | **2** |
 | 档案层 | 项目专属文档 | 3 |
 
 ### 指令清单
 
 | 指令 | 别名 | 用途 | 框架 | 工作流 |
 |---|---|---|---|---|
-| 存入图书馆 | 入馆、存知识 | 将当前对话中的新增知识入库到 `Earth_Library`，自动建立关联索引 | `mod-earth-library-framework.mdc` | `flow-library-ingest.mdc` |
-| 启用图书馆 | 开馆、启用库 | 开启 Earth Library 补充参考模式（持续生效，直到停用） | `mod-earth-library-framework.mdc` | — |
-| 停用图书馆 | 闭馆、停用库 | 关闭 Earth Library 补充参考模式（持续生效，直到启用） | `mod-earth-library-framework.mdc` | — |
-| 图书馆巡检 | 巡检图书馆、库巡检 | 执行重复与质量巡检，写入待处理队列 | `mod-earth-library-framework.mdc` | `flow-library-review.mdc` |
-| 图书馆纠错 | 纠错图书馆、库纠错 | 对待处理项执行纠错建议标记（非破坏式） | `mod-earth-library-framework.mdc` | `flow-library-review.mdc` |
-| 图书馆优化 | 优化图书馆、库优化 | 追加知识结构优化建议并进入待处理队列 | `mod-earth-library-framework.mdc` | `flow-library-review.mdc` |
-| 更新图书馆标签 | 更新标签、标签维护 | 维护 Earth Library 标签词典 | `Earth_Library/Tag_Guide.md` | — |
 
 ### 常用脚本
 
 ```bash
 # 入库
-python "Earth_Library/scripts/store_to_library.py" --title "标题" --content "内容" --type "类型" --source "来源" --confidence "中" --keywords "关键词1,关键词2"
 
 # 一键入库（自然语言）
-python "Earth_Library/scripts/quick_ingest.py" --text "这里直接放一段知识内容"
 
 # 启停状态
-python "Earth_Library/scripts/library_switch.py" --mode enable|disable|status
 
 # 检索
-python "Earth_Library/scripts/search_library.py" --q "关键词"
 
 # 巡检
-python "Earth_Library/scripts/library_review.py"
 
 # 纠错
-python "Earth_Library/scripts/library_fix.py"
 
 # 优化
-python "Earth_Library/scripts/library_optimize.py"
 ```
 
 ---
@@ -278,13 +262,6 @@ python "Earth_Library/scripts/library_optimize.py"
 
 | 类型 | 路径 | 说明 |
 |:---|:---|:---|
-| 架构设计 | `Earth_Library/Earth_Library_Architecture.md` | 系统架构与定位 |
-| 多轮主控 | `Earth_Library/Earth_Library_Master_Control.md` | 跨轮进度看板与轮次日志 |
-| 项目备忘录 | `Earth_Library/Earth_Library_Project_Memo.md` | 永久口径/决策/备忘 |
-| 知识总索引 | `Earth_Library/Library_Index.md` | 检索入口 |
-| 关系网络 | `Earth_Library/Relations/Relations_Index.md` | 知识关联 |
-| 标签维护 | `Earth_Library/Tag_Guide.md` | 标签体系说明 |
-| 启停开关 | `Earth_Library/System/library_switch.json` | 启用状态 |
 
 ## 12) Agent 工作约定（脚本修改）
 

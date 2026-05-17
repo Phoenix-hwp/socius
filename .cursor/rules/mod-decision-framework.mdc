@@ -184,10 +184,24 @@ L_C = map(C→L)   // 独立轨道
 
 | 查什么 | 去哪查 | 影响哪个维度 |
 |--------|--------|-------------|
-| 领域方法论（B端产品链路、用例图规范等） | `Earth_Library/cards.jsonl` + 关联 Notion 原文 + `Knowledge-Brain/framework.md` | A ↓（有方法论锚定，模糊度降低）、C ↓（有框架参考，创意自由度不需全开） |
+| 领域方法论（B端产品链路、用例图规范等） | 关联 Notion 原文 + `Knowledge-Brain/framework.md` | A ↓（有方法论锚定，模糊度降低）、C ↓（有框架参考，创意自由度不需全开） |
 | 操作经验/流程偏好 | `User-Knowledge-Registry.jsonl` | Rev ↑/↓（知道什么路径风险高） |
 | 同类型任务历史 | `Task-Type-Registry.json` → P008 FSM + Decomposition-Log | A ↓（知道上次怎么拆的）、FSM 升级/降级判定 |
 | 方法可靠性与已知参数 | `method-reliability-registry.json`（含 `known_issues` + `known_params`） | Rev ↑/↓（方法是否可靠）、C ↓（有参数模版可用） |
+
+#### 知识脑预载入降噪（P008 联动）
+
+> **触发时机**：`task-init-protocol.mdc` Step 2-KB 执行完毕后，`kb_protocols_activated` 字段已填入。
+
+当 Agent 在执行 P008 评估前已通过 Step 2-KB 完成了知识脑前置查询（`kb_protocols_activated` 字段非空，且其中至少 1 条协议的 `validated_count ≥ 1`）：
+
+| 条件 | 影响 | 原理 |
+|------|------|------|
+| `kb_protocols_activated` 中 ≥1 条 `validated_count ≥ 1` | A 降一级（A2→A1, A1→A0，不低于 A0） | 有已验证知识兜底，目标模糊度降低 |
+| 同上 | C 降一级（C3→C2, C2→C1, C1→C0，不低于 C0） | 有框架/策略参考，创意不必全开 |
+| `kb_protocols_activated` 为空或全部为 `validated_count = 0` | 不做降级 | 无已验证知识，认知风险不变 |
+
+> **注意**：知识脑预载入**仅影响 A 和 C 维度**（认知层面）。物理风控维度（S/Rev/Auth/E/V）不受 KB 预载入影响——知道怎么做 ≠ 不会搞砸。降级后仍在 Step 3 提案中展示「原始评分 → KB 降级后评分」，让用户感知知识脑的影响。
 
 **效果**：查到了 → 维度评估更准，L 可能降低（因有知识兜底）。查不到 → 不降 L，但不影响评估。A≥A2 且知识脑无覆盖时，在 L2 提案末尾追加「⚡ 知识脑缺口」提示。
 
@@ -239,6 +253,14 @@ L_C = map(C→L)   // 独立轨道
 - Auth3（不可逆广域写入）
 - E3（不可逆外部写入）
 - 涉及规则层（`.cursor/rules/*.mdc`）修改（需额外确认）
+
+### FSM 知识联动（P1 — 规则占位，待数据积累后启用）
+
+> **当前状态**：规则已写，不触发。待 `activation-log.jsonl` 中积累足够有效数据后再启用。详情见 `00-Inbox/存疑_知识脑与决策层联动_2026-05-17.md`。
+
+**条件**：同 `task_type` 下，某协议 `activated_count ≥ 3` 且 `effective_count = 0`（所有激活均被纠正参与）。
+**动作**：该协议在该 `task_type` 下的 P008 A/C 不再降级。`mod-decision-framework.mdc` §三 FSM 降级规则追加一条：「KB 协议在同类任务中连续未被有效使用」。
+**启用门槛**：待 `activation-log.jsonl` 中该 `task_type` 累计 ≥5 条记录后首次启用。
 
 ---
 
@@ -297,10 +319,20 @@ Layer 2（模块层）── 每个决策点独立走一轮微缩协议
   "L_C": 1,
   "L_final": 1,
   "decision": "L1 — 告知执行",
+  "kb_protocols_activated": ["CP-003", "CP-012"],
+  "kb_dimensions_adjusted": {"A": "1→0", "C": "1→0"},
+  "kb_effective": true,
   "result": "success",
   "user_override": false
 }
 ```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `kb_protocols_activated` | `[string]` | Step 2-KB 预载入匹配的协议 ID 列表。空数组 = 无匹配 |
+| `kb_dimensions_adjusted` | `{string: string}` | KB 降级效果：原始评级→降级后评级。如 `{"A":"1→0","C":"1→0"}`。仅当降级发生时填写 |
+| `kb_effective` | `boolean` | 任务收束时由 `flow-behavior-auto-receipt.mdc` 回填。`true` = 激活协议本轮有效，`false` = 激活但被用户纠正，`null` = 无激活协议 |
+| `kb_miscued` | `[string]` | 被用户纠正涉及的协议 ID 列表（收束时回填） |
 
 > 方案评估时查询 `User-Knowledge-Registry.jsonl`，匹配同类任务的历史经验作为维度评估的辅助输入。
 > 

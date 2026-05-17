@@ -12,6 +12,7 @@ glossary:
   downstream:
     - extract-templates.md（按分类结果调用对应提炼模板）
     - template-generator.md（程序性知识的后续执行路由表）
+    - synthesizer.md（P3 主题阅读合成器——同一概念域积累 >=5 份协议后触发跨协议合成）
 ---
 
 # 知识类型识别器
@@ -119,6 +120,30 @@ glossary:
 
 取 Step 0 拆分后的一个原子知识单元（一张卡片、一个概念段、一个方法段、一个经验段）。
 
+### Step 1.5：诠释自检（P0）
+
+> 目的：在分类之前先确认「我真的读懂了吗」。Agent 对知识单元做一次自述式理解，防止因术语不熟、领域陌生、上下文不足导致的误读。
+
+#### 输出三字段
+
+| 字段 | 含义 | 必填 | 示例 |
+|:---|:---|:---|:---|
+| `self_recital` | 用一句话说出这段知识的核心主张（≤30 字）。不是复述标题，而是用自己的话概括「它到底说了什么」 | 是 | `"BPMN 活动类型区分不看复杂度看可分解性"` |
+| `concept_anchor_candidates` | 推测的知识所属概念锚（≥1 个）。不确定时用 `?` 后缀标注 | 是 | `["BPMN.activity","BPMN.activity.task?"]` |
+| `doubts` | 理解时遇到的困惑点。无则填 `null` | 否 | `"子流程与调用活动的边界仍不清晰"` |
+
+#### 互锁规则
+
+- `self_recital` 读起来必须像人话（不是摘要算法），不要求完整性，要求「说对了」
+- `concept_anchor_candidates` 中若全部带 `?` → 视为高不确定度，进入 Step 2 分类时须再次交叉检查
+- `doubts` 非空时，若后续提炼（`extract-templates.md`）未解答困惑，协议 frontmatter 中须标注 `review_note: "理解尚不完全"`
+
+#### 输出到后续步骤
+
+- `self_recital` → 写入协议的 `activation.self_recital`
+- `concept_anchor_candidates` → 传入 `concept-anchor.md` 做概念锚定（去 `?` 后落定）
+- `doubts` → 传入 `extract-templates.md` 做提炼后交叉检查
+
 ### Step 2：判别主分类
 
 逐条对照 §二 六类的判别特征，判断这段知识主要回答哪个核心问题。输出唯一主分类。
@@ -143,6 +168,21 @@ glossary:
 | `strategic` | ③ 新协议 + ① 对接 P008 维度基线 | `extract-templates.md` §策略性 | 沉淀为 CP-xxx + 更新决策框架维度 |
 | `experiential` | ③ 新协议（经验协议） | `extract-templates.md` §经验性 | 沉淀为 CP-xxx |
 | `regulatory` | ③ 新协议 + ① 审视现有约束 | `extract-templates.md` §规则性 | 沉淀为 CP-xxx + 检查是否与现有规则冲突 |
+
+---
+
+### 消化完成闸门：P2 四问自检
+
+> 消化处理完成、协议准备落盘前，须通过四问闸门。任一问不通过 → 返回对应步骤修正。
+
+| # | 问题 | 检查什么 | 不通过时 |
+|:---|:---|:---|:---|
+| 1 | **整体在谈什么？** | `self_recital` 是否准确概括了知识单元的核心主张？与原始文本对照是否一致？ | 返回 Step 1.5 修正 `self_recital` |
+| 2 | **细部说了什么？** | 提炼骨架的每一个字段是否都能在原始文本中找到对应支撑？有无「提炼过度」（凭空添加了原文没有的内容）？ | 返回 `extract-templates.md` 修正骨架 |
+| 3 | **有道理吗？** | P1 评断验证是否通过？`judgment.verdict` 是否非 `"质疑"` 或 `"矛盾"`？若为质疑/矛盾，是否已在协议中标注？ | 确认 judgment 字段已正确填写 |
+| 4 | **跟我有什么关系？** | 该协议是否能被系统使用？`activation` 块（`task_types`、`concept_anchor`、`decision_signal`）是否完整且可触发？ | 补全 activation 字段 |
+
+四问全部通过后，协议方可落盘到 `protocols/CP-xxx.md`。
 
 ---
 
@@ -212,3 +252,218 @@ activation.decision_signal = "需要分阶段验证产品假设时"
 - 分类结果写入协议 frontmatter 的 `cp_type`（主）和 `cp_subtypes`（辅）字段
 - 分类器在「学习」指令触发时调用，作为消化流程的第一步
 - 若分类不确定（多个候选主分类），在消化日志中标注 `classification_confidence: medium`，后续由 L3 分析校准
+
+---
+
+## 六、收束自检（Step S）— 全域知识驱动巡检
+
+> **定位**：消化管线末尾，协议落盘且 P2 四问闸门通过后执行。
+>
+> **核心思路**：不以固定清单巡检，而以**本轮新知为探针**——每轮消化产出的协议自带一个领域视角，Step S 用这个视角去扫描整个 Cursor Knowledge 知识库，发现新知与旧系统之间的冲突/盲区/可补强点。**知识驱动自进化**：每学一轮，系统就接受一轮来自新视角的审视。
+>
+> **原则**：只标记不动手——产出建议写入对话，不自动修改任何系统文件。不阻断落盘。
+
+### 巡检维度
+
+每次消化完成后，以本轮产出的协议（`concept_anchor` + `cp_type` + `activation` + 核心主张）为输入，逐维扫描：
+
+| # | 巡检维度 | 核心问题 | 巡检对象 | 产出 |
+|:---|:---|:---|:---|:---|
+| **S1** | 规则体系 | 新知是否暴露了现有规则体系的盲区、矛盾或冗余？ | `.cursor/rules/*.mdc` | 标记冲突规则对 / 空白域 / 过时条款 |
+| **S2** | 决策框架 | 新知能否补强 P008 的评估维度，或提供新的决策信号？ | `mod-decision-framework.mdc` §五（7 维度基线） | 建议新增/修正的维度项 |
+| **S3** | 能力与技能 | 新知是否暗示需要新的 Skill、新的操作转化路径、或现有 Skill 的参数调整？ | `skill-registry.json` / `task-type-registry.md` / `method-reliability-registry.json` | 建议新增 skill / 补全参数 / 更新 known_issues |
+| **S4** | 概念树 | 新知的概念锚与已有概念空间是否冲突、重叠、或形成新的上位/下位关系？ | `concept-tree.json` + `protocols/` 中同域协议 | 建议新增/合并/拆分概念锚节点 |
+| **S5** | 数据与配置 | 新知是否暴露出数据治理、配置注册表、过渡方案中的缺口或过时项？ | `data-governance-standards` 相关文件 / `change-impact-checklist.json` / `Transition-Plan-Registry.json` / `Active-Task-Tracker.json` | 标记违规行 / 过期条目 / 缺漏项 |
+| **S6** | 架构自反 | 消化管线本身是否因本次消化暴露出架构缺陷？系统四层（网关/能力/执行/认知）的边界是否需要调整？ | `Knowledge-Brain/framework.md` / `classifier.md` / `extract-templates.md` / `template-generator.md` / `activation.md` / `concept-anchor.md` | 管线优化建议 / 架构修正建议 |
+
+### 巡检执行规则
+
+#### S1：规则体系扫描
+
+```
+输入：新知 protocol 的 concept_anchor + activation.decision_signal + activation.anti_pattern
+
+检查：
+  ① 关键词碰撞 — 用 concept_anchor 的域标签（如 "BPMN"、"DDD"、"SWOT"）搜索 .cursor/rules/*.mdc
+  ② 规则相关性 — 命中的规则中，该域是否有对应的 flow/mod/gateway 规则覆盖？
+     → 若有覆盖但内容与新知矛盾 → 🔴 冲突标记
+     → 若有覆盖但内容与新知互补（新知提供了规则未覆盖的边界）→ 🟡 补强建议
+     → 若无覆盖但该域显然是系统操作域 → 🟠 盲区标记
+  ③ 过时检测 — 命中规则中是否有引用已退役/已删除的模块（如 Earth_Library）？
+     → 🔴 过期引用标记
+  ④ 冗余检测 — 新知是否与已有协议的 decision_signal/anti_pattern 完全重叠？
+     → 🟡 冗余标记（两条协议在同一个决策点上抢话）
+```
+
+#### S2：决策框架扫描
+
+```
+输入：新知 protocol 的 cp_type + activation.decision_signal + 协议核心判断标准
+
+检查：
+  ① 维度覆盖 — P008 的 7 维度（Verifiability/Reversibility/Complexity/Familiarity/Impact/Dependency/MethodReliability）
+     中，是否有维度在当前知识域上缺乏评估依据？
+     → 若有且新知提供了该域的判断标准 → 🟢 建议新增维度基线
+  ② 信号注入 — 新知的 decision_signal 是否可转为 P008 的评估触发器？
+     → 如"选择活动类型时"可触发 Complexity 维度中 BPMN 域的专项评估
+  ③ 反模式注入 — 新知的 anti_pattern 是否可作为 P008 在执行中拦截的风险信号？
+```
+
+#### S3：能力与技能扫描
+
+```
+输入：新知 protocol 的 cp_type + activation.capability_hint + activation.task_types
+
+检查：
+  ① task_type 覆盖 — activation.task_types 中的类型在 task-type-registry 中是否存在？
+     → 不存在 → 🟠 建议注册新 task_type
+  ② skill 缺口 — 该 task_type 在 skill-registry.json 中是否有已注册的 skill？
+     → 无 → 🟡 建议开发新 skill（或不建议，因该类型更适合 Agent 直接执行）
+  ③ 参数补全 — 程序性新知（cp_type=procedural）的步骤参数，是否可补入 method-reliability-registry 的 known_params？
+  ④ 已知问题更新 — 经验性新知（cp_type=experiential）的错误模式，是否应补入相关 skill 的 known_issues？
+```
+
+#### S4：概念树扫描
+
+```
+输入：新知 protocol 的 concept_anchor + self_recital + 概念定义
+
+检查：
+  ① 空间碰撞 — 在 concept-tree.json 中，与新知同一域（Domain.*）下，是否存在同义不同名 / 同名不同义的节点？
+  ② 层级关系 — 新知概念锚与已有节点是上位/下位/同级关系？若应是上下位但树中未体现 → 🟡 建议调整层级
+  ③ 跨域桥接 — 新知是否暴露了两个原本无关的域之间存在关联？（如 "BPMN.handoff" ↔ "DDD.bounded_context"）
+     → 🟡 建议添加跨域 related 边
+```
+
+#### S5：数据与配置扫描
+
+```
+输入：新知 protocol 的知识域 + 消化过程中处理的数据类型
+
+检查：
+  ① 数据治理 — 消化过程中触及的 JSON/JSONL 文件是否有 schema 不一致、长文本未外迁等违规？
+  ② 配置完整性 — change-impact-checklist.json 的搜索范围是否覆盖了新知识域可能影响的文件类型？
+  ③ 过渡方案 — Transition-Plan-Registry.json 中是否有与新知识域相关的条目需要更新状态？
+  ④ 跟踪器 — Active-Task-Tracker.json 中有无因新知消化而应标记为完成/新增的条目？
+```
+
+#### S6：架构自反
+
+```
+输入：本次消化管线的执行过程 + 遇到的阻碍 + classifier.md §一~五 的覆盖情况
+
+检查：
+  ① 管线覆盖 — classifier 的分类体系是否无法覆盖本轮知识？（如知识类型在新六类之外）
+  ② 模板适配 — extract-templates 的骨架是否因领域特殊性而需要扩展？
+  ③ 层边界 — 新知是否模糊了系统四层之间的边界？（如认知层产出直接替代了能力层的职责）
+  ④ 接口断裂 — 消化产物（协议）是否能通过 activation.md 定义的通道被外围系统消费？
+```
+
+### 输出格式
+
+```
+Step S 全域巡检：
+
+  S1 规则体系：
+    - [🔴 冲突] <规则文件> §X — <冲突描述> → 建议：<处理方向>
+    - [🟡 补强] <规则文件> — <补强描述>
+    - [🟠 盲区] <域> — 在 .cursor/rules/ 中无覆盖 → 建议：<新增规则方向>
+    - 无异常
+
+  S2 决策框架：
+    - [🟢 维度补强] P008 <维度名> — <建议新增的评估基线>
+    - [🟢 信号注入] <decision_signal> 可作为 P008 在 <场景> 下的触发条件
+    - 无异常
+
+  S3 能力与技能：
+    - [🟠 新task_type] <type> — task-type-registry 中不存在 → 建议注册
+    - [🟡 skill缺口] <task_type> 无对应 skill → 建议开发 / 建议 Agent 直接执行
+    - [🟡 参数补全] <skill_name> 的 known_params 可新增 <参数项>
+    - 无异常
+
+  S4 概念树：
+    - [🟡 层级调整] <概念锚A> 应为 <概念锚B> 的下位概念
+    - [🟡 跨域关联] <域A.锚> ↔ <域B.锚> — 建议添加 related 边
+    - 无异常
+
+  S5 数据与配置：
+    - [🟡 配置缺口] <文件名> — <缺漏描述>
+    - [🔴 数据违规] <文件名>:<行号> — <违规描述>
+    - 无异常
+
+  S6 架构自反：
+    - [待讨论] <管线改进建议>
+    - 无异常
+
+  未解决问题（留待下次对话）：<N 项>
+```
+
+### 标记等级
+
+| 标记 | 含义 | 行动 |
+|:---|:---|:---|
+| 🔴 | 严重—冲突/违规/过期引用 | 在对话中醒目提示，建议优先处理 |
+| 🟡 | 建议—可补强/可优化 | 在对话中列出，供用户决定是否处理 |
+| 🟠 | 警示—新发现/潜在风险 | 在对话中标注，不急于处理 |
+| 🟢 | 积极—可新增的能力/信号 | 在对话中推荐，需用户确认后实施 |
+| `[待讨论]` | 无共识方案，需人工决策 | 留置下次对话讨论 |
+
+### 规则
+
+- **核心原则不变**：只标记，不自动修改任何系统文件（`.cursor/rules/*.mdc`、`skill-registry.json`、`concept-tree.json`、`mod-decision-framework.mdc` 等）
+- **不阻断落盘**：即使 S1-S6 全部标记严重项，协议依然落盘
+- **与 mod-system-audit 的边界**：
+  - `mod-system-audit`：**周期静态审计**——固定清单，查的是系统是否有结构性缺陷（如 frontmatter 缺失、硬编码路径、schema 不统一）
+  - **Step S**：**知识驱动动态巡检**——探头是新知，查的是新知与旧系统的语义关系（矛盾/互补/盲区/可升级点）
+  - 两者互补，不替代
+- **每次消化必执行 Step S**：即使快速产出「S1-S6 无异常」，也必须走完逐维扫描
+- **积累效应**：多轮消化的 Step S 产出在对话中累积。未解决的问题在下次消化时复审是否已有答案
+
+---
+
+## 七、P3 闸门 — 主题阅读触发（Step S 之后）
+
+> **定位**：Step S 全域巡检收尾后执行。检查本轮消化涉及的域是否跨过协议积累阈值，若跨过则触发跨协议主题阅读合成。
+>
+> **原则**：只检查不强制执行——达标则 Trigger 标注，Agent 在对话中询问用户是否现在执行合成。合成逻辑由 `synthesizer.md` 定义。
+
+### 触发条件
+
+本轮消化涉及的每一个 `concept_anchor` 的顶层域（如 `BPMN`、`Reading`、`PM`），通过 `concept-tree.json` 统计该域下所有子节点的 `protocols` 数组元素总数。
+
+```
+对本轮涉及域逐个检查：
+  若 protocol 总数 >= 5 且 (首次合成 or 距上次合成新增 >= 3 份协议) → 🟢 Trigger
+  若 protocol 总数 >= 5 但距上次合成新增 < 3 份协议 → ⏭ 跳过（防频繁触发）
+  若 protocol 总数 < 5 → ⏭ 跳过（标注 N/5 待积累）
+```
+
+### 输出格式
+
+```
+P3 闸门检查：
+
+  <域标签>：协议 N 份 — 🟢 Trigger（首次 / 上次合成后新增 M 份）
+  <域标签>：协议 N 份 — ⏭ 跳过（距上次合成仅新增 M 份，< 3）
+  <域标签>：协议 N 份 — ⏭ 跳过（N/5 待积累）
+
+  待合成域：<N 个>
+```
+
+### Trigger 后的动作
+
+1. 在对话中提示用户：
+
+```
+> 💡 P3 主题阅读：<域标签> 已积累 <N> 份协议（>= 5），建议执行一次跨协议合成以发现矛盾/空白/融汇点。
+> 是否现在执行？你也可以说「稍后」。
+```
+
+2. 若用户确认 → 按 `synthesizer.md` 执行五项合成动作，输出报告到对话，更新 `concept-tree.json` 的 `_syntheses` 字段。
+
+3. 若用户说「稍后」→ 标记在本轮 Step S 末尾，不强制执行。下次消化同一域时再次检查（防重复触发规则仍生效）。
+
+### 规则
+
+- **不阻断消化管线**：P3 触发失败（如 concept-tree.json 读取异常）不影响协议落盘
+- **手动触发不受阈值和间隔限制**：用户说「对 UR 域做主题阅读」时直接执行，即使只有 2 份协议

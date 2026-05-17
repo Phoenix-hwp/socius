@@ -484,7 +484,7 @@ def build_execution_plan(mode: str, cfg: dict[str, Any]) -> dict[str, Any]:
             "include_child": bool(cfg.get("include_child", True)),
             "include_relation": bool(cfg.get("include_relation", True)),
             "relation_field": cfg.get("relation_field"),
-            "consumer": cfg.get("consumer", "earth_library"),
+            "consumer": cfg.get("consumer", "knowledge_brain"),
             "dry_run": bool(cfg.get("dry_run", False)),
         })
         return plan

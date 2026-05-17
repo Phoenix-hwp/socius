@@ -14,7 +14,7 @@ glossary:
 
 对**新增或实质修改**以下对象时，须在落盘前完成下方「自检清单」：
 - `.cursor/mcp/*.py`、`.cursor/hooks/*.py`、`.cursor/tools/*.py`
-- `Earth_Library/scripts/*.py`
+- `Skills_Library/scripts/*.py`
 - `.cursor/rules/*.mdc`（尤其是 alwaysApply 规则）
 
 ## 约束清单（强制自检）

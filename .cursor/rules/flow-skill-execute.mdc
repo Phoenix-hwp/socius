@@ -72,7 +72,7 @@ Read `Skills_Library/skills/<skill-name>/SKILL.md`，确认：
 
 - **允许**写入：`Skills_Library/skills/<skill-name>/`、`声明的 write_scope`、`.trash/`
 - **禁止**写入：`.cursor/rules/`、`.cursor/hooks/`、`.cursor/hooks.json`、`.git/`、`10-Topics/Cursor-command-aliases.md`、`kernel-runtime.mdc`
-- **需确认**写入：`10-Topics/`（非别名表）、`Earth_Library/`、`Daily-Backups/`、项目目录
+- **需确认**写入：`10-Topics/`（非别名表）、`Daily-Backups/`、项目目录
 
 ### B1.1 禁止操作清单（强制）
 

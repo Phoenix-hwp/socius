@@ -17,7 +17,6 @@ Created: 2026-05-03
 | `.cursor/hooks/` | 9 | 会话钩子（profile注入、预检、错误日志）|
 | `.cursor/mcp/` | 14 | Notion 工作流与工具脚本 |
 | `.cursor/tools/` | 5 | 通用工具（清理、修复、GUI）|
-| `Earth_Library/scripts/` | 14 | 图书馆入库/检索/巡检/优化 |
 
 **总计：42 个脚本**（Python 23 + Node.js 14 + CMD 12 + PowerShell 5）
 
@@ -223,7 +222,6 @@ Earth Library 脚本已经相对规整，但仍有优化空间：
 #### 优化方案（轻量级）
 
 ```
-Earth_Library/scripts/
 ├── core/                          # 新增：核心库
 │   ├── __init__.py
 │   ├── models.py                  # 数据模型（Card, Index, Relation）
@@ -265,7 +263,6 @@ Earth_Library/scripts/
 |:---|:---|:---|
 | 重构 Notion CRUD 向导 | `notion_cli/crud_wizard.py` | 清晰的层次结构 |
 | 重构 Hooks 实现 | `hooks.d/*.py` | 统一的钩子接口 |
-| 重构 Earth Library 核心 | `Earth_Library/scripts/core/` | 可复用的入库逻辑 |
 
 ### 阶段3：统一入口与配置（第5周）
 

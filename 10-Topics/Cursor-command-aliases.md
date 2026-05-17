@@ -34,13 +34,6 @@ tags:
 | 提交git | Git同步、推仓库、提交远端 | **Git 提交推送**：先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根执行 `git status`，按意图协助 `add`/`commit`/`pull`/`push`；强制推送与破坏性重置须先确认 | `flow-git-commit.mdc`（框架：`mod-git-crud-framework.mdc`） |
 | 拉取git | 拉取远端、直接拉取 | **Git 直接拉取**：一句到位 `git pull --rebase`，不做差异审查，对远端无疑虑时用 | `flow-git-pull.mdc`（框架：`mod-git-crud-framework.mdc`） |
 | 安全拉取 | 审查拉取、拉取审查 | **Git 审查式拉取**：`git fetch` 后展示远端新增提交清单与文件变更统计，用户选择 [1]覆盖本地 [2]合并 [3]保留本地 后再执行对应操作 | `flow-git-safe-pull.mdc`（框架：`mod-git-crud-framework.mdc`） |
-| 存入图书馆 | 入馆、存知识 | 将当前对话中的新增知识写入 `Earth_Library`，并自动建立关联索引 | `flow-library-ingest.mdc`（框架：`mod-earth-library-framework.mdc`，架构：`Earth_Library/Earth_Library_Architecture.md`） |
-| 启用图书馆 | 开馆、启用库 | 开启 Earth Library 补充参考模式（持续生效，直到停用） | `mod-earth-library-framework.mdc` |
-| 停用图书馆 | 闭馆、停用库 | 关闭 Earth Library 补充参考模式（持续生效，直到启用） | `mod-earth-library-framework.mdc` |
-| 图书馆巡检 | 巡检图书馆、库巡检 | 执行疑似重复与质量巡检，并写入待处理队列 | `flow-library-review.mdc`（框架：`mod-earth-library-framework.mdc`） |
-| 图书馆纠错 | 纠错图书馆、库纠错 | 对待处理项执行纠错建议标记（非破坏式） | `flow-library-review.mdc`（框架：`mod-earth-library-framework.mdc`） |
-| 图书馆优化 | 优化图书馆、库优化 | 追加知识结构优化建议并进入待处理队列 | `flow-library-review.mdc`（框架：`mod-earth-library-framework.mdc`） |
-| 更新图书馆标签 | 更新标签、标签维护 | 维护 Earth Library 标签词典并长期迭代更新 | `Earth_Library/Tag_Guide.md` |
 | Notion操作流程 | Notion增删改查 | **统一**：**Y** → **目录编号** → **增/删/改/查**；**改**须 **`1` 清空重写 / `2` 局部合并** → 预览 → **`确认更新`**；**优先 MCP**，脚本兜底注明原因；全局检索或已知 URL 可跳过目录 | `.cursor/rules/mod-notion-crud-framework.mdc` |
 | Notion创建 | 写入流程、落点确认 | **增（创建）** 六步流程：**Y** → **目录** → **标题 1/2** → **标题落地** → **正文预览** → **`确认写入`**；骨架见统一 CRUD 规则 | `.cursor/rules/flow-notion-create.mdc` |
 | Notion更新 | 更新Notion、修改页面 | 更新策略 **`1`** 清空重写 / **`2`** 局部合并 → 变更预览 → **`确认更新`** | `.cursor/rules/flow-notion-update.mdc` |
@@ -62,7 +55,7 @@ tags:
 | 评估技能 | 技能评估、技能巡检 | 对备选和已安装技能执行中检：逐技能检查质量变化/风险变化/表现评分趋势 | `.cursor/rules/mod-skill-evaluation.mdc`、`Skills_Library/task-type-registry.md` |
 | 待办 | 查看待办、调整待办 | **待办计划交互管理**：执行 `Skill-待办提醒`（Shell `python Skills_Library/scripts/todo-reminder.py --scan --skip-daily-check` → 解析 JSON → 弹出两阶段 AskQuestion 链（多选待办 → 逐项操作：查看备忘/推迟/标记完成/标记进行中/跳过）→ 用户选择后 Shell 写回） | `Skills_Library/scripts/todo-reminder.py`（技能：`skill-todo-reminder`） |
 | 系统检查 | 自检、审计、巡检系统、健康检查 | **全系统健康扫描**：覆盖 D1 架构规范、D2 数据治理、D3 注册表对齐、D4 编码规范、D5 过渡方案、D6 技能健康，输出结构化报告与待处理清单 | `.cursor/rules/mod-system-audit.mdc` |
-| 学习 | 学习知识、阅读卡片 | **知识脑学习**：Agent 读取指定知识源（Earth Library 卡片/Notion 笔记/网页/PDF）→ 结构化总结核心思维模型 → 逐点和用户讨论四个输出端（审视现有系统 / 操作转化 / 新协议 / 融汇创新）→ 讨论结论写入 `Knowledge-Brain/protocols/`（标注 `[待验证]`）→ 实践验证后按协议归宿路由迁移 | `Knowledge-Brain/framework.md`（概念总纲：`10-Topics/Knowledge-Brain.md`） |
+| 学习 | 学习知识、阅读卡片 | **知识脑学习**：Agent 读取指定知识源（Notion 笔记/网页/PDF）→ 结构化总结核心思维模型 → 逐点和用户讨论四个输出端（审视现有系统 / 操作转化 / 新协议 / 融汇创新）→ 讨论结论写入 `Knowledge-Brain/protocols/`（标注 `[待验证]`）→ 实践验证后按协议归宿路由迁移 | `Knowledge-Brain/framework.md`（概念总纲：`10-Topics/Knowledge-Brain.md`） |
 | 语音 | 说、语音 | **语音朗读摘要**：设置 voice_mode=summary，Agent 回复时将概要/结论/建议投喂 TTS 朗读；文字仍完整显示在 UI | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） |
 | 说全文 | 全文、语音全文 | **语音朗读全文**：设置 voice_mode=full，Agent 回复时将完整内容投喂 TTS 朗读
 
