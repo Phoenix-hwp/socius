@@ -1,0 +1,825 @@
+{
+  "meta": {
+    "description": "任务类型注册表 — 建立「意图→已知模式」映射。为 P008 FSM 提供「什么是同类任务」的判定依据，支撑 L2→L1→L0 自动升级。type_id 为与 Skills_Library/task-type-registry.md 的共享键。",
+    "semantic": "task_type 语义为「响应」而非「归属」—— 系统级技能（tier=system）可不声明 task_type。",
+    "thresholds": {
+      "migration_readiness": 5,
+      "description": "连续成功 ≥5 次后标记 migration_ready，Agent 主动提议从命令级别名路由迁移到 P008 意图评估"
+    },
+    "expected_C": {
+      "description": "任务类型的创意度天花板（2026-05-23：C维度从L计算移除，改为任务类型元数据）。超出此值触发C偏差检测。",
+      "values": {
+        "0": "纯执行/无设计空间",
+        "1": "框架内微调",
+        "2": "需要设计判断",
+        "3": "高度发散/原创"
+      }
+    }
+  },
+  "task_types": [
+    {
+      "type_id": "rule_file_manage",
+      "label": "规则文件管理",
+      "description": "在 .cursor/rules/ 下创建/修改 .mdc 规则文件并登记到别名表/help-index。合并自 rule_file_create + rule_file_modify（风险特征相同 S1/Rev0/A0/C1）—— 2026-05-21",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 1,
+      "last_task": "2026-05-15",
+      "migration_ready": false,
+      "related_knowledge": [
+        "决策框架设计"
+      ],
+      "required_slots": [
+        {
+          "name": "target_path",
+          "label_cn": "目标路径",
+          "strategy": "auto_fill",
+          "default_rule": "从对话上下文推导 .cursor/rules/ 下的文件和 alias 表"
+        },
+        {
+          "name": "rule_scope",
+          "label_cn": "规则范围/边界",
+          "strategy": "must_ask",
+          "example_prompt": "这条规则覆盖哪些场景？只是脚本编码，还是包括规则文件管理？"
+        },
+        {
+          "name": "alias_name",
+          "label_cn": "别名名",
+          "strategy": "context_derive",
+          "default_rule": "从 rule_scope 关键词推导 2-10 字别名"
+        }
+      ],
+      "skills": {
+        "internal": [],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 1
+    },
+    {
+      "type_id": "rich_document_generate",
+      "label": "富文档生成",
+      "description": "生成 .docx / .pptx 等非纯文本产出物（简历/报告/演示文稿）。合并自 docx_generate + ppt_generate + ppt_template_fill —— 风险特征相近（非纯文本渲染可靠度不确定），2026-05-21",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 1,
+        "E": 0,
+        "Auth": 0,
+        "V": 1
+      },
+      "typical_L": 1,
+      "consecutive_successes": 2,
+      "last_task": "2026-05-21",
+      "migration_ready": false,
+      "note": "合并时继承 ppt_generate=1 + GDP报告(docx-like PDF) 本日1次 = 2",
+      "related_knowledge": [
+        "I/O 结构约束",
+        "非纯文本渲染"
+      ],
+      "required_slots": [
+        {
+          "name": "format",
+          "label_cn": "输出格式",
+          "strategy": "must_ask",
+          "example_prompt": "输出什么格式？PDF / DOCX / PPTX？"
+        },
+        {
+          "name": "template",
+          "label_cn": "模板",
+          "strategy": "context_derive",
+          "default_rule": "检查仓库中是否有对应的模板文件（.docx/.pptx）"
+        },
+        {
+          "name": "content_source",
+          "label_cn": "内容来源",
+          "strategy": "auto_fill",
+          "default_rule": "从对话上下文和活跃任务中抽取待聚合的内容"
+        }
+      ],
+      "skills": {
+        "internal": [],
+        "external": [
+          "anthropics-xlsx",
+          "anthropics-docx",
+          "anthropics-pptx"
+        ],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 2
+    },
+    {
+      "type_id": "git_commit",
+      "label": "Git 提交推送",
+      "description": "git add . → commit → pull --rebase → push。当前为命令级别名路由",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 2,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "远期候选：达到迁移门槛后提交换到 P008",
+      "skills": {
+        "internal": [
+          "archived: skill-git-crud (2026-05-18)"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": [
+          "archived skill-git-crud not available since 2026-05-18"
+        ]
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "git_pull",
+      "label": "Git 拉取",
+      "description": "git pull --rebase。GUI 点击动作，永久保留别名路由",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 0,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "GUI 点击动作，永久保留别名路由",
+      "skills": {
+        "internal": [
+          "archived: skill-git-crud (2026-05-18)"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": [
+          "archived skill-git-crud not available since 2026-05-18"
+        ]
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "web_search_research",
+      "label": "WebSearch 调研",
+      "description": "用 WebSearch 收集公开数据并整理为结构化结论",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 1,
+        "E": 1,
+        "Auth": 1,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "related_knowledge": [
+        "脱毛仪市场调研"
+      ],
+      "skills": {
+        "internal": [
+          "WebSearch（内置）"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 1
+    },
+    {
+      "type_id": "knowledge_brain_learn",
+      "label": "知识脑学习",
+      "description": "读取 Earth Library / Notion 笔记 / PDF → 结构化总结 → 逐点讨论固化",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 2,
+        "E": 1,
+        "Auth": 1,
+        "V": 1
+      },
+      "typical_L": 2,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "特殊类型——知识脑生长任务，C3（高创意/原创理解），L2（确认后执行）",
+      "required_slots": [
+        {
+          "name": "source_path",
+          "label_cn": "知识来源",
+          "strategy": "must_ask",
+          "example_prompt": "从哪个文件/Notion 页面/URL 学习？"
+        },
+        {
+          "name": "output_format",
+          "label_cn": "输出形式",
+          "strategy": "auto_fill",
+          "default_rule": "默认生成 CP 协议卡片存 Knowledge-Brain/protocols/"
+        },
+        {
+          "name": "discussion_points",
+          "label_cn": "讨论重点（四个输出端）",
+          "strategy": "auto_fill",
+          "default_rule": "按 framework.md 四个输出端（概念锚点/框架对照/方法边界/行动清单）自动拆分"
+        }
+      ],
+      "skills": {
+        "internal": [
+          "Read（本地文件）",
+          "FetchMcpResource（Notion）",
+          "WebFetch（网页）"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 3
+    },
+    {
+      "type_id": "notion_create",
+      "label": "Notion 写入",
+      "description": "创建/更新 Notion 页面内容（写入类操作）",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 0,
+        "E": 2,
+        "Auth": 2,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [
+          "skill-notion-crud"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "notion_query",
+      "label": "Notion 查询",
+      "description": "查询/读取 Notion 页面内容（只读类操作）",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 0,
+        "E": 1,
+        "Auth": 1,
+        "V": 0
+      },
+      "typical_L": 0,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [
+          "skill-notion-crud"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "conversation_backup",
+      "label": "对话备份",
+      "description": "备份/读取/续聊对话（读写成对出现）",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 0,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [
+          "skill-conversation",
+          "skill-project-memo",
+          "skill-multi-round"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "knowledge_ingest",
+      "label": "知识入库",
+      "description": "知识卡片/笔记入库到 Earth Library",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 1,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "required_slots": [
+        {
+          "name": "source_path",
+          "label_cn": "入库来源",
+          "strategy": "must_ask",
+          "example_prompt": "从哪个文件/URL/Notion 页面入库？"
+        },
+        {
+          "name": "target_collection",
+          "label_cn": "目标集合",
+          "strategy": "context_derive",
+          "default_rule": "匹配 Earth Library 现有集合名称"
+        },
+        {
+          "name": "tags",
+          "label_cn": "标签",
+          "strategy": "auto_fill",
+          "default_rule": "从内容关键词自动提取 2-5 个标签"
+        }
+      ],
+      "skills": {
+        "internal": [
+          "skill-earth-library"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 1
+    },
+    {
+      "type_id": "code_review",
+      "label": "代码审查",
+      "description": "审查代码，发现关键问题并给出可执行修改建议",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 1,
+        "E": 0,
+        "Auth": 0,
+        "V": 1
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "required_slots": [
+        {
+          "name": "target_files",
+          "label_cn": "待审查文件",
+          "strategy": "must_ask",
+          "example_prompt": "审查哪些文件？指定路径或用 glob 匹配"
+        },
+        {
+          "name": "review_focus",
+          "label_cn": "审查侧重",
+          "strategy": "context_derive",
+          "default_rule": "默认全维度（安全/性能/可维护/规范），用户可指定侧重"
+        },
+        {
+          "name": "output_action",
+          "label_cn": "输出形式",
+          "strategy": "auto_fill",
+          "default_rule": "结构化报告（严重性/文件/行号/建议）"
+        }
+      ],
+      "skills": {
+        "internal": [],
+        "external": [
+          "addyosmani-code-review-and-quality",
+          "addyosmani-code-simplification"
+        ],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 2
+    },
+    {
+      "type_id": "software_spec",
+      "label": "软件规格",
+      "description": "编写 PRD/技术规格文档，含边界、验收标准",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 2,
+        "E": 0,
+        "Auth": 0,
+        "V": 1
+      },
+      "typical_L": 2,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "required_slots": [
+        {
+          "name": "product_domain",
+          "label_cn": "产品领域",
+          "strategy": "must_ask",
+          "example_prompt": "为哪个产品/模块写 PRD？"
+        },
+        {
+          "name": "spec_type",
+          "label_cn": "规格类型",
+          "strategy": "context_derive",
+          "default_rule": "PRD（面向产品）vs TRD（技术规格）——从上下文推导"
+        },
+        {
+          "name": "acceptance_criteria",
+          "label_cn": "验收标准",
+          "strategy": "must_ask",
+          "example_prompt": "有没有必须满足的验收条件？性能/安全/兼容性？"
+        }
+      ],
+      "skills": {
+        "internal": [],
+        "external": [
+          "addyosmani-spec-driven-development",
+          "addyosmani-interview-me",
+          "addyosmani-idea-refine"
+        ],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 2
+    },
+    {
+      "type_id": "architecture_design",
+      "label": "方案设计",
+      "description": "架构设计/技术方案，多路径对比，有取舍说明",
+      "typical_dimensions": {
+        "S": 2,
+        "Rev": 0,
+        "A": 2,
+        "E": 0,
+        "Auth": 0,
+        "V": 1
+      },
+      "typical_L": 2,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [
+          "skill-capability-encapsulate",
+          "skill-skills-library"
+        ],
+        "external": [
+          "addyosmani-planning-and-task-breakdown",
+          "addyosmani-doubt-driven-development"
+        ],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 3
+    },
+    {
+      "type_id": "coding_build",
+      "label": "构建/编码",
+      "description": "写代码、实现功能、符合规范、通过 lint",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "required_slots": [
+        {
+          "name": "language_stack",
+          "label_cn": "语言/技术栈",
+          "strategy": "auto_fill",
+          "default_rule": "从仓库文件扩展名和导入语句推导"
+        },
+        {
+          "name": "output_paths",
+          "label_cn": "产出物文件路径",
+          "strategy": "must_ask",
+          "example_prompt": "新代码/模块放在哪个目录/文件？"
+        },
+        {
+          "name": "constraints",
+          "label_cn": "约束（兼容性/编码规范）",
+          "strategy": "context_derive",
+          "default_rule": "检查 .cursor/rules/script-coding-constraints.mdc"
+        }
+      ],
+      "skills": {
+        "internal": [],
+        "external": [
+          "addyosmani-incremental-implementation",
+          "addyosmani-test-driven-development",
+          "addyosmani-context-engineering",
+          "addyosmani-source-driven-development",
+          "addyosmani-frontend-ui-engineering",
+          "addyosmani-api-and-interface-design"
+        ],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 1
+    },
+    {
+      "type_id": "testing",
+      "label": "测试",
+      "description": "编写/执行测试，覆盖关键路径",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [],
+        "external": [
+          "addyosmani-test-driven-development",
+          "addyosmani-debugging-and-error-recovery",
+          "addyosmani-browser-testing-with-devtools"
+        ],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "deployment",
+      "label": "部署/发布",
+      "description": "部署、发布、发版流程，含回滚预案",
+      "typical_dimensions": {
+        "S": 2,
+        "Rev": 1,
+        "A": 0,
+        "E": 2,
+        "Auth": 2,
+        "V": 0
+      },
+      "typical_L": 2,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [
+          "archived: skill-git-crud (2026-05-18)"
+        ],
+        "external": [
+          "addyosmani-shipping-and-launch",
+          "addyosmani-ci-cd-and-automation",
+          "addyosmani-git-workflow-and-versioning",
+          "addyosmani-documentation-and-adrs"
+        ],
+        "candidates": [],
+        "uncovered": [
+          "archived skill-git-crud not available since 2026-05-18"
+        ]
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "video_download",
+      "label": "视频下载",
+      "description": "下载视频文件，支持格式/分辨率选择",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 0,
+        "E": 1,
+        "Auth": 1,
+        "V": 0
+      },
+      "typical_L": 0,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [],
+        "external": [],
+        "candidates": [
+          "MapleShaw/yt-dlp-downloader-skill"
+        ],
+        "uncovered": []
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "video_processing",
+      "label": "视频处理",
+      "description": "剪辑、字幕、转码、视频合成",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 1,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [],
+        "external": [],
+        "candidates": [
+          "video-db/skills"
+        ],
+        "uncovered": []
+      },
+      "expected_C": 1
+    },
+    {
+      "type_id": "web_scraping",
+      "label": "网页抓取",
+      "description": "爬取/抓取网页数据，结构化输出",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 1,
+        "E": 1,
+        "Auth": 1,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "skills": {
+        "internal": [],
+        "external": [
+          "skill-playwright-cli"
+        ],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 1
+    },
+    {
+      "type_id": "behavior_learning",
+      "label": "行为学习",
+      "description": "行为偏好捕获、纠正、趋势分析 — 系统级能力",
+      "typical_dimensions": {
+        "S": 1,
+        "Rev": 0,
+        "A": 1,
+        "E": 0,
+        "Auth": 0,
+        "V": 1
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "系统级：被 sessionStart/收束流程调用，非用户直接触发",
+      "skills": {
+        "internal": [
+          "skill-behavior"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 1
+    },
+    {
+      "type_id": "chart_diagram",
+      "label": "图表绘制",
+      "description": "流程图/UML/时序图/Mermaid/架构图渲染",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 0,
+        "V": 1
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "required_slots": [
+        {
+          "name": "diagram_type",
+          "label_cn": "图表类型",
+          "strategy": "must_ask",
+          "example_prompt": "流程图/时序图/类图/架构图？"
+        },
+        {
+          "name": "participants",
+          "label_cn": "参与者/节点",
+          "strategy": "context_derive",
+          "default_rule": "从对话中提取提到的系统/模块/角色"
+        },
+        {
+          "name": "output_format",
+          "label_cn": "输出格式",
+          "strategy": "auto_fill",
+          "default_rule": "默认 Mermaid（跨平台兼容）"
+        }
+      ],
+      "skills": {
+        "internal": [],
+        "external": [
+          "skill-pretty-mermaid"
+        ],
+        "candidates": [
+          "gardusig/cursor-skills"
+        ],
+        "uncovered": []
+      },
+      "expected_C": 2
+    },
+    {
+      "type_id": "tts_speak",
+      "label": "语音朗读",
+      "description": "TTS 语音朗读对话内容 — 系统级/角色能力",
+      "typical_dimensions": {
+        "S": 0,
+        "Rev": 0,
+        "A": 0,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 0,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "GUI 点击动作，永久保留别名路由",
+      "skills": {
+        "internal": [
+          "skill-tts-speak"
+        ],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 0
+    },
+    {
+      "type_id": "system_audit",
+      "label": "系统审计",
+      "description": "全系统架构/数据/编码/技能健康检查 — 系统级自检能力",
+      "typical_dimensions": {
+        "S": 2,
+        "Rev": 0,
+        "A": 1,
+        "E": 0,
+        "Auth": 0,
+        "V": 0
+      },
+      "typical_L": 1,
+      "consecutive_successes": 0,
+      "last_task": null,
+      "migration_ready": false,
+      "note": "系统级自检，覆盖架构规范、数据治理、注册表对齐、过渡方案检查",
+      "skills": {
+        "internal": [],
+        "external": [],
+        "candidates": [],
+        "uncovered": []
+      },
+      "expected_C": 1
+    }
+  ]
+}
