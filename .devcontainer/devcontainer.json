@@ -1,0 +1,10 @@
+{
+  "name": "Socius",
+  "image": "python:3.11-slim",
+  "postCreateCommand": "pip install -e . && socius verify",
+  "customizations": {
+    "codespaces": {
+      "openFiles": ["README.md"]
+    }
+  }
+}
