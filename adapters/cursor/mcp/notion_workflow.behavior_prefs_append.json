@@ -1,8 +1,0 @@
-{
-  "mode": "update_page",
-  "target": "https://www.notion.so/Notion-AI-4c207a961fd642d08556cf2e6f565721",
-  "replace": false,
-  "content_file": "_sync_behavior_prefs_patch_20260502.md",
-  "dry_run": false,
-  "confirm_execute": false
-}

@@ -30,6 +30,18 @@ Simulation-Sandbox/
 .cursor/mcp/notion.env
 
 # ============================================
+# ============================================
+# GitHub 开源屏蔽：以下为本仓库的 Cursor 专属运行时，不进入公开仓库
+# 注意：这些目录在本地磁盘上保留，仅被 Git 忽略
+# ============================================
+.cursor/
+adapters/cursor/mcp/
+adapters/cursor/hooks/
+adapters/cursor/tools/
+core/skills/
+Simulation-Sandbox/
+
+# ============================================
 # 运行时缓存与回收站
 # ============================================
 .trash/

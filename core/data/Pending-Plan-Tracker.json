@@ -1,4 +1,4 @@
-﻿{
+{
   "meta": {
     "description": "待办计划追踪 — 支持备忘关联、每日首次提醒（手动「待办」指令触发）、自动完成检测。长文本已外迁到 plans/ 目录，JSON 仅保留短标识 + 文件指针。",
     "last_reminded": "",
@@ -1598,8 +1598,7 @@
       "input_from": [{"from_task": "M2-5a", "asset": "README.md"}, {"from_task": "M2-5c", "asset": ".github/workflows/ci.yml"}],
       "output_to": "GitHub 仓库",
       "tool_lock": "git"
-    }
-  },
+    },
     {
       "id": "P069",
       "topic": "人工重写 45 个 .mdc frontmatter description（双编码 mojibake → 正确中文） + 编码防控三层落地",

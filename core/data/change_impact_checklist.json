@@ -1,4 +1,4 @@
-﻿{
+{
   "meta": {
     "description": "影响面注册表 — 按对象类型预注册搜索范围。第一层变更前影响枚举（pre-change-impact-enumeration.mdc）读取本表获取应搜索的文件类型列表，确保不遗漏任何引用端点。",
     "usage": "Agent 做变更前影响枚举时，遍历 search_scopes 中所有 group，对每个 glob 执行关键词搜索，输出待同步清单。",

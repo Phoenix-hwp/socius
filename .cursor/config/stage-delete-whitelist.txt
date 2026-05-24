@@ -1,3 +1,0 @@
-# One relative directory per line.
-# Only files inside these directories can be stage-cleaned.
-# (none configured — add project dirs here when needed)
