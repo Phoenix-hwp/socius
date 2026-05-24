@@ -1,0 +1,208 @@
+#!/usr/bin/env python3
+"""Lifecycle CLI — Unified file lifecycle management entry point.
+
+Replaces: cleanup_temp_backups.py, delete_stage_files.py
+Usage:
+    python -m lifecycle_manager cleanup --type temp --days 15
+    python -m lifecycle_manager cleanup --type stage --interactive
+    python -m lifecycle_manager stats
+"""
+from __future__ import annotations
+
+import argparse
+import sys
+from datetime import datetime
+from pathlib import Path
+
+# Add parent to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+from lifecycle_manager import (
+    detect_lifecycle,
+    get_policy,
+    get_trash_path,
+    is_expired,
+    is_index_file,
+    soft_delete,
+)
+
+
+def cmd_stats(args: argparse.Namespace) -> int:
+    """Show lifecycle statistics."""
+    root = Path(args.root) if args.root else Path.cwd()
+
+    stats = {"temp": 0, "stage": 0, "long_term": 0, "unknown": 0}
+
+    # Scan Daily-Backups
+    daily_dir = root / "Daily-Backups"
+    if daily_dir.exists():
+        for f in daily_dir.glob("*.md"):
+            if is_index_file(f):
+                continue
+            lt = detect_lifecycle(f)
+            stats[lt] = stats.get(lt, 0) + 1
+
+    print("Lifecycle Statistics")
+    print("=" * 40)
+    for lt, count in stats.items():
+        policy = get_policy(lt)
+        desc = policy.description if policy else "Unknown"
+        print(f"  {lt:12} : {count:4d} files  ({desc})")
+
+    return 0
+
+
+def cmd_cleanup(args: argparse.Namespace) -> int:
+    """Cleanup files by lifecycle type."""
+    root = Path(args.root) if args.root else Path.cwd()
+    policy = get_policy(args.type)
+
+    if not policy:
+        print(f"Unknown lifecycle type: {args.type}", file=sys.stderr)
+        return 1
+
+    # Determine directory and trash path
+    if args.type == "temp":
+        target_dir = root / "Daily-Backups"
+        trash = get_trash_path(root, "daily-backups")
+    elif args.type == "stage":
+        wl_file = root / ".cursor" / "config" / "stage-delete-whitelist.txt"
+        if not wl_file.exists():
+            print(f"Whitelist not found: {wl_file}", file=sys.stderr)
+            return 1
+        # Read whitelist paths
+        target_dirs = []
+        for line in wl_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#"):
+                target_dirs.append(root / line)
+        trash = get_trash_path(root, "stage-files")
+    else:
+        print(f"Cleanup not supported for type: {args.type}", file=sys.stderr)
+        return 1
+
+    # Collect candidates
+    candidates: list[Path] = []
+    now = datetime.now()
+
+    if args.type == "temp":
+        if not target_dir.exists():
+            print(f"Directory not found: {target_dir}")
+            return 0
+        for f in target_dir.glob("*.md"):
+            if is_index_file(f):
+                continue
+            if detect_lifecycle(f) != "temp":
+                continue
+            if args.days and not is_expired(f, args.days, now):
+                continue
+            candidates.append(f)
+
+    elif args.type == "stage":
+        for td in target_dirs:
+            if not td.exists():
+                continue
+            for f in td.rglob("*.md"):
+                if detect_lifecycle(f) == "stage":
+                    candidates.append(f)
+
+    if not candidates:
+        print(f"No {args.type} files found for cleanup.")
+        return 0
+
+    # Interactive confirmation for stage files
+    if policy.requires_confirmation or args.interactive:
+        print(f"Found {len(candidates)} {args.type} file(s):")
+        for i, f in enumerate(candidates, 1):
+            rel = f.relative_to(root) if f.is_relative_to(root) else f
+            print(f"  {i:3}. {rel}")
+
+        if args.dry_run:
+            print("\n(Dry run - no changes made)")
+            return 0
+
+        s1 = input("\nType YES to continue: ").strip()
+        if s1 != "YES":
+            print("Cancelled.")
+            return 0
+
+        s2 = input(f"Type CONFIRM to soft-delete these files: ").strip()
+        if s2 != "CONFIRM":
+            print("Cancelled.")
+            return 0
+
+    # Execute cleanup
+    if args.dry_run:
+        print(f"\nWould move {len(candidates)} files to trash:")
+        for f in candidates:
+            print(f"  - {f.name}")
+        return 0
+
+    moved = []
+    for f in candidates:
+        try:
+            new_path = soft_delete(f, trash)
+            moved.append((f, new_path))
+        except Exception as e:
+            print(f"Error moving {f}: {e}", file=sys.stderr)
+
+    print(f"\nMoved {len(moved)} files to trash:")
+    for src, dst in moved:
+        print(f"  {src.name}")
+        print(f"    -> {dst}")
+
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="lifecycle",
+        description="Unified file lifecycle management",
+    )
+    parser.add_argument(
+        "--root",
+        help="Workspace root directory (default: current directory)",
+    )
+
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    # stats command
+    stats_parser = subparsers.add_parser("stats", help="Show lifecycle statistics")
+    stats_parser.set_defaults(func=cmd_stats)
+
+    # cleanup command
+    cleanup_parser = subparsers.add_parser("cleanup", help="Cleanup files by type")
+    cleanup_parser.add_argument(
+        "--type",
+        required=True,
+        choices=["temp", "stage"],
+        help="Lifecycle type to cleanup",
+    )
+    cleanup_parser.add_argument(
+        "--days",
+        type=int,
+        help="Retention days (for temp files)",
+    )
+    cleanup_parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Force interactive confirmation",
+    )
+    cleanup_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be done without making changes",
+    )
+    cleanup_parser.set_defaults(func=cmd_cleanup)
+
+    args = parser.parse_args()
+
+    if not args.command:
+        parser.print_help()
+        return 1
+
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

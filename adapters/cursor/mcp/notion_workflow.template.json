@@ -1,0 +1,17 @@
+{
+  "mode": "read",
+  "target": "https://www.notion.so/f5f299d05ba882bebaa801acd9ce4920?v=f80299d05ba882be880108424ff17826&source=copy_link",
+  "output_file": "notion_workflow.result.json",
+
+  "_modes": "read | create_page | update_page",
+  "_read_required": "target",
+
+  "_create_required": "parent, title, content_file",
+  "parent": "https://www.notion.so/your-parent-page-or-id",
+  "title": "TMP_新页面标题",
+  "content_file": "content.md",
+
+  "_update_required": "target, content_file",
+  "replace": false
+}
+

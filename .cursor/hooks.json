@@ -6,25 +6,25 @@
         "command": "cmd /c echo %date% %time% sessionStart hook fired >> %TEMP%\\cursor-hook-diag.log 2>&1"
       },
       {
-        "command": "cmd /c .cursor\\tools\\cleanup_temp_backups.cmd --days=15 >nul 2>&1"
+        "command": "cmd /c adapters\\cursor\\tools\\cleanup_temp_backups.cmd --days=15 >nul 2>&1"
       },
       {
-        "command": "cmd /c python .cursor/hooks/launcher.py profile_injector || node .cursor/hooks/session_start_profile_launch.mjs"
+        "command": "cmd /c python adapters/cursor/hooks/launcher.py profile_injector || node adapters/cursor/hooks/session_start_profile_launch.mjs"
       }
     ],
     "postToolUseFailure": [
       {
-        "command": "cmd /c python .cursor/hooks/launcher.py error_recorder || node .cursor/hooks/error_log_launch.mjs"
+        "command": "cmd /c python adapters/cursor/hooks/launcher.py error_recorder || node adapters/cursor/hooks/error_log_launch.mjs"
       }
     ],
     "afterShellExecution": [
       {
-        "command": "cmd /c python .cursor/hooks/launcher.py error_recorder || node .cursor/hooks/error_log_launch.mjs"
+        "command": "cmd /c python adapters/cursor/hooks/launcher.py error_recorder || node adapters/cursor/hooks/error_log_launch.mjs"
       }
     ],
     "beforeMCPExecution": [
       {
-        "command": "cmd /c python .cursor/hooks/launcher.py notion_precheck || node .cursor/hooks/notion_daily_precheck_launch.mjs"
+        "command": "cmd /c python adapters/cursor/hooks/launcher.py notion_precheck || node adapters/cursor/hooks/notion_daily_precheck_launch.mjs"
       }
     ]
   }

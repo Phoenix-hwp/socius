@@ -41,6 +41,9 @@ node_modules/
 # Temp scripts and debug output
 temp/
 
+# pip editable install artifacts
+phoenix_core.egg-info/
+
 # 操作前安全快照（操作完成后由脚本自动清理，残留视为废数据）
 *.bak_*
 *.old

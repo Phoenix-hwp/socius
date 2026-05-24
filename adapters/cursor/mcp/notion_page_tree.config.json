@@ -1,0 +1,14 @@
+{
+  "roots": [
+    "https://www.notion.so/500299d05ba882138347819a6cf33c26",
+    "https://www.notion.so/661299d05ba882adb0c201f0c3c79903",
+    "https://www.notion.so/eda299d05ba8836fbc5f81e02e8abb78",
+    "https://www.notion.so/9a0299d05ba88286aea681ba3e5ace44"
+  ],
+  "max_level": 2,
+  "include_database_rows": true,
+  "database_row_limit": 100,
+  "database_scan_block_limit": 8000,
+  "output_file": "notion_page_tree.json"
+}
+
