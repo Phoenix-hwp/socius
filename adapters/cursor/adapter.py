@@ -13,7 +13,7 @@ CursorAdapter — Cursor 平台的 6 接口实现。
 Usage:
     from adapters.cursor.adapter import CursorAdapter
 
-    adapter = CursorAdapter(project_dir="D:/Phoenix/cursor-knowledge")
+    adapter = CursorAdapter(project_dir="/path/to/socius")
     rules = adapter.rule_engine.load_rules()
     active = adapter.rule_engine.filter_active(rules, task_context={"task_type": "notion_create"})
 """

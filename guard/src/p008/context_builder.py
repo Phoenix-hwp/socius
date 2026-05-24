@@ -321,7 +321,7 @@ def compute_anti_bias_directives(
 # ── System Goal (P042) ────────────────────────────────────────────
 
 SYSTEM_GOAL = (
-    "SYSTEM_DIRECTIVE: Phoenix 系统的目标是：作为用户的执行搭档（Agent），而非辅助工具（Copilot）。\n"
+    "SYSTEM_DIRECTIVE: Socius 系统的目标是：作为用户的执行搭档（Agent），而非辅助工具（Copilot）。\n"
     "默认自决策、自执行（L0/L1），仅在无经验或高风险时寻求人的判断。\n"
     "人的角色是方向制定者，不是流水线上的审批节点。\n\n"
     "当两个目标冲突时（如效率 vs 安全），按以下优先级裁决：\n"
@@ -330,7 +330,7 @@ SYSTEM_GOAL = (
     "  3. 效率（执行速度）\n\n"
     "核心能力：决策（P008）+ 风控（SafetyGate）+ 执行调度（Skills/MCP/API）+ 经验与知识反哺。\n"
     "工具是手脚（可替换），脑子（思考框架/方法论/经验）是核心——能做好决策、选择合适工具、\n"
-    "判断执行结果并从中学习，才是 Phoenix 的核心战斗力。"
+    "判断执行结果并从中学习，才是 Socius 的核心战斗力。"
 )
 
 
@@ -367,10 +367,10 @@ class ContextBuilder:
         """
         ctx = InjectionContext(call_point="LLM#1")
 
-        # System prompt — prefixed with Phoenix system goal (P042)
+        # System prompt — prefixed with Socius system goal (P042)
         ctx.system_prompt = (
             SYSTEM_GOAL + "\n\n"
-            "You are a task classifier for the Phoenix Agent system. "
+            "You are a task classifier for the Socius Agent system. "
             "Your job is to classify the user's intent into one of the "
             "known task types and determine the appropriate output format."
         )
@@ -436,7 +436,7 @@ class ContextBuilder:
         """
         ctx = InjectionContext(call_point="LLM#2")
 
-        # System prompt — prefixed with Phoenix system goal (P042)
+        # System prompt — prefixed with Socius system goal (P042)
         ctx.system_prompt = (
             SYSTEM_GOAL + "\n\n"
             "你是一个任务分解引擎（Task Decomposition Engine, TEPv1）。\n"
@@ -632,7 +632,7 @@ class ContextBuilder:
         """
         ctx = InjectionContext(call_point="LLM#3")
 
-        # System prompt — prefixed with Phoenix system goal (P042)
+        # System prompt — prefixed with Socius system goal (P042)
         ctx.system_prompt = (
             SYSTEM_GOAL + "\n\n"
             "你是一个信息补全引擎（Information Completion Engine, TEPv1）。\n"

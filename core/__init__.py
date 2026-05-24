@@ -1,4 +1,4 @@
-"""Phoenix Framework Core — 认知引擎 + P008 决策框架 + TEP 任务编排。
+"""Socius Framework Core — 认知引擎 + P008 决策框架 + TEP 任务编排。
 
 框架层零 Cursor 依赖。所有平台适配器通过 adapter_interfaces.py 的 Protocol 接口接入。
 

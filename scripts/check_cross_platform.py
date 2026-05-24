@@ -1,7 +1,7 @@
 """
 跨平台兼容性检测工具。
 
-检查 Phoenix 框架在 Cursor 以外的平台（VS Code / Docker / CLI / Web IDE）下
+检查 Socius 框架在 Cursor 以外的平台（VS Code / Docker / CLI / Web IDE）下
 是否能稳定正常运行。不依赖 Cursor IDE 的任何专属 API。
 
 Usage:
@@ -404,13 +404,13 @@ def check_directory_structure():
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="Phoenix 跨平台兼容性检测")
+    parser = argparse.ArgumentParser(description="Socius 跨平台兼容性检测")
     parser.add_argument("--platform", default="all",
                         choices=["all", "cursor", "vscode", "docker"],
                         help="目标平台 (default: all)")
     args = parser.parse_args()
 
-    print(f"Phoenix 跨平台兼容性检测 — 目标平台: {args.platform}")
+    print(f"Socius 跨平台兼容性检测 — 目标平台: {args.platform}")
     print(f"仓库根: {REPO_ROOT}")
 
     check_interfaces()

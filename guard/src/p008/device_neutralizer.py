@@ -2,7 +2,7 @@
 
 Guard MVP v0.2. Ensures LLM prompts and outputs are device-independent:
 
-1. Path normalization: D:\Phoenix\cursor-knowledge → ~/workspace
+1. Path normalization: D:\socius\workspace → ~/workspace
 2. OS normalization:    Windows 10.0.26200 → cross-platform
 3. Tool normalization:  git → git (abstract tool name, not full path)
 

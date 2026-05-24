@@ -1,13 +1,13 @@
 """
-Phoenix CLI — 框架层独立运行入口点。
+Socius CLI — 框架层独立运行入口点。
 
 不依赖 Cursor IDE。通过 ``pip install -e .`` 安装后，在终端直接运行::
 
-    phoenix run --task-type notion_create --model deepseek-v4-pro
+    socius run --task-type notion_create --model deepseek-v4-pro
 
-    phoenix list-models
+    socius list-models
 
-    phoenix verify
+    socius verify
 
 框架层：
     - 加载规则 → ContextBuilder 组装上下文
@@ -16,9 +16,9 @@ Phoenix CLI — 框架层独立运行入口点。
     - 工具调用 → IToolProvider 实现
 
 Usage:
-    phoenix run [--task-type TYPE] [--model MODEL] [--prompt TEXT]
-    phoenix list-models
-    phoenix verify
+    socius run [--task-type TYPE] [--model MODEL] [--prompt TEXT]
+    socius list-models
+    socius verify
 
 """
 
@@ -30,7 +30,7 @@ import sys
 from pathlib import Path
 
 # 确保 REPO_ROOT 在 sys.path 中
-_REPO_ROOT = Path(__file__).resolve().parent  # phoenix_cli.py 在仓库根目录
+_REPO_ROOT = Path(__file__).resolve().parent  # socius_cli.py 在仓库根目录
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
@@ -38,7 +38,7 @@ from core.model_registry import list_models
 from adapters.cursor.adapter import CursorAdapter
 from core.context_builder import ContextBuilder
 
-logger = logging.getLogger("phoenix")
+logger = logging.getLogger("socius")
 
 
 def cmd_list_models():
@@ -55,7 +55,7 @@ def cmd_list_models():
 
 def cmd_verify():
     """快速自检——验证框架层各组件可用性。"""
-    print("Phoenix 框架层自检\n" + "=" * 60)
+    print("Socius 框架层自检\n" + "=" * 60)
 
     adapter = CursorAdapter(project_dir=str(_REPO_ROOT))
     summary = adapter.summary()
@@ -115,7 +115,7 @@ def cmd_run(args: argparse.Namespace):
         print("❌ 任务描述不能为空")
         sys.exit(1)
 
-    print(f"\n🚀 Phoenix Agent 启动")
+    print(f"\n🚀 Socius Agent 启动")
     print(f"  任务类型: {task_type}")
     print(f"  模型: {model_name}")
     print(f"  任务: {user_prompt[:80]}{'...' if len(user_prompt) > 80 else ''}")
@@ -148,7 +148,7 @@ def cmd_run(args: argparse.Namespace):
     # 2. 组装 system_prompt
     system_prompt = f"""{context}
 
-你是一个 Phoenix 框架的 Agent。你有以下工具可用：
+你是一个 Socius 框架的 Agent（工作搭档）。你有以下工具可用：
 - read(path, offset=0, limit=None): 读取文件
 - write(path, contents): 写入文件
 - shell(command, working_directory=None, block_until_ms=30000): 执行命令
@@ -263,14 +263,14 @@ def _parse_tool_call(text: str) -> dict | None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Phoenix Framework CLI — 框架层独立运行入口",
+        description="Socius Framework CLI — 框架层独立运行入口",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:
-  phoenix list-models                     # 列出所有已注册模型
-  phoenix verify                          # 框架层自检
-  phoenix run --task-type notion_create   # 执行 Agent 任务
-  phoenix run --model ollama-local --prompt "读取 README.md"
+  socius list-models                     # 列出所有已注册模型
+  socius verify                          # 框架层自检
+  socius run --task-type notion_create   # 执行 Agent 任务
+  socius run --model ollama-local --prompt "读取 README.md"
         """,
     )
 

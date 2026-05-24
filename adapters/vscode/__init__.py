@@ -1,4 +1,4 @@
-"""VS Code Adapter — 将 VS Code Extension API 映射到 Phoenix 框架接口。
+"""VS Code Adapter — 将 VS Code Extension API 映射到 Socius 框架接口。
 
 目标:
     IModelProvider  → vscode.lm API

@@ -1,4 +1,4 @@
-"""CursorAdapter — 将 Cursor IDE Agent 能力映射到 Phoenix 框架接口。
+"""CursorAdapter — 将 Cursor IDE Agent 能力映射到 Socius 框架接口。
 
 6 个适配器接口均由 CursorAdapter 聚合，各接口可独立使用::
 
