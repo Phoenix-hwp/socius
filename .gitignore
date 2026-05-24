@@ -5,7 +5,22 @@
 # 注意：`/.git/` 行在 Git 中不生效，仅作为云盘预留记录
 # ============================================
 
-# 仿真沙箱（训练产物，不参与版本库和云盘同步）
+# ============================================
+# 个人运行时数据（不进入公开仓库）
+# ============================================
+Daily-Backups/
+Knowledge-Assets/
+System-Capabilities/
+projects/
+inbox/
+.claude/
+_*.*
+bootstrap-*.*
+Command-Help-Index.md
+Cursor_Knowledge.code-workspace
+temp_validate.py
+
+# 仿真沙箱（训练产物）
 Simulation-Sandbox/
 
 # ============================================
