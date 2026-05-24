@@ -2,7 +2,11 @@
 Title: 知识类型识别器（Classifier）
 Lifecycle: 阶段
 Created: 2026-05-16
-Updated: 2026-05-16
+Updated: 2026-05-24（M2-3b — 声明 IModelProvider 接口依赖 + 路径修正）
+model_provider:
+  interface: IModelProvider.complete()
+  usage: "Step 1-4 分类判别 + Step 1.5 诠释自检 + Step 1.6 视角自检 均通过 IModelProvider.complete() 调用模型推理。平台适配器实现 IModelProvider，框架层零 Cursor 依赖。"
+  fallback: "Cursor 环境下仍由 Agent 直接推理（Agent === IModelProvider），独立运行时切到 core.model_providers 的 DeepSeek/Kimi/Ollama Provider。"
 glossary:
   purpose: 读入原始知识文本 → 判别六类知识 → 主/辅分类 → 查路由表确定消化目标
   input: 原始知识文本（卡片 body_md / Notion 页面 / 网页 / PDF 提取文本 / 书籍章节）
@@ -21,7 +25,7 @@ glossary:
     format:
       done: "[✓ Step_ID]"
       skip: "[⏭ Step_ID: reason]"
-    definitions: ".cursor/workflow-definitions.json → knowledge_digestion"
+    definitions: "core/data/workflow_definitions.json → knowledge_digestion"
 ---
 
 # 知识类型识别器
@@ -80,7 +84,7 @@ glossary:
 2. **检索已有消化记录**：
 
 ```
-rg "《<书名>》" Knowledge-Brain/digest-log-*.md
+rg "《<书名>》" core/knowledge/digest-log-*.md
 ```
 
 3. **判定**：
@@ -386,7 +390,7 @@ Step 0-V 产出 text_bridge.json 后：
 ### 日志文件命名
 
 ```
-Knowledge-Brain/digest-log-YYYY-MM-DD.md
+core/knowledge/digest-log-YYYY-MM-DD.md
 ```
 
 若同一天有多次消化，追加到同一文件（用 `---` 分隔线隔开批次）。
@@ -679,7 +683,7 @@ Step R 读后总结完成，共 N 条协议。
 | **S3** | 能力与技能 | 新知是否暗示需要新的 Skill、新的操作转化路径、或现有 Skill 的参数调整？ | `skill-registry.json` / `task-type-registry.md` / `method-reliability-registry.json` | 建议新增 skill / 补全参数 / 更新 known_issues |
 | **S4** | 概念树 | 新知的概念锚与已有概念空间是否冲突、重叠、或形成新的上位/下位关系？ | `concept-tree.json` + `protocols/` 中同域协议 | 建议新增/合并/拆分概念锚节点 |
 | **S5** | 数据与配置 | 新知是否暴露出数据治理、配置注册表、过渡方案中的缺口或过时项？ | `data-governance-standards` 相关文件 / `change-impact-checklist.json` / `Transition-Plan-Registry.json` / `Active-Task-Tracker.json` | 标记违规行 / 过期条目 / 缺漏项 |
-| **S6** | 架构自反 | 消化管线本身是否因本次消化暴露出架构缺陷？系统四层（网关/能力/执行/认知）的边界是否需要调整？ | `Knowledge-Brain/framework.md` / `classifier.md` / `extract-templates.md` / `template-generator.md` / `activation.md` / `concept-anchor.md` | 管线优化建议 / 架构修正建议 |
+| **S6** | 架构自反 | 消化管线本身是否因本次消化暴露出架构缺陷？系统四层（网关/能力/执行/认知）的边界是否需要调整？ | `Knowledge-Brain/framework.md`(→ core/knowledge/framework.md) / `classifier.md` / `extract-templates.md` / `template-generator.md` / `activation.md` / `concept-anchor.md` | 管线优化建议 / 架构修正建议 |
 
 ### 巡检执行规则
 

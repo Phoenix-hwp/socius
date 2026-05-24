@@ -2,6 +2,10 @@
 Title: 方法模板生成器（Template Generator）
 Lifecycle: 阶段
 Created: 2026-05-16
+Updated: 2026-05-24（M2-3d — 路径修正 + IModelProvider 接口依赖）
+model_provider:
+  interface: IModelProvider.complete() / complete_json()
+  usage: "L1-L3 分流判断通过 IModelProvider 推理程序性知识的复杂度/复用频率，决定生成上下文模板/Skill参数/完整文档"
 glossary:
   purpose: 将提炼后的程序性知识映射为可执行的工作流骨架，按复杂度/复用频率分流到三级产物
   input: 程序性知识的提炼产物（extract-templates.md §二的输出）

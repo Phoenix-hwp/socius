@@ -2,6 +2,11 @@
 Title: 主题阅读合成器（Synthesizer / P3）
 Lifecycle: 阶段
 Created: 2026-05-17
+Updated: 2026-05-24（M2-3c — 声明 IModelProvider 接口依赖）
+model_provider:
+  interface: IModelProvider.complete_json()
+  usage: "五项合成动作（矛盾标记/空白检测/核心主张提炼/融汇建议/概念树更新）通过 IModelProvider.complete_json() 调用模型推理，输出结构化 dict。"
+  fallback: "Cursor 环境下仍由 Agent 直接推理（Agent === IModelProvider），独立运行时切到 core.model_providers。"
 glossary:
   purpose: 同一概念域下协议积累 >= 3 份后，触发跨协议主题阅读合成——对比、找矛盾、补空白、提炼核心主张、形成融汇建议。对应框架输出端 4 融汇创新。
   input:

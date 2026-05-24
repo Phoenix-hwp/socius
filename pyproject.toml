@@ -26,5 +26,8 @@ classifiers = [
 Homepage = "https://github.com/phoenixhwp/phoenix"
 Repository = "https://github.com/phoenixhwp/phoenix"
 
+[project.scripts]
+phoenix = "phoenix_cli:main"
+
 [tool.setuptools.packages.find]
 include = ["core*", "adapters*"]

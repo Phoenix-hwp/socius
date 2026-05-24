@@ -2,6 +2,11 @@
 Title: 自描述激活规范（Activation）
 Lifecycle: 阶段
 Created: 2026-05-16
+Updated: 2026-05-24（M2-3d — 声明 IModelProvider 接口依赖 + 路径修正）
+model_provider:
+  interface: IModelProvider.complete()
+  usage: "三层过滤器（语义/任务类型/强度）通过 IModelProvider.complete() 判别协议是否激活。"
+  fallback: "Cursor 环境下 Agent 直接推理，独立运行时切到 core.model_providers。"
 glossary:
   purpose: 知识脑运行时引擎 — 协议/Skill 自描述激活 + 三源认知模型 + 对话双向通道 + 三层过滤器 + 小注式矛盾仲裁 + 上下文窗口管理
   input:
@@ -13,7 +18,7 @@ glossary:
     - task-init-protocol.mdc Step 2-KB（知识脑前置查询）
     - mod-decision-framework.mdc §二（KB 预载入 → 维度降级标记）
     - flow-behavior-auto-receipt.mdc §C#13（收束时协议有效性反馈）
-    - Knowledge-Brain/activation-log.jsonl（运行时激活日志：追踪每条协议的 activated/effective/bystander_count）
+    - core/knowledge/activation-log.jsonl（运行时激活日志：追踪每条协议的 activated/effective/bystander_count）
   runtime_features:
     - 三源认知模型（大模型主持 + 网络核查 + 知识脑提醒）
     - 对话双向通道（向下消费/向上反馈/向上写入）
@@ -255,7 +260,7 @@ Step 4: 截断 — 单任务 ≤5 条协议注入上下文
 
 **触发时机**：过滤器 1 的候选池产出后
 
-**数据源**：`Knowledge-Brain/activation-log.jsonl` 中该协议的历史激活记录
+**数据源**：`core/knowledge/activation-log.jsonl` 中该协议的历史激活记录
 
 **校准逻辑**：
 
