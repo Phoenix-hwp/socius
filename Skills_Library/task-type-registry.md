@@ -34,7 +34,7 @@ related:
 - 触发关键词：提交git、Git同步、推仓库、提交远端、拉取、pull、push、commit、合并
 - 结果期望：变更正确 add/commit/push，无遗漏文件，无密钥泄露
 - 覆盖技能：
-  - skill-git-crud（内部，active）
+  - skill-git-crud（内部，archived 2026-05-18）
   - addyosmani/agent-skills（备选，/ship 子能力）
 - **触发计数**：0
 - **历史中位轮次**：—
@@ -156,7 +156,7 @@ related:
 - 结果期望：发布流程完整，无遗漏步骤，回滚预案就绪
 - 覆盖技能：
   - addyosmani/agent-skills（备选，/ship 子能力）
-  - skill-git-crud（内部，active，/push 子能力）
+  - skill-git-crud（内部，archived 2026-05-18）
 - **触发计数**：0
 - **历史中位轮次**：—
 - **历史中位 Token**：—
@@ -265,7 +265,7 @@ related:
 - 父类型：—
 - 触发关键词：拉取git、拉取远端、直接拉取、pull
 - 结果期望：远端变更正确并入本地
-- 覆盖技能：skill-git-crud（内部，active）
+- 覆盖技能：skill-git-crud（内部，archived 2026-05-18）
 - **触发计数**：0 | **历史中位轮次**：— | **历史中位 Token**：—
 
 

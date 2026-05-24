@@ -31,9 +31,9 @@ tags:
 | 执行策略 | 策略、风险策略 | 返回全局风险分级自动执行策略（balanced）及当前会话执行原则 | `Command-Help-Index.md` |
 | 快速模式 | 自动执行、少确认 | 将当前会话切换到"低/中风险自动执行，高风险确认" | `Command-Help-Index.md` |
 | 谨慎模式 | 全确认、严格确认 | 将当前会话切换到"所有写入动作先确认" | `Command-Help-Index.md` |
-| 提交git | Git同步、推仓库、提交远端 | **Git 提交推送**：先 Read `10-Topics/Gitee-Workspace-Git-Workflow.md`，在工作区根执行 `git status`，按意图协助 `add`/`commit`/`pull`/`push`；强制推送与破坏性重置须先确认 | `flow-git-commit.mdc`（框架：`mod-git-crud-framework.mdc`） |
-| 拉取git | 拉取远端、直接拉取 | **Git 直接拉取**：一句到位 `git pull --rebase`，不做差异审查，对远端无疑虑时用 | `flow-git-pull.mdc`（框架：`mod-git-crud-framework.mdc`） |
-| 安全拉取 | 审查拉取、拉取审查 | **Git 审查式拉取**：`git fetch` 后展示远端新增提交清单与文件变更统计，用户选择 [1]覆盖本地 [2]合并 [3]保留本地 后再执行对应操作 | `flow-git-safe-pull.mdc`（框架：`mod-git-crud-framework.mdc`） |
+| 提交git | Git同步、推仓库、提交远端 | ⛔ **已废弃（2026-05-18）**：Git 同步模块已移除，工作区通过网盘同步 | — |
+| 拉取git | 拉取远端、直接拉取 | ⛔ **已废弃（2026-05-18）**：Git 同步模块已移除 | — |
+| 安全拉取 | 审查拉取、拉取审查 | ⛔ **已废弃（2026-05-18）**：Git 同步模块已移除 | — |
 | Notion操作流程 | Notion增删改查 | **统一**：**Y** → **目录编号** → **增/删/改/查**；**改**须 **`1` 清空重写 / `2` 局部合并** → 预览 → **`确认更新`**；**优先 MCP**，脚本兜底注明原因；全局检索或已知 URL 可跳过目录 | `.cursor/rules/mod-notion-crud-framework.mdc` |
 | Notion创建 | 写入流程、落点确认 | **增（创建）** 六步流程：**Y** → **目录** → **标题 1/2** → **标题落地** → **正文预览** → **`确认写入`**；骨架见统一 CRUD 规则 | `.cursor/rules/flow-notion-create.mdc` |
 | Notion更新 | 更新Notion、修改页面 | 更新策略 **`1`** 清空重写 / **`2`** 局部合并 → 变更预览 → **`确认更新`** | `.cursor/rules/flow-notion-update.mdc` |
@@ -41,8 +41,8 @@ tags:
 | Notion查询 | 查询Notion、读取Notion | 关键词 → 定位解析 → 展示摘要 | `.cursor/rules/flow-notion-query.mdc` |
 | Notion写入菜单 | Notion菜单写入 | **可选本机**：`.cursor/mcp/notion_write_menu.cmd`（**CRUD 向导**）或 `.cursor/tools/notion_gui_menu.ps1`；对话内仍以统一 CRUD 规则为准 | `.cursor/rules/mod-notion-crud-framework.mdc` |
 | （会话约定）脚本改动先说明 | 改动预告、预期先行 | **非口令菜单**：Agent 在实质性修改脚本/自动化入口并落盘前，须先简述改后行为与验收；降低预期偏差导致的反复修改。全文见规则文件 | `.cursor/rules/pre-edit-script-change-brief.mdc` |
-| git到新设备 | 克隆到新路径、同步到新位置、拉取git到新目录 | 将远程仓库拉取到用户指定的新路径，包含确认步骤、路径选择、冲突处理 | `.cursor/rules/flow-git-clone-to-custom-path.mdc` |
-| 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | **换设备后由 Agent 执行初始化链路**：提醒先 `git clone/pull`（若用户未做）；在**工作区根**用工具或等价方式运行 `bootstrap-on-pull.cmd`（占位、环境、Shim 依赖、ngrok 检测、API Key 占位）；回执须含脚本摘要与**仍需手动**项（见 `模型配置说明.md`）。用户仅说「初始化」且无他义时，视同本指令 | `.cursor/rules/git-cross-device-and-secrets.mdc`、`模型配置说明.md` |
+| git到新设备 | 克隆到新路径、同步到新位置、拉取git到新目录 | ⛔ **已废弃（2026-05-18）**：Git 同步模块已移除 | — |
+| 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | ⛔ **已废弃（2026-05-18）**：工作区通过网盘同步，新设备直接复制工作区根目录即可 | — |
 | 运行模型 | 切换模型、启动模型 | **交互终端**：在 `.cursor/ai-model-shim/` 目录下以可见终端窗口运行 `auto-switch.cmd`，弹出菜单供用户选择 Kimi K2.6 / DeepSeek V4 Pro，后续流程（Shim 代理 + ngrok 隧道）在终端内交互完成 | `.cursor/ai-model-shim/auto-switch.cmd` |
 | 封装能力 | 固化流程、封装指令 | **被动固化（B1）**：提取近期执行的步骤序列 → 按复杂度判定产物（≤3→别名，4-7→flow-*.mdc，8+→Skill）→ 预览 → 等待 `确认封装` 后落盘并登记到 `Skills_Library/skill-registry.json` | `.cursor/rules/flow-capability-encapsulate.mdc` |
 | （会话约定）变更前影响枚举 | 影响枚举、搜引用 | **非口令菜单**：涉及路径/字段名/文件名变更前，强制搜索全库引用并列出待同步清单，全部打勾后方可落盘。详见 `pre-change-impact-enumeration.mdc` | `.cursor/rules/pre-change-impact-enumeration.mdc`、`.cursor/change-impact-checklist.json` |
@@ -53,11 +53,17 @@ tags:
 | 技能全关 | 禁用所有技能、停用技能 | 一键关闭所有外部技能，仅保留内核规则 | `.cursor/rules/flow-skill-toggle.mdc` |
 | 执行技能 | 运行技能、调用技能 | 执行已部署的 Skill（执行前快照 → 写路径限制 → 差异审查 → 确认/回滚） | `.cursor/rules/flow-skill-execute.mdc`、`.cursor/rules/mod-skills-library-framework.mdc` |
 | 评估技能 | 技能评估、技能巡检 | 对备选和已安装技能执行中检：逐技能检查质量变化/风险变化/表现评分趋势 | `.cursor/rules/mod-skill-evaluation.mdc`、`Skills_Library/task-type-registry.md` |
-| 待办 | 查看待办、调整待办 | **待办计划交互管理**：执行 `Skill-待办提醒`（Shell `python Skills_Library/scripts/todo-reminder.py --scan --skip-daily-check` → 解析 JSON → 弹出两阶段 AskQuestion 链（多选待办 → 逐项操作：查看备忘/推迟/标记完成/标记进行中/跳过）→ 用户选择后 Shell 写回） | `Skills_Library/scripts/todo-reminder.py`（技能：`skill-todo-reminder`） |
+| 待办 | 查看待办、调整待办、调取待办 | **待办计划交互管理**：Shell `todo-reminder.py --scan --skip-daily-check` → 两阶段 AskQuestion。**V012-DRILL-* 分叉（强制）**：`is_v012_drill=true` → `flow-v012-drill-bridge.mdc` → `flow-v012-pipeline-execute.mdc`；mark-done 须 `v012-drill-validate.py` 通过 | `todo-reminder.py` + `flow-v012-drill-bridge.mdc` |
 | 系统检查 | 自检、审计、巡检系统、健康检查 | **全系统健康扫描**：覆盖 D1 架构规范、D2 数据治理、D3 注册表对齐、D4 编码规范、D5 过渡方案、D6 技能健康，输出结构化报告与待处理清单 | `.cursor/rules/mod-system-audit.mdc` |
 | 学习 | 学习知识、阅读卡片 | **知识脑学习**：Agent 读取指定知识源（Notion 笔记/网页/PDF）→ 结构化总结核心思维模型 → 逐点和用户讨论四个输出端（审视现有系统 / 操作转化 / 新协议 / 融汇创新）→ 讨论结论写入 `Knowledge-Brain/protocols/`（标注 `[待验证]`）→ 实践验证后按协议归宿路由迁移 | `Knowledge-Brain/framework.md`（概念总纲：`10-Topics/Knowledge-Brain.md`） |
 | 语音 | 说、语音 | **语音朗读摘要**：设置 voice_mode=summary，Agent 回复时将概要/结论/建议投喂 TTS 朗读；文字仍完整显示在 UI | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） |
 | 说全文 | 全文、语音全文 | **语音朗读全文**：设置 voice_mode=full，Agent 回复时将完整内容投喂 TTS 朗读
+|| 仿真 | 模拟、沙箱仿真、仿真练习 | **仿真机制通用入口**：列出可用仿真场景让用户选 → 从任务池匹配任务 → 输出启动简报 → 确认后进入沙箱执行 → 收束输出 Step T 总结 | `.cursor/rules/flow-simulation-execute.mdc`（框架：`mod-simulation-framework.mdc`） |
+|| 全链路仿真 | 全场模拟 | **全系统 9 环节拉练**：直接加载 S2-full-chain 场景，跑一次完整的任务链 | `.cursor/rules/flow-simulation-execute.mdc`（框架：`mod-simulation-framework.mdc`） |
+|| 今天的仿真 | 今日练习 | **按计划自动执行**：读取 `Simulation-Sandbox/training-plan.json` 取当日任务并执行 | `.cursor/rules/flow-simulation-execute.mdc`（框架：`mod-simulation-framework.mdc`） |
+|| 决策训练 | 边际测试 | **P008 边界裁决打磨**：加载 S2-P008-boundary 场景，从 A 类任务池取边界任务 | `.cursor/rules/flow-simulation-execute.mdc`（框架：`mod-simulation-framework.mdc`） |
+|| 拆解训练 | 任务拆解练习 | **任务拆解粒度打磨**：加载 S2-decomposition 场景，从 B 类任务池取跨域复合任务 | `.cursor/rules/flow-simulation-execute.mdc`（框架：`mod-simulation-framework.mdc`） |
+|| 仿真报告 | 训练报告 | **汇总仿真数据**：读取 `Simulation-Sandbox/logs/` 汇总输出本周/本轮的仿真统计 | `.cursor/rules/flow-simulation-execute.mdc`（框架：`mod-simulation-framework.mdc`） |
 
 ## 2. 维护约定
 

@@ -4,6 +4,7 @@ glossary:
   layer: 3-工作流执行层
   module: Conversation
   depends: [mod-conversation-framework, flow-conversation-routing]
+guard_replaceable: false
 ---
 
 # 读取历史对话流程

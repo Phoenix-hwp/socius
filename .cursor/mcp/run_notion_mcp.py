@@ -35,9 +35,13 @@ def main() -> int:
 
     npx_exe = which("npx")
     if not npx_exe:
-        common = Path(r"C:\Program Files\nodejs\npx.cmd")
-        if common.exists():
-            npx_exe = str(common)
+        # Search PATH-relative candidates (cross-device safe — no hardcoded paths)
+        import os
+        for p in os.environ.get("PATH", "").split(os.pathsep):
+            candidate = Path(p) / "npx.cmd"
+            if candidate.exists():
+                npx_exe = str(candidate)
+                break
 
     if not npx_exe:
         print(

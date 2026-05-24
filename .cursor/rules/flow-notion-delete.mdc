@@ -6,6 +6,7 @@ glossary:
   module: Notion
   operation: delete
   depends: [mod-notion-precondition, mod-notion-crud-framework]
+guard_replaceable: false
 ---
 
 # Notion 删除/归档页面工作流

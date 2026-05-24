@@ -10,6 +10,7 @@ glossary:
     - mod-skills-library-framework.mdc（Skills Library 框架）
     - Skills_Library/config.json（单 Agent 配置）
     - Skills_Library/skill-registry.json（技能注册表）
+guard_replaceable: false
 ---
 
 # 技能开关工作流

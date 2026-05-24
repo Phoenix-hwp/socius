@@ -4,6 +4,7 @@ glossary:
   layer: 3-工作流执行层
   module: Conversation
   depends: [mod-conversation-framework, mod-multi-round-framework, flow-conversation-routing]
+guard_replaceable: false
 ---
 
 # 恢复并续聊流程

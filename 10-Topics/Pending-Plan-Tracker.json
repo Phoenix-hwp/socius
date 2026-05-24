@@ -1,14 +1,24 @@
 {
   "meta": {
-    "description": "待办计划追踪 — 支持备忘关联、每日首次提醒（sessionStart 自动拉取 + 手动 pull）、自动完成检测",
-    "last_reminded": "2026-05-17",
+    "description": "待办计划追踪 — 支持备忘关联、每日首次提醒（手动「待办」指令触发）、自动完成检测。长文本已外迁到 plans/ 目录，JSON 仅保留短标识 + 文件指针。",
+    "last_reminded": "",
+    "data_governance": "符合原则1：description >50字的 plan 已外迁到 10-Topics/plans/<id>.md，JSON 仅存 id + topic + status + file_pointer",
     "reminder_rules": {
-      "overdue": "planned_date <= 今天 + status=pending → 每日首次交互弹窗（多选待办 → 逐项操作：查看备忘/推迟/完成/标记进行中）；sessionStart 自动 fetch/pull 后触发，或手动 pull 后触发，同日跳过",
+      "overdue": "planned_date <= 今天 + status=pending → 每日首次交互弹窗（用户输入「待办」手动触发），同日跳过",
       "upcoming": "planned_date 在未来 3 天 + status=pending → 每日首次交互弹窗合并展示",
       "keyword_match": "对话命中 resume_keywords → 回复末尾追加「⏰ 待办关联」提示（加粗醒目，不阻断）",
       "auto_complete": "收束时检测待办项（pending + in_progress）是否实际完成 → AskQuestion 确认（见 flow-behavior-auto-receipt.mdc 步骤 C#8）",
       "manual_cancel": "'取消待办 Pxxx' 或交互弹窗 [跳过此项] → 不变更 tracker.json（跳过只跳过本次提醒，不取消）",
-      "command": "输入「待办」→ 手动触发待办查看/操作弹窗链（同交互流程）"
+      "command": "输入「待办」→ 手动触发待办查看/操作弹窗链（同交互流程）",
+      "tep_sim_routing": "id 匹配 V012-DRILL-* → flow-v012-drill-bridge.mdc；mark-done 须 pipeline 全链路验收",
+      "cancel_policy": {
+        "rule": "Agent 将待办状态变更为 cancelled 时，必须先用 AskQuestion 向用户确认原因。不得静默取消。",
+        "required_fields": [
+          "cancel_reason"
+        ],
+        "enforcement": "gateway-command-router.mdc + todo_reminder hook 双端拦截",
+        "created": "2026-05-20"
+      }
     },
     "memo_linkage": {
       "direction": "备忘不主动生成待办；用户手动关联；多对一（多待办可指同一备忘）",
@@ -16,247 +26,1578 @@
       "no_auto_write": "待办完成不回写备忘文件，仅更新 tracker.json 状态"
     },
     "pending_fields": {
-      "source_task": "关联的子任务 ID（来自 Active-Task-Tracker），null = 无关联"
+      "source_task": "关联的子任务 ID（来自 Active-Task-Tracker），null = 无关联",
+      "parent_task": "父任务 ID（TEP 拆解的根任务），null = 独立待办。子任务继承父任务的 deadline",
+      "deadline": "最终截止日期（用户指定），null = 无截止约束",
+      "planned_completion": "TEP 计划完成日（deadline - review_gap_days），阶段一计算，阶段四落盘",
+      "review_gap_days": "预留 review 天数（默认：1-3子任务=1天, 4-6=2天, 7+=3天，用户可改）",
+      "estimated_minutes": "预估耗时（分钟），阶段二 LLM#2 输出，阶段三负载检查用",
+      "method": "锁定方法声明（不可变）：一句话描述本步核心方法，连载恢复时注入上下文",
+      "input_from": "上游依赖：数组[{from_task, asset}]。空数组=无依赖",
+      "output_to": "本步产出物路径或键，连载恢复和依赖检查用",
+      "tool_lock": "锁定工具关键词，null = 自由选择"
+    },
+    "vision_fields": {
+      "trigger_condition": "什么事件发生时，此愿景应被重新审视（不主动弹窗提醒，仅在用户说'回顾远期愿景'或系统审计检测到相关能力变更时提示）",
+      "status": "固定为 vision（远期预留，无 planned_date）"
     }
   },
-  "pending": [
+  "vision": [
     {
-      "id": "P002",
-      "topic": "alwaysApply 规则分级 — phase2 安全级引入 severity+task_triggers",
-      "next_action": "设计 severity + task_triggers frontmatter 字段方案，落地到 7 个安全级规则；建立规则间 requires 依赖声明；更新 gateway-command-router.mdc 规则索引",
-      "planned_date": "2026-05-18",
-      "status": "pending",
-      "resume_keywords": [
-        "severity",
-        "task_triggers",
-        "规则分级",
-        "phase2",
-        "安全级",
-        "requires"
-      ],
-      "source_memo": {
-        "path": "System-Capabilities/Rules-Framework/Rules_Memo.md",
-        "entry": "MEMO-001"
-      },
-      "source_task": null
+      "id": "V001",
+      "topic": "执行层情境感知 — activation.md 的协议权重随对话上下文动态调整",
+      "category": "执行层",
+      "status": "vision",
+      "first_seen": "2026-05-18",
+      "source": "议题0边界讨论",
+      "file": "plans/V001.md"
     },
     {
+      "id": "V002",
+      "topic": "Simulation-Sandbox 闭环 — 结果反馈→自动调整策略的回路",
+      "category": "仿真机制",
+      "status": "vision",
+      "first_seen": "2026-05-18",
+      "source": "议题0边界讨论",
+      "file": "plans/V002.md"
+    },
+    {
+      "id": "V003",
+      "topic": "concept-tree related 边加权 — 二值关系→连续权重",
+      "category": "认知层",
+      "status": "vision",
+      "first_seen": "2026-05-18",
+      "source": "议题0边界讨论",
+      "file": "plans/V003.md"
+    },
+    {
+      "id": "V004",
+      "topic": "FSM 升级验证期 + 仿真数据纳入统计",
+      "category": "决策框架",
+      "status": "vision",
+      "first_seen": "2026-05-19",
+      "source": "议题1 讨论",
+      "file": "plans/V004.md"
+    },
+    {
+      "id": "V005",
+      "topic": "规则削减 — Guard 落地后收敛 .mdc 规则体系",
+      "category": "规则体系",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "first_seen": "2026-05-19",
+      "source": "系统全面评价",
+      "file": "plans/V005.md"
+    },
+    {
+      "id": "V006",
+      "topic": "记忆系统统一 — 7 套存储合并为 MemoryStore",
+      "category": "记忆系统",
+      "status": "vision",
+      "first_seen": "2026-05-19",
+      "source": "系统全面评价",
+      "dependencies": [
+        "P050",
+        "P035"
+      ],
+      "file": "plans/V006.md"
+    },
+    {
+      "id": "V007",
+      "topic": "知识脑协议淘汰机制 — kb_validator 追踪指标",
+      "category": "认知层",
+      "status": "vision",
+      "first_seen": "2026-05-19",
+      "source": "系统全面评价",
+      "file": "plans/V007.md"
+    },
+    {
+      "id": "V008",
+      "topic": "去 Cursor 绑定 — 解耦为独立运行时",
+      "category": "架构独立性",
+      "status": "vision",
+      "first_seen": "2026-05-19",
+      "source": "系统全面评价",
+      "file": "plans/V008.md"
+    },
+    {
+      "id": "V009",
+      "topic": "令牌制经验系统 — 强制注入历史经验",
+      "category": "记忆系统",
+      "status": "vision",
+      "first_seen": "2026-05-19",
+      "source": "系统全面评价",
+      "file": "plans/V009.md"
+    },
+    {
+      "id": "V010",
+      "topic": "知识脑协议有效性的「生效≠有用」测量",
+      "category": "认知层",
+      "status": "vision",
+      "first_seen": "2026-05-19",
+      "source": "系统全面评价",
+      "file": "plans/V010.md"
+    },
+    {
+      "id": "V011",
+      "topic": "方案决策管线 — flow-strategy-analyze 全链路串联",
+      "category": "决策框架",
+      "status": "vision",
+      "first_seen": "2026-05-21",
+      "source": "用户洞察",
+      "file": "plans/V011.md"
+    },
+    {
+      "id": "V012",
+      "topic": "渐进式任务执行管线（TEP）— 模糊任务五阶段闭环",
+      "category": "决策框架",
+      "status": "in_progress",
+      "first_seen": "2026-05-21",
+      "source": "用户洞察",
+      "file": "plans/V012.md"
+    }
+  ],
+  "pending": [
+    {
       "id": "P004",
-      "topic": "§5 事后审查兜底 — 审计 P001 落盘中的遗漏并验证修复效果",
-      "next_action": "在下一次 ≥3 文件写入时，验证收束步骤 C #9（§5 兜底检查阻断）是否生效；若再次跳过则分析原因并加固",
-      "planned_date": "2026-05-19",
-      "status": "pending",
+      "topic": "§5 事后审查兜底 — 审计 P001 落盘",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "planned_date": "2026-05-20",
       "resume_keywords": [
         "§5",
         "事后审查",
-        "兜底",
-        "pre-change-impact-enumeration",
-        "遗漏"
+        "pre-change-impact-enumeration"
       ],
       "source_memo": {
         "path": "System-Capabilities/Rules-Framework/Rules_Memo.md",
         "entry": "MEMO-002"
       },
-      "source_task": null
+      "file": "plans/P004.md"
     },
     {
-      "id": "P010",
-      "topic": "知识脑管线验证 — 消化首批 1-3 张 Earth Library 卡片，走完整管线",
-      "next_action": "取 1-3 张 cards.jsonl 中的卡片（非 Domain_Overview），走完整管线：Step0 源分解 -> Step1.5 诠释自检 -> 分类 -> 提炼 -> P1 评断 -> P2 四问闸门 -> Step S 收束自检。验证管线是否顺畅",
-      "planned_date": null,
+      "id": "P026",
+      "topic": "视觉通道阶段2：单图验证 Step 0-V 全链路",
       "status": "pending",
+      "planned_date": "2026-06-15",
       "resume_keywords": [
-        "管线验证",
-        "消化卡片",
-        "P0",
-        "P1",
-        "P2",
-        "Step S",
-        "Earth Library"
+        "视觉通道",
+        "阶段2",
+        "Step 0-V",
+        "visual-bridge",
+        "BPMN"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Knowledge-Brain/KB_Memo.md",
-        "entry": "MEMO-007"
-      },
-      "source_task": null
+      "file": "plans/P026.md"
     },
     {
-      "id": "P011",
-      "topic": "嵌入知识脑前置查询到 task-init-protocol.mdc Step 2-3 之间",
-      "next_action": "在 task-init-protocol.mdc Step 2（结构探针）和 Step 3（方案提案）之间，插入知识脑前置查询步骤：按 task_type + domain 查 activation filter 1 -> 注入相关协议到上下文",
-      "planned_date": null,
+      "id": "P027",
+      "topic": "视觉通道阶段3：回溯补充已有协议 visual_anchor",
       "status": "pending",
+      "planned_date": "2026-06-15",
       "resume_keywords": [
-        "task-init-protocol",
-        "知识脑前置查询",
-        "activation",
-        "Step 2",
-        "Step 3",
-        "嵌入"
+        "视觉通道",
+        "阶段3",
+        "visual_anchor",
+        "BPMN",
+        "UML"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Knowledge-Brain/KB_Memo.md",
-        "entry": "MEMO-007"
-      },
-      "source_task": null
+      "file": "plans/P027.md"
     },
     {
-      "id": "P012",
-      "topic": "审查能力虚拟化方案 — 打通 template-generator 的 L2/L3",
-      "next_action": "1) 审查 Skill 标准接口声明方案（input_schema / output_schema / side_effects / dependencies）；2) 确认 skill-registry.json 改造范围；3) 确定 L2/L3 自动生成的触发条件和映射规则",
-      "planned_date": null,
-      "status": "pending",
+      "id": "P042",
+      "topic": "系统改进 — Guard-Cursor 双轨 RACI 矩阵",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "planned_date": "2026-05-31",
       "resume_keywords": [
-        "能力虚拟化",
-        "Capability Virtualization",
-        "L2",
-        "L3",
-        "template-generator",
-        "skill-registry",
-        "标准接口"
+        "系统目标",
+        "RACI",
+        "Guard"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Knowledge-Brain/KB_Memo.md",
-        "entry": "MEMO-007"
-      },
-      "source_task": null
+      "file": "plans/P042.md"
+    },
+    {
+      "id": "P055",
+      "topic": "L-1 — 批判性思维与论证理论消化",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "planned_date": "2026-05-22",
+      "resume_keywords": [
+        "批判性思维",
+        "Toulmin",
+        "论证模型"
+      ],
+      "file": "plans/P055.md"
+    },
+    {
+      "id": "P056",
+      "topic": "S2-1 — P008 边界裁决仿真（双过程+能力圈）",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "planned_date": "2026-05-23",
+      "resume_keywords": [
+        "边界裁决",
+        "双过程",
+        "能力圈",
+        "S2-1"
+      ],
+      "file": "plans/P056.md"
+    },
+    {
+      "id": "P059",
+      "topic": "L-2 — 组织行为学与群体决策消化",
+      "status": "pending",
+      "planned_date": "2026-05-26",
+      "resume_keywords": [
+        "群体决策",
+        "盲思",
+        "阿比林",
+        "魔鬼代言人"
+      ],
+      "file": "plans/P059.md"
+    },
+    {
+      "id": "P064",
+      "topic": "FSM 修复 — P0 bug + 观察期 + Task-Type 合并",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "planned_date": "2026-05-21",
+      "resume_keywords": [
+        "FSM",
+        "观察期",
+        "probation"
+      ],
+      "file": "plans/P064.md"
+    },
+    {
+      "id": "V012-DRILL-010",
+      "topic": "V012链路练习 — 电商运营：渠道销售数据 PPT + 转化漏斗图",
+      "status": "pending",
+      "planned_date": "2026-05-24",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "电商运营",
+        "DRILL",
+        "010"
+      ],
+      "file": "plans/V012-DRILL-010.md"
+    },
+    {
+      "id": "V012-DRILL-011",
+      "topic": "V012链路练习 — 电商运营：竞品SKU抓取 + 对比表 + 企业微信推送",
+      "status": "pending",
+      "planned_date": "2026-05-24",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "电商运营",
+        "DRILL",
+        "011"
+      ],
+      "file": "plans/V012-DRILL-011.md"
+    },
+    {
+      "id": "V012-DRILL-012",
+      "topic": "V012链路练习 — 数据分析师：用户留存分析报告 PDF（漏斗+趋势折线）",
+      "status": "pending",
+      "planned_date": "2026-05-25",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "数据分析师",
+        "DRILL",
+        "012"
+      ],
+      "file": "plans/V012-DRILL-012.md"
+    },
+    {
+      "id": "V012-DRILL-013",
+      "topic": "V012链路练习 — 数据分析师：社区精华帖抓取 + 知识脑消化入库",
+      "status": "pending",
+      "planned_date": "2026-05-25",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "数据分析师",
+        "DRILL",
+        "013"
+      ],
+      "file": "plans/V012-DRILL-013.md"
+    },
+    {
+      "id": "V012-DRILL-014",
+      "topic": "V012链路练习 — 产品经理：用户反馈智能分类工具 PRD + 系统架构图 DOCX",
+      "status": "pending",
+      "planned_date": "2026-05-26",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "产品经理",
+        "DRILL",
+        "014"
+      ],
+      "file": "plans/V012-DRILL-014.md"
+    },
+    {
+      "id": "V012-DRILL-015",
+      "topic": "V012链路练习 — 产品经理：下季度 Roadmap — Notion需求→优先级排序→PDF+PPTX",
+      "status": "pending",
+      "planned_date": "2026-05-26",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "产品经理",
+        "DRILL",
+        "015"
+      ],
+      "file": "plans/V012-DRILL-015.md"
+    },
+    {
+      "id": "V012-DRILL-016",
+      "topic": "V012链路练习 — 项目经理：项目周报 — Notion任务进度→XLSX燃尽数据→PDF周报",
+      "status": "pending",
+      "planned_date": "2026-05-27",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "项目经理",
+        "DRILL",
+        "016"
+      ],
+      "file": "plans/V012-DRILL-016.md"
+    },
+    {
+      "id": "V012-DRILL-017",
+      "topic": "V012链路练习 — 项目经理：研发协作流程现状→Spotify-Squad改进 + 迁移计划 + 钉钉推送",
+      "status": "pending",
+      "planned_date": "2026-05-27",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "项目经理",
+        "DRILL",
+        "017"
+      ],
+      "file": "plans/V012-DRILL-017.md"
+    },
+    {
+      "id": "V012-DRILL-018",
+      "topic": "V012链路练习 — HR：入职手册更新 — DOCX原手册+Notion新制度→新版PDF",
+      "status": "pending",
+      "planned_date": "2026-05-28",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "HR",
+        "DRILL",
+        "018"
+      ],
+      "file": "plans/V012-DRILL-018.md"
+    },
+    {
+      "id": "V012-DRILL-019",
+      "topic": "V012链路练习 — HR：四天工作制调研 — 劳动法+企业案例+海外数据→知识卡片入库",
+      "status": "pending",
+      "planned_date": "2026-05-28",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "HR",
+        "DRILL",
+        "019"
+      ],
+      "file": "plans/V012-DRILL-019.md"
+    },
+    {
+      "id": "V012-DRILL-020",
+      "topic": "V012链路练习 — 客服：月度投诉分类统计 — Notion工单→饼图+XLSX热力表",
+      "status": "pending",
+      "planned_date": "2026-05-29",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "客服",
+        "DRILL",
+        "020"
+      ],
+      "file": "plans/V012-DRILL-020.md"
+    },
+    {
+      "id": "V012-DRILL-021",
+      "topic": "V012链路练习 — 客服：竞品FAQ抓取+对比文档+知识卡片入库+企业微信推送",
+      "status": "pending",
+      "planned_date": "2026-05-29",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "客服",
+        "DRILL",
+        "021"
+      ],
+      "file": "plans/V012-DRILL-021.md"
+    },
+    {
+      "id": "V012-DRILL-022",
+      "topic": "V012链路练习 — 研发人员：用户反馈分类工具 MVP — TDD+代码审查+Swagger文档",
+      "status": "pending",
+      "planned_date": "2026-05-30",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "研发人员",
+        "DRILL",
+        "022"
+      ],
+      "file": "plans/V012-DRILL-022.md"
+    },
+    {
+      "id": "V012-DRILL-023",
+      "topic": "V012链路练习 — 研发人员：CI流水线排障修复 + 回归测试 + Postmortem报告",
+      "status": "pending",
+      "planned_date": "2026-05-30",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "研发人员",
+        "DRILL",
+        "023"
+      ],
+      "file": "plans/V012-DRILL-023.md"
     }
   ],
   "archive": [
     {
+      "id": "P002",
+      "topic": "alwaysApply 规则分级 — phase2 安全级引入 trigger",
+      "status": "completed",
+      "completed_date": "2026-05-18",
+      "resume_keywords": [
+        "severity",
+        "task_triggers",
+        "规则分级"
+      ],
+      "file": "plans/P002.md"
+    },
+    {
+      "id": "P010",
+      "topic": "知识脑管线验证 — 消化首批 Earth Library 卡片",
+      "status": "completed",
+      "completed_date": "2026-05-17",
+      "resume_keywords": [
+        "管线验证",
+        "消化卡片",
+        "P0"
+      ],
+      "file": "plans/P010.md"
+    },
+    {
+      "id": "P011",
+      "topic": "嵌入知识脑前置查询到 task-init-protocol Step 2-KB",
+      "status": "completed",
+      "completed_date": "2026-05-17",
+      "resume_keywords": [
+        "task-init-protocol",
+        "知识脑前置查询"
+      ],
+      "file": "plans/P011.md"
+    },
+    {
       "id": "P003",
-      "topic": "数据治理宪法 — 核心数据迁移（cards.jsonl → .md + relations.jsonl 瘦身 + library_index 清理）",
-      "next_action": "取消原因：卡片体系已迁移为知识脑协议，Earth Library 目录已被移除",
-      "planned_date": "2026-05-25",
+      "topic": "数据治理宪法 — 核心数据迁移",
       "status": "cancelled",
+      "completed_date": "2026-05-17",
       "resume_keywords": [
         "cards.jsonl",
         "数据治理",
-        "宪法",
-        "迁移",
-        "relations.jsonl",
-        "双轨"
+        "迁移"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Data-Governance/DG_Memo.md",
-        "entry": "MEMO-003"
-      },
-      "source_task": null,
-      "completed_date": "2026-05-17"
+      "file": "plans/P003.md"
     },
     {
       "id": "P001",
       "topic": "alwaysApply 规则分级 — phase1 条件级降级",
-      "next_action": "降级 3 个条件级规则（notion-precondition / notion-crud-framework / post-git-pull），alwaysApply: true → false",
-      "planned_date": "2026-05-13",
       "status": "completed",
       "completed_date": "2026-05-13",
       "resume_keywords": [
         "alwaysApply",
         "规则分级",
-        "审计",
-        "条件级"
+        "审计"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Rules-Framework/Rules_Memo.md",
-        "entry": "MEMO-001"
-      },
-      "source_task": null
+      "file": "plans/P001.md"
     },
     {
       "id": "P007",
-      "topic": "四个架构扩展方向深化讨论 — 能力虚拟化 / 语义关系图 / 决策偏好模型 / 任务排期",
-      "next_action": "1) 确认四个方向各自的第一阶段动作和排期；2) 判断是否需要为每个方向新建独立待办；3) 决策偏好模型的\"红线清单\"初步设计；4) 任务排期封装为 skill 的边界确认",
-      "planned_date": "2026-05-14",
+      "topic": "四个架构扩展方向深化讨论",
       "status": "completed",
       "completed_date": "2026-05-14",
       "resume_keywords": [
         "能力虚拟化",
         "语义关系图",
-        "决策偏好",
-        "扩展方向",
-        "Capability",
-        "Semantic",
-        "Decision",
-        "任务排期",
-        "Pending-Plan-Tracker",
-        "MEMO-004"
+        "决策偏好"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Decision-Framework/DF_Memo.md",
-        "entry": "MEMO-004"
-      },
-      "source_task": null
+      "file": "plans/P007.md"
     },
     {
       "id": "P008",
-      "topic": "权限决策框架 — mod-decision-framework 落地：7 维度 + L0-L3 推导 + FSM + 任务父子 schema 预留 + 拆解日志预留",
-      "next_action": "mod-decision-framework.mdc 已创建（含 7 维度定义 + 双轨制 + max() + FSM + 任务判类 + 递归自相似 + 决策日志 + 命令级嵌套）→ gateway-command-router.mdc Step 0.2 已注入评估入口 → task-init-protocol.mdc 已补入递归自相似 + P008 嵌入点",
-      "planned_date": "2026-05-15",
+      "topic": "权限决策框架 — mod-decision-framework 落地",
       "status": "completed",
       "completed_date": "2026-05-15",
       "resume_keywords": [
         "decision framework",
-        "决策框架",
-        "L0",
-        "L3",
-        "维度",
-        "权限",
         "FSM",
-        "任务分解",
-        "decomposition",
-        "拆解",
-        "排期",
-        "parent",
-        "child"
+        "L0",
+        "L3"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Decision-Framework/DF_Memo.md",
-        "entry": "MEMO-004"
-      },
-      "source_task": null
+      "file": "plans/P008.md"
     },
     {
       "id": "P005",
-      "topic": "数据治理宪法 — Behavior-Fit-Log.jsonl 双格式统一（legacy → compact）",
-      "next_action": "1) 审计 10-Topics/Behavior-Fit-Log.jsonl 中所有 legacy 格式行；2) 设计 compact 格式的完整字段集合（含可选字段用 null）；3) 迁移所有 legacy 行到 compact 行式；4) 更新 flow-behavior-auto-receipt.mdc 中写入逻辑保证后续统一",
-      "planned_date": "2026-05-16",
+      "topic": "数据治理宪法 — Behavior-Fit-Log 双格式统一",
       "status": "completed",
+      "completed_date": "2026-05-15",
       "resume_keywords": [
         "Behavior-Fit-Log",
         "格式统一",
-        "legacy",
-        "compact",
-        "JSONL",
-        "双格式"
+        "legacy"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Data-Governance/DG_Memo.md",
-        "entry": "MEMO-003"
-      },
-      "source_task": null,
-      "completed_date": "2026-05-15"
+      "file": "plans/P005.md"
     },
     {
       "id": "P006",
-      "topic": "数据治理宪法 — .md frontmatter 命名风格统一（title vs Title / created vs Created）",
-      "next_action": "1) 扫描全库 .md/.mdc 文件 frontmatter 字段命名，统计 title/Title、created/Created 等分布；2) 选定一种命名风格（建议首字母大写）；3) 批量统一所有文件 frontmatter 字段名；4) 更新所有规则中引用的 frontmatter 字段名",
-      "planned_date": "2026-05-16",
+      "topic": "数据治理宪法 — .md frontmatter 命名统一",
       "status": "completed",
+      "completed_date": "2026-05-16",
       "resume_keywords": [
         "frontmatter",
         "命名",
-        "统一",
-        "title",
-        "created",
-        "大写"
+        "统一"
       ],
-      "source_memo": {
-        "path": "System-Capabilities/Data-Governance/DG_Memo.md",
-        "entry": "MEMO-003"
-      },
-      "source_task": null,
-      "completed_date": "2026-05-16"
+      "file": "plans/P006.md"
+    },
+    {
+      "id": "P013",
+      "topic": "知识脑补缺：系统思维 — 系统基模+因果回路图+杠杆点",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "系统思维",
+        "系统基模",
+        "因果回路图"
+      ],
+      "file": "plans/P013.md"
+    },
+    {
+      "id": "P014",
+      "topic": "知识脑补缺：决策框架 — Cynefin+决策树+RACI",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "Cynefin",
+        "决策树",
+        "贝叶斯",
+        "RACI"
+      ],
+      "file": "plans/P014.md"
+    },
+    {
+      "id": "P028",
+      "topic": "Guard MVP v0.1 — P008 引擎核心",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "P008",
+        "Guard",
+        "决策引擎"
+      ],
+      "file": "plans/P028.md"
+    },
+    {
+      "id": "P044",
+      "topic": "T05 技能评估复审 — 仿真数据积累后重启",
+      "status": "pending",
+      "planned_date": "2026-05-28",
+      "resume_keywords": [
+        "技能评估",
+        "T05",
+        "skill-evaluation"
+      ],
+      "file": "plans/P044.md"
+    },
+    {
+      "id": "P029",
+      "topic": "Guard MVP v0.1 — P008 FSM + 单元测试",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "FSM",
+        "状态机",
+        "升级降级"
+      ],
+      "file": "plans/P029.md"
+    },
+    {
+      "id": "P030",
+      "topic": "Guard MVP v0.1 — 安全闸门：高风险拦截器",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "安全闸门",
+        "高风险",
+        "safety_gate"
+      ],
+      "file": "plans/P030.md"
+    },
+    {
+      "id": "P031",
+      "topic": "Guard MVP v0.2 — 约束引擎：Schema + 工具选择器",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "约束引擎",
+        "工具选择器",
+        "device_neutralizer"
+      ],
+      "file": "plans/P031.md"
+    },
+    {
+      "id": "P032",
+      "topic": "Guard MVP v0.2 — 注入引擎：三 LLM 上下文构造器",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "注入引擎",
+        "context_builder",
+        "InjectionContext"
+      ],
+      "file": "plans/P032.md"
+    },
+    {
+      "id": "P033",
+      "topic": "Guard MVP v0.3 — 客观反馈引擎",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "客观反馈",
+        "协议评估",
+        "工具可靠性"
+      ],
+      "file": "plans/P033.md"
+    },
+    {
+      "id": "P034",
+      "topic": "Guard MVP v0.3 — 集成测试 + 状态持久化",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "集成测试",
+        "状态持久化",
+        "多次采样"
+      ],
+      "file": "plans/P034.md"
+    },
+    {
+      "id": "P043",
+      "topic": "task-init-protocol Step 1 Cynefin 轻量判域",
+      "status": "completed",
+      "completed_date": "2026-05-20",
+      "resume_keywords": [
+        "Cynefin",
+        "task-init-protocol",
+        "判域"
+      ],
+      "file": "plans/P043.md"
+    },
+    {
+      "id": "P045",
+      "topic": "P012 前置 — template-generator L1 使用数据积累",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "template-generator",
+        "L1",
+        "activation-log"
+      ],
+      "file": "plans/P045.md"
+    },
+    {
+      "id": "P046",
+      "topic": "Guard 前置 — 写 TG 任务池 task-pool.json",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "task-pool.json",
+        "任务池"
+      ],
+      "file": "plans/P046.md"
+    },
+    {
+      "id": "P047",
+      "topic": "Guard 前置 — TG-001 仿真（P008 边界裁决）",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "dependencies": [
+        "P046"
+      ],
+      "resume_keywords": [
+        "TG-001",
+        "P008",
+        "边界裁决"
+      ],
+      "file": "plans/P047.md"
+    },
+    {
+      "id": "P048",
+      "topic": "Guard 前置 — TG-002 仿真（高风险审计）",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "dependencies": [
+        "P046",
+        "P047"
+      ],
+      "resume_keywords": [
+        "TG-002",
+        "高危",
+        "FSM降级"
+      ],
+      "file": "plans/P048.md"
+    },
+    {
+      "id": "P049",
+      "topic": "Guard 前置 — 汇总 TG-001/002 → 跨类型决策样本",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "dependencies": [
+        "P047",
+        "P048"
+      ],
+      "resume_keywords": [
+        "决策样本",
+        "跨类型"
+      ],
+      "file": "plans/P049.md"
+    },
+    {
+      "id": "P050",
+      "topic": "V006 前置 — M0 统一经验索引",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "经验索引",
+        "experience-index",
+        "V006"
+      ],
+      "file": "plans/P050.md"
+    },
+    {
+      "id": "P015",
+      "topic": "知识脑补缺：沟通 — MECE + 金字塔补全 + SUCCES",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "MECE",
+        "金字塔原理",
+        "SUCCES"
+      ],
+      "file": "plans/P015.md"
+    },
+    {
+      "id": "P040",
+      "topic": "知识消化流程补全 — 4 输出端审视 + Step R 自检",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "Step R",
+        "自检",
+        "digest-log"
+      ],
+      "file": "plans/P040.md"
+    },
+    {
+      "id": "P016",
+      "topic": "知识脑补缺：数据建模 — ER + 维度建模 + LATCH",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "ER图",
+        "维度建模",
+        "LATCH"
+      ],
+      "file": "plans/P016.md"
+    },
+    {
+      "id": "P041",
+      "topic": "系统改进 — guard_replaceable 标注 + 规则削减审计",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "转移负担",
+        "guard_replaceable",
+        "规则削减"
+      ],
+      "file": "plans/P041.md"
+    },
+    {
+      "id": "P017",
+      "topic": "知识脑补缺：质量改进 — PDCA + 5Whys + TOC",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "PDCA",
+        "5Whys",
+        "约束理论",
+        "TOC"
+      ],
+      "file": "plans/P017.md"
+    },
+    {
+      "id": "P012",
+      "topic": "能力虚拟化 Phase 2 — template-generator L2/L3 + 入口路由",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "dependencies": [
+        "P045"
+      ],
+      "resume_keywords": [
+        "能力虚拟化",
+        "L2",
+        "L3",
+        "template-generator"
+      ],
+      "file": "plans/P012.md"
+    },
+    {
+      "id": "P035",
+      "topic": "Guard — Cursor 集成：CLI + 双轨过渡",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "Cursor集成",
+        "CLI",
+        "双轨过渡"
+      ],
+      "file": "plans/P035.md"
+    },
+    {
+      "id": "P036",
+      "topic": "Guard — 断档处理：中断恢复 + 降级 + 冷启动",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "断档处理",
+        "中断恢复",
+        "降级策略"
+      ],
+      "file": "plans/P036.md"
+    },
+    {
+      "id": "P037",
+      "topic": "Guard — 跨设备一致性测试",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "跨设备",
+        "一致性测试",
+        "device_neutralizer"
+      ],
+      "file": "plans/P037.md"
+    },
+    {
+      "id": "P038",
+      "topic": "Guard — 文档 + 使用指南 + 全链路验收",
+      "status": "completed",
+      "completed_date": "2026-05-21",
+      "resume_keywords": [
+        "文档",
+        "README",
+        "使用指南"
+      ],
+      "file": "plans/P038.md"
+    },
+    {
+      "id": "P061",
+      "topic": "P008 D维度 — 论证完整性检查（Toulmin 6 要素）",
+      "status": "completed",
+      "completed_date": "2026-05-22",
+      "resume_keywords": [
+        "Toulmin",
+        "D维度",
+        "六要素"
+      ],
+      "file": "plans/P061.md"
+    },
+    {
+      "id": "P062",
+      "topic": "SafetyGate — ARS 轻量论证评估",
+      "status": "completed",
+      "completed_date": "2026-05-22",
+      "resume_keywords": [
+        "ARS",
+        "SafetyGate",
+        "论证评估"
+      ],
+      "file": "plans/P062.md"
+    },
+    {
+      "id": "P063",
+      "topic": "Lollapalooza 因子库 — 复用逻辑谬误分类",
+      "status": "completed",
+      "completed_date": "2026-05-22",
+      "resume_keywords": [
+        "Lollapalooza",
+        "因子库",
+        "逻辑谬误"
+      ],
+      "file": "plans/P063.md"
+    },
+    {
+      "id": "P066",
+      "topic": "CP-128 机会成本 — TIP Step 3 + P008 V 维度",
+      "status": "completed",
+      "completed_date": "2026-05-22",
+      "resume_keywords": [
+        "机会成本",
+        "opportunity_cost",
+        "V维度"
+      ],
+      "file": "plans/P066.md"
+    },
+    {
+      "id": "P065",
+      "topic": "仿真批量造数 — Phase 5 FSM 数据填充（15 任务）",
+      "status": "completed",
+      "completed_date": "2026-05-22",
+      "resume_keywords": [
+        "仿真批量",
+        "FSM数据",
+        "Phase5"
+      ],
+      "file": "plans/P065.md"
+    },
+    {
+      "id": "V012-DRILL-001",
+      "topic": "V012链路练习 — 模糊需求：周报 PDF",
+      "status": "completed",
+      "planned_date": "2026-05-24",
+      "parent_task": "V012",
+      "resume_keywords": [
+        "V012",
+        "链路",
+        "周报",
+        "DRILL"
+      ],
+      "file": "plans/V012-DRILL-001.md",
+      "completed_date": "2026-05-23"
+    },
+    {
+      "id": "P057",
+      "topic": "S2-2 — Lollapalooza 检测器设计仿真",
+      "status": "completed",
+      "planned_date": "2026-05-24",
+      "resume_keywords": [
+        "Lollapalooza",
+        "检测器",
+        "因子叠加",
+        "S2-2"
+      ],
+      "file": "plans/P057.md",
+      "completed_date": "2026-05-23"
+    },
+    {
+      "id": "P067",
+      "topic": "仿真练习全链路闭环 — V012-DRILL 系列逐任务推进",
+      "status": "in_progress",
+      "planned_date": "2026-05-30",
+      "parent_task": null,
+      "resume_keywords": [
+        "仿真练习",
+        "V012-DRILL",
+        "全链路闭环",
+        "TEP"
+      ],
+      "file": "plans/P067.md",
+      "first_seen": "2026-05-24",
+      "source": "用户决定 — 双主线之一"
+    },
+    {
+      "id": "S1-001",
+      "topic": "跑通 V012-DRILL 全链路闭环（端到端首轮验证）— DRILL-010",
+      "status": "pending",
+      "planned_date": "2026-05-24",
+      "parent_task": "P067",
+      "resume_keywords": [
+        "仿真",
+        "全链路",
+        "端到端",
+        "DRILL-010"
+      ],
+      "file": "plans/P067.md",
+      "source_task": "P067",
+      "deadline": null,
+      "estimated_minutes": 60,
+      "method": "执行 V012-DRILL-010 完整管线：模糊需求→槽位发现→交互补全→拆解排期→逐步执行→pipeline 验收",
+      "input_from": [],
+      "output_to": "Simulation-Sandbox/V012-DRILL-010/",
+      "tool_lock": null
+    },
+    {
+      "id": "S1-002",
+      "topic": "仿真沙箱反馈回路 — 基于 S1-001 反馈调整策略 → DRILL-011",
+      "status": "pending",
+      "planned_date": "2026-05-27",
+      "parent_task": "P067",
+      "resume_keywords": [
+        "反馈回路",
+        "策略调整",
+        "DRILL-011"
+      ],
+      "file": "plans/P067.md",
+      "source_task": "P067",
+      "deadline": null,
+      "estimated_minutes": 60,
+      "method": "对比前后两轮 slot_discovery_rate / question_efficiency → 调整探索激进程度 → 再跑 DRILL-011",
+      "input_from": [{"from_task": "S1-001", "asset": "Simulation-Sandbox/V012-DRILL-010/"}],
+      "output_to": "Simulation-Sandbox/V012-DRILL-011/",
+      "tool_lock": null
+    },
+    {
+      "id": "S1-003",
+      "topic": "V012-DRILL-012~013 数据分析师角色双任务并行",
+      "status": "pending",
+      "planned_date": "2026-05-28",
+      "parent_task": "P067",
+      "resume_keywords": [
+        "数据分析师",
+        "留存分析",
+        "DRILL-012",
+        "DRILL-013"
+      ],
+      "file": "plans/P067.md",
+      "source_task": "P067",
+      "deadline": null,
+      "estimated_minutes": 90,
+      "method": "双任务并行执行 DRILL-012（留存分析报告 PDF）+ DRILL-013（社区精华帖抓取+知识脑消化）",
+      "input_from": [],
+      "output_to": "Simulation-Sandbox/V012-DRILL-012/ + Simulation-Sandbox/V012-DRILL-013/",
+      "tool_lock": null
+    },
+    {
+      "id": "S1-004",
+      "topic": "V012-DRILL-014~015 产品经理角色多格式产出",
+      "status": "pending",
+      "planned_date": "2026-05-29",
+      "parent_task": "P067",
+      "resume_keywords": [
+        "产品经理",
+        "PRD",
+        "DOCX",
+        "DRILL-014",
+        "DRILL-015"
+      ],
+      "file": "plans/P067.md",
+      "source_task": "P067",
+      "deadline": null,
+      "estimated_minutes": 90,
+      "method": "双任务并行执行 DRILL-014（PRD + 架构图 DOCX）+ DRILL-015（Roadmap Notion→PDF+PPTX）",
+      "input_from": [],
+      "output_to": "Simulation-Sandbox/V012-DRILL-014/ + Simulation-Sandbox/V012-DRILL-015/",
+      "tool_lock": null
+    },
+    {
+      "id": "S1-005",
+      "topic": "V012-DRILL-016~018 项目经理角色全链路覆盖",
+      "status": "pending",
+      "planned_date": "2026-05-30",
+      "parent_task": "P067",
+      "resume_keywords": [
+        "项目经理",
+        "XLSX",
+        "燃尽图",
+        "DRILL-016"
+      ],
+      "file": "plans/P067.md",
+      "source_task": "P067",
+      "deadline": null,
+      "estimated_minutes": 60,
+      "method": "执行 DRILL-016（Notion→XLSX燃尽数据→PDF周报）及后续 DRILLs",
+      "input_from": [],
+      "output_to": "Simulation-Sandbox/V012-DRILL-016/",
+      "tool_lock": null
+    },
+    {
+      "id": "P068",
+      "topic": "框架迁移剥离 Cursor 依赖 — 渐进式原地重构 + GitHub 开源准备",
+      "status": "in_progress",
+      "planned_date": "2026-06-05",
+      "parent_task": null,
+      "resume_keywords": [
+        "迁移",
+        "剥离",
+        "Cursor",
+        "适配器",
+        "GitHub",
+        "开源"
+      ],
+      "file": "plans/P068.md",
+      "first_seen": "2026-05-24",
+      "source": "用户决定 — 双主线之二"
+    },
+    {
+      "id": "M2-0a",
+      "topic": "Git 基线 + 分支 — 连通本地仓库 + 建 refactor/core-migration 分支",
+      "status": "pending",
+      "planned_date": "2026-05-24",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "Git",
+        "基线",
+        "分支",
+        "refactor"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 15,
+      "method": "git 暂存未提交内容 → 基线 commit → git checkout -b refactor/core-migration",
+      "input_from": [],
+      "output_to": "git branch refactor/core-migration",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-0b",
+      "topic": "建新区结构 — core/ + adapters/ + pyproject.toml",
+      "status": "pending",
+      "planned_date": "2026-05-24",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "新区",
+        "core",
+        "adapters",
+        "pyproject"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "创建 core/adapter_interfaces.py（6 个 Protocol）+ core/__init__.py + adapters/cursor/ + pyproject.toml",
+      "input_from": [],
+      "output_to": "core/adapter_interfaces.py",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-0c",
+      "topic": "接口文档 — adapter_interfaces.py docstring + 各平台实现示例",
+      "status": "pending",
+      "planned_date": "2026-05-25",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "接口文档",
+        "docstring",
+        "实现示例"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 45,
+      "method": "为 IModelProvider 等 6 个接口写 docstring + Cursor/VS Code/Docker 实现示例",
+      "input_from": [{"from_task": "M2-0b", "asset": "core/adapter_interfaces.py"}],
+      "output_to": "core/adapter_interfaces.py",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-1a",
+      "topic": "搬冷文件 — .cursor/tools/ + hooks + mcp → adapters/cursor/",
+      "status": "pending",
+      "planned_date": "2026-05-25",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "冷文件",
+        "tools",
+        "hooks",
+        "mcp"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "移动 .cursor/tools/ hooks/ mcp/ → adapters/cursor/，更新路径引用，验证 sessionStart 钩子",
+      "input_from": [],
+      "output_to": "adapters/cursor/",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-1b",
+      "topic": "搬 Knowledge-Brain → core/knowledge/（⚠ 影响仿真）",
+      "status": "pending",
+      "planned_date": "2026-05-26",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "Knowledge-Brain",
+        "knowledge",
+        "认知引擎"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 45,
+      "method": "移动 Knowledge-Brain/ 全部内容 → core/knowledge/，更新所有规则/脚本中的路径引用，验协议激活链",
+      "input_from": [],
+      "output_to": "core/knowledge/",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-1c",
+      "topic": "protocols/ 独立到仓库根",
+      "status": "pending",
+      "planned_date": "2026-05-27",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "protocols",
+        "独立",
+        "一级目录"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "Knowledge-Brain/protocols/ → protocols/，更新所有引用路径，旧路径保留符号链接",
+      "input_from": [{"from_task": "M2-1b", "asset": "core/knowledge/"}],
+      "output_to": "protocols/",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-1d",
+      "topic": "拆 10-Topics → core/data/ + plans/ + docs/ + inbox/（⚠ 影响仿真数据路径）",
+      "status": "pending",
+      "planned_date": "2026-05-28",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "10-Topics",
+        "拆解",
+        "data",
+        "plans"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 60,
+      "method": "数据文件→core/data/，计划→plans/，用户文档→docs/，临时笔记→inbox/，Cursor 专属→adapters/cursor/。更新仿真链路所有数据文件读写路径",
+      "input_from": [],
+      "output_to": "core/data/ + plans/ + docs/ + inbox/",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-1e",
+      "topic": "搬 Skills_Library → core/skills/",
+      "status": "pending",
+      "planned_date": "2026-05-29",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "Skills_Library",
+        "skills",
+        "技能库"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "Skills_Library/skills/ + scripts/ + skill-registry.json → core/skills/",
+      "input_from": [],
+      "output_to": "core/skills/",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-2a",
+      "topic": "实现 CursorAdapter — 6 个接口的 Cursor 平台实现",
+      "status": "pending",
+      "planned_date": "2026-05-30",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "CursorAdapter",
+        "接口实现",
+        "胶水层"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 60,
+      "method": "adapters/cursor/__init__.py 实现 IModelProvider / IRuleEngine / IToolProvider / IHookBus / ISkillLoader / IUserInteraction",
+      "input_from": [{"from_task": "M2-0b", "asset": "core/adapter_interfaces.py"}],
+      "output_to": "adapters/cursor/__init__.py",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-2b",
+      "topic": "验证 Cursor 版本全流程不退化",
+      "status": "pending",
+      "planned_date": "2026-05-31",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "验证",
+        "不退化",
+        "Cursor"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "跑一次完整 TIP 任务，确认 sessionStart/规则加载/AskQuestion 均正常",
+      "input_from": [{"from_task": "M2-2a", "asset": "adapters/cursor/__init__.py"}],
+      "output_to": null,
+      "tool_lock": null
+    },
+    {
+      "id": "M2-3a",
+      "topic": "上下文构建器 — 替代 Cursor alwaysApply 规则注入",
+      "status": "pending",
+      "planned_date": "2026-06-01",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "上下文构建器",
+        "ContextBuilder",
+        "alwaysApply"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 60,
+      "method": "新建 core/context_builder.py，组装 rules/protocols/data → 注入 prompt，替代 Cursor 隐式注入",
+      "input_from": [],
+      "output_to": "core/context_builder.py",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-3b",
+      "topic": "classifier.md 重构 — 显式调用 IModelProvider.complete()",
+      "status": "pending",
+      "planned_date": "2026-06-01",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "classifier",
+        "重构",
+        "IModelProvider"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 45,
+      "method": "将 classifier 的六类分类逻辑改为显式调用 IModelProvider.complete(prompt)，替代隐式 Agent 上下文推理",
+      "input_from": [{"from_task": "M2-3a", "asset": "core/context_builder.py"}],
+      "output_to": "core/knowledge/classifier.md",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-3c",
+      "topic": "synthesizer.md 重构 — 显式调用 IModelProvider.complete_json()",
+      "status": "pending",
+      "planned_date": "2026-06-02",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "synthesizer",
+        "重构",
+        "complete_json"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 45,
+      "method": "将 synthesizer 的矛盾检测/空白标注逻辑改为显式调用 IModelProvider.complete_json(prompt, schema=...)",
+      "input_from": [{"from_task": "M2-3a", "asset": "core/context_builder.py"}],
+      "output_to": "core/knowledge/synthesizer.md",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-3d",
+      "topic": "其他认知管线重构 — activation / template-generator 等",
+      "status": "pending",
+      "planned_date": "2026-06-02",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "activation",
+        "template-generator",
+        "管线重构"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 60,
+      "method": "逐一检查 activation.md / template-generator.md / extract-templates.md 等 → 改为显式 IModelProvider 调用",
+      "input_from": [{"from_task": "M2-3b", "asset": "core/knowledge/classifier.md"}],
+      "output_to": "core/knowledge/",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-4a",
+      "topic": "Cursor 双轨验证 — CursorAdapter vs 直接 Agent 调用的行为等价性",
+      "status": "pending",
+      "planned_date": "2026-06-03",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "双轨验证",
+        "行为等价性"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "CursorAdapter 下跑一次完整 TIP 流程，对比 IModelProvider 路径 vs 直接 Agent 调用的输出是否一致",
+      "input_from": [{"from_task": "M2-2b", "asset": "adapters/cursor/__init__.py"}, {"from_task": "M2-3d", "asset": "core/knowledge/"}],
+      "output_to": null,
+      "tool_lock": null
+    },
+    {
+      "id": "M2-4b",
+      "topic": "独立运行验证 — phoenix run CLI 不依赖 Cursor 执行任务",
+      "status": "pending",
+      "planned_date": "2026-06-03",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "独立运行",
+        "CLI",
+        "phoenix run"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "phoenix run 简单任务，验证 IModelProvider（Ollama/LM Studio）可工作",
+      "input_from": [{"from_task": "M2-4a", "asset": null}],
+      "output_to": null,
+      "tool_lock": null
+    },
+    {
+      "id": "M2-4c",
+      "topic": "merge main — refactor/core-migration 合入 main 分支",
+      "status": "pending",
+      "planned_date": "2026-06-04",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "merge",
+        "main",
+        "合入"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 15,
+      "method": "git checkout main → git merge refactor/core-migration，确认仿真练习产物不受影响",
+      "input_from": [{"from_task": "M2-4b", "asset": null}],
+      "output_to": "git branch main (updated)",
+      "tool_lock": "git"
+    },
+    {
+      "id": "M2-5a",
+      "topic": "README + LICENSE + CONTRIBUTING.md 开源三件套",
+      "status": "pending",
+      "planned_date": "2026-06-04",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "README",
+        "LICENSE",
+        "CONTRIBUTING"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "编写 README（架构图+快速开始+接口说明）+ MIT LICENSE + CONTRIBUTING（开发环境配置+PR 流程）",
+      "input_from": [],
+      "output_to": "README.md + LICENSE + CONTRIBUTING.md",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-5b",
+      "topic": "Dockerfile + docker-compose.yml 最小可运行版本",
+      "status": "pending",
+      "planned_date": "2026-06-05",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "Docker",
+        "Dockerfile",
+        "compose"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": "编写 Dockerfile（Python+Node.js 双运行时）+ docker-compose.yml（phoenix-core + Ollama/LM Studio）",
+      "input_from": [],
+      "output_to": "Dockerfile + docker-compose.yml",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-5c",
+      "topic": "GitHub Actions CI — test + lint",
+      "status": "pending",
+      "planned_date": "2026-06-05",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "CI",
+        "GitHub Actions",
+        "test"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 30,
+      "method": ".github/workflows/ci.yml（pytest + ruff lint），pull_request 触发",
+      "input_from": [],
+      "output_to": ".github/workflows/ci.yml",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-5d",
+      "topic": "PyPI 发布 pipeline",
+      "status": "pending",
+      "planned_date": "2026-06-05",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "PyPI",
+        "发布",
+        "pip"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 20,
+      "method": "pyproject.toml 配置 build system + twine 发布脚本 + GitHub Actions publish workflow（tag 触发）",
+      "input_from": [],
+      "output_to": "pyproject.toml",
+      "tool_lock": null
+    },
+    {
+      "id": "M2-5e",
+      "topic": "push to GitHub — 首次推送开源仓库",
+      "status": "pending",
+      "planned_date": "2026-06-06",
+      "parent_task": "P068",
+      "resume_keywords": [
+        "push",
+        "GitHub",
+        "开源"
+      ],
+      "file": "plans/P068.md",
+      "source_task": "P068",
+      "deadline": null,
+      "estimated_minutes": 15,
+      "method": "git remote add origin <github-url> → git push -u origin main",
+      "input_from": [{"from_task": "M2-5a", "asset": "README.md"}, {"from_task": "M2-5c", "asset": ".github/workflows/ci.yml"}],
+      "output_to": "GitHub 仓库",
+      "tool_lock": "git"
     }
   ]
 }

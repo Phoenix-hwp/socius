@@ -12,6 +12,15 @@ glossary:
     - flow-high-risk-safety.mdc（高风险操作防护）
     - flow-skill-execute.mdc（技能执行工作流）
   - .cursor/method-reliability-registry.json（方法可靠性注册表）
+guard_replaceable: false
+guard_replaceable: false
+  pipeline_markers:
+    rule: "Agent 在技能获取的**每个阶段(A-F)完成后**必须在回复末尾输出 `[✓ Stage_ID]` 标记。所有 6 阶段(Sections A-F)均为 required=true——Guard 下次启动时自动扫描缺失标记并阻断。"
+    close_check: "**收束前自检（强制）**：在最后一步 F（确认部署）前，Agent 必须回溯检查前面 5 阶段（A/B/C/D/E）是否均有完成标记。若有缺失 → 补充 `[✓ Stage_ID]（补标）` 后执行 F。"
+    format:
+      done: "[✓ A]" / "[✓ B]" / ...
+      skip: "[⏭ A: reason]"
+    definitions: ".cursor/workflow-definitions.json → skill_acquire"
 ---
 
 # 技能获取工作流

@@ -37,7 +37,7 @@ related:
 
 | 名称 | 分类 | Stars | 准入分 | 优先级 | 状态 |
 |:---|:---|:---|:---|:---|:---|
-| addyosmani/agent-skills | 办公编程 | 20,200+ | 26 | 1 ⭐ | 候选 |
+| addyosmani/agent-skills | 办公编程 | 44,933 | 26 | 1 ⭐ | ✅ 已接入 |
 | rushikeshpol02/ai-skills | 办公编程 | — | — | 3 | 候选 |
 | maorfsdev/reflect-yourself | 自学习 | 22 | 18 | 2 | 暂缓 |
 | kanishka-namdeo/instructify | 自学习 | — | — | 3 | 候选 |
@@ -60,9 +60,10 @@ related:
 - **准入分**：26/30（功能 5 + 质量 5 + 风险 4 + 安装 4 + 兼容 4 + 可逆 4）
 - **优先级**：1
 - **风险**：低 — 7 条 slash 命令，纯流程类，不大量写文件
-- **状态**：候选
+- **状态**：✅ 已接入
+- **接入日**：2026-05-23
 - **最后评估日**：2026-05-12
-- **评估结论**：Addy Osmani（Google Chrome 工程总监）出品，生产级质量。7 条命令覆盖全生命周期。**推荐作为首次接入目标**。
+- **评估结论**：Addy Osmani（Google Chrome 工程总监）出品，44.9k Stars，MIT 许可。从原始 7 命令进化为 22 个结构化 SKILL.md + 3 个专家 Agent 角色。零依赖，纯指令。部署到 `.cursor/skills/addyosmani/` 与 `Skills_Library/skills/addyosmani/`。覆盖 Define→Plan→Build→Verify→Review→Ship 全生命周期。
 
 ---
 
@@ -215,9 +216,14 @@ _暂无_
 |:---|:---|:---|:---|
 | 2026-05-12 | maorfsdev/reflect-yourself | 暂缓 | 写入路径与内部规则有重叠风险；先跑通首次接入再评估 |
 | 2026-05-12 | addyosmani/agent-skills | 首推待接入 | 大牛出品、范围明确、低风险、生产级质量 |
-
----
+| 2026-05-23 | anthropics/skills（xlsx/pdf/pptx/docx） | ✅ 已接入 | 准入分 29/30，Anthropic 官方出品，生产级，覆盖 Excel/PDF/PPT/Word 全文档格式 |
+| 2026-05-23 | dachent/skills（xlsx-win/pptx-win/docx-win） | ❌ 试运行阻断 | COM 预检：Agent Shell 会话不在活动桌面会话中；保留用于用户手动触发 |
+| 2026-05-23 | Microsoft @playwright/cli | ✅ 已接入 | 准入分 28/30，Microsoft 官方出品，token 高效 CLI，覆盖浏览器操控+SPA 抓取 |
+| 2026-05-23 | fanchou/webhook-push | ✅ 已接入 | 准入分 25/30，三合一（钉钉/飞书/企微）Webhook 推送，单向通知不求对话 |
+| 2026-05-23 | apify/agent-skills | 🔻 降级移除 | playwright-cli 已覆盖其核心场景（SPA 抓取）；apify 额外依赖外部平台+API Key |
 
 ## 巡检记录
 
-_暂无（待首次巡检触发）_
+| 日期 | 级别 | 发现 | 动作 |
+|:---|:---|:---|:---|
+| 2026-05-23 | 中检 | 6个新技能评估→4接入+1阻断+1降级 | 已登记 |

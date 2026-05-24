@@ -74,6 +74,14 @@ Module: Knowledge-Brain
 - 当前 19 份协议中 conceptual 类型为 0
 - 需要补概念定义协议，防止语义漂移（P0 诠释自检已就绪，消化时自动产出）
 
+### 4. Step R 读后总结 ✅ 已落地 2026-05-18
+
+- **问题**：Step S 是以协议为探针的客观系统扫描，缺少 Agent 主观价值判断——"我学了什么，对我有没有用"
+- **方案**：在 P2 四问闸门和 Step S 之间插入 Step R，Agent 逐协议输出三段式总结（① 对我有用的 / ② 暂时没用的 / ③ 建议优化系统的），用户确认后进入 Step S
+- **落地文件**：`classifier.md` §五-bis（Step R 规范 + 示例）+ §六（Step S 定位更新）+ `framework.md`（管线桩 + 子能力表 + 接口表）
+- **管线变为**：`Step 0 → Step 1.5 → Step 1-4 → P2 四问闸门 → Step R 读后总结 → Step S 全域巡检 → P3 闸门`
+- **与 Step S 的衔接**：Step R 产出的 `optimization_suggestions` 清单传入 Step S 作为优先扫描线索
+
 ---
 
 ## 讨论历史

@@ -15,6 +15,7 @@ glossary:
   - Skills_Library/skill-registry.json（已安装技能注册表）
   - Skills_Library/skill-performance-log.jsonl（表现评分日志）
   - pre-change-impact-enumeration.mdc（涉及字段/结构变更时的引用搜索）
+guard_replaceable: framework
 ---
 
 # 技能评估体系

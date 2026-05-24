@@ -1,0 +1,217 @@
+---
+description: V012 TEP 全链路沙箱执行 — 槽位发现→交互补全→拆解排期→逐步执行→pipeline 验收
+alwaysApply: false
+Lifecycle: 长期
+Created: 2026-05-24
+glossary:
+  layer: 3-工作流执行层
+  purpose: 在 Simulation-Sandbox 内跑完 V012 状态机，禁止单次产物短路
+  downstream:
+    - Simulation-Sandbox/v012-runtime-schema.json
+    - Simulation-Sandbox/task-pool.json
+  upstream:
+    - flow-v012-drill-bridge.mdc
+    - task-init-protocol.mdc
+    - mod-simulation-framework.mdc
+guard_replaceable: false
+---
+
+# V012 全链路沙箱执行（Pipeline Execute）
+
+## 适用范围
+
+`V012-DRILL-*` 练习任务；场景 `S3-v012-pipeline`。所有读写限定 `Simulation-Sandbox/**`。
+
+---
+
+## 写保护（启动时强制）
+
+```
+⚙ V012 链路练习模式
+  写入白名单：Simulation-Sandbox/**
+  禁止写入：.cursor/ / Knowledge-Brain/ / 10-Topics/ / Skills_Library/
+  基线：<git rev-parse HEAD>
+```
+
+---
+
+## 阶段 A：INIT → SLOT_DISCOVERY
+
+1. Read `task-pool.json` 条目 + `briefs/{ID}.md`
+2. Read `10-Topics/Task-Type-Registry.json` 对应 `task_type` 的 `required_slots`
+3. Read 沙箱 `context/{ID}/` 可探索线索（模拟 Active-Task-Tracker / behavior log）
+4. 写入 `state/{ID}/tep-state.json`：`current_state=SLOT_DISCOVERY`
+5. 写入 `state/{ID}/slots.json`：每个 required_slot → `status: missing|inferred`
+
+**禁止**：读取生产 `Knowledge-Brain/protocols/` 或 `Pending-Plan-Tracker.json` 代替沙箱 context。
+
+---
+
+## 阶段 B：WAITING_USER → SLOT_UPDATE（循环）
+
+1. 列出仍 `missing` 的槽位，**AskQuestion** 逐批补全（≥1 轮，除非全部已从 context 推断为 `filled`）
+2. 每轮用户回答后更新 `slots.json`，追加 `tep-state.json` history → `SLOT_UPDATE`
+3. 全部必填槽位 `filled` → 进入阶段 C
+
+---
+
+## 阶段 C：DECOMPOSE（拆解 + 排期）
+
+1. 按 TIP Step 4 拆解为 ≥ `task-pool.min_subtasks` 个子任务
+2. 每个子任务须含：`method`、`estimated_minutes`、`output_to`；可选 `input_from`、`planned_completion`
+3. 写入 `logs/{ID}/decomposition-log.jsonl`（每行一条拆解决策）
+4. 写入 `state/{ID}/active-task-tracker.json`：`parent/children/next_child` 树
+5. 日负载检查 → `logs/{ID}/load-check.json`（合计 estimated_minutes + 是否超载）
+6. `tep-state.json` → `DECOMPOSE`
+
+---
+
+## 阶段 C-bis：PLAN_REVIEW（排期确认）
+
+> **必须 AskQuestion，不可静默跳过。**
+
+1. 展示拆解结果（子任务列表 + 方法 + 预估耗时 + 产出 + `input_from` 依赖关系）
+2. 展示日负载摘要（总耗时 / 是否超载）
+3. AskQuestion 让用户确认排期：
+
+```
+选项：
+A) 确认排期，继续
+C) 需要调整（请说明）
+```
+
+4. 用户确认后 `tep-state.json` → `PLAN_REVIEW`
+
+---
+
+## 阶段 C-ter：PENDING_CREATE（生成待办）
+
+1. 每个子任务写入 `Pending-Plan-Tracker.json`（`source_task` 指向父任务 ID）
+2. `tep-state.json` → `PENDING_CREATE`
+
+---
+
+## 阶段 C-quater：SKILL_AUDIT（能力审计 + 合并告知）
+
+> **与 C-bis 的排期确认合并为同一个 AskQuestion 面板呈现**，不单独开一轮交互。全部技能可用时静默跳过本阶段。
+
+1. 对照 `10-Topics/Task-Type-Registry.json` 中当前 task_type 的 `skills.external` + `Skills_Library/skill-registry.json`，生成缺口清单
+2. 区分缺口类型：
+
+| 缺口类型 | 判断依据 | 处理方式 |
+|:---|:---|:---|
+| 未安装 | `skill-registry` 中无此项 | 面板标注 `🔴 未安装` + GitHub 来源 |
+| 已归档（非禁用） | `skill-registry.status: archived` 且 `method-reliability-registry` 中无 `🚫` | **静默安装**，不进入面板 |
+| 已禁用 | `method-reliability-registry.status: 🚫` | 面板标注 `🚫 已禁用` + 原因，默认不安装 |
+| 不可获取 | GitHub 404 / 仓库不存在 | 面板标注 `❌ 不可获取` + 原因，走三级告知 |
+
+3. 排期确认面板（C-bis + C-quater 合并）：
+
+```
+【排期确认】
+| # | 子任务 | 方法 | 预估 | 产出 | 依赖 |
+|---|--------|------|------|------|------|
+| 1 | ... | ... | 15min | ... | - |
+| 2 | ... | ... | 30min | ... | 1 ✅ |
+
+⚠ 能力缺口：
+| 子任务 | 缺失技能 | 状态 | 来源 |
+|:---|:---|:---|:---|
+| 2 | anthropics-docx-pptx | 🔴 未安装 | GitHub: anthropics/skills-docx |
+
+选项：
+A) 确认排期 + 安装缺失能力（走 flow-skill-acquire，同源合并一次获取）
+B) 确认排期，仅创建待办（能力缺失子任务标记 skill_gap）
+C) 调整排期
+```
+
+4. 选 A → 走 `flow-skill-acquire.mdc` 获取技能，同 GitHub 源的多技能合并为一次获取。获取成功后自动回审计步骤验证
+5. 选 B → 每个缺技能的子任务在 `active-task-tracker.json` 中标记 `skill_gap: true`，写入 `Decision-Log.jsonl`（"用户选择仅创建待办而未安装能力"）
+6. 执行完后 `tep-state.json` → `SKILL_AUDIT`
+
+---
+
+## 阶段 B-bis：连载恢复（仅含 `preseed_state` 的任务）
+
+1. Read `task-pool.preseed_state` 目录
+2. 复制 preseed 的 `tep-state.json`、`slots.json`、`active-task-tracker.json` → `state/{ID}/`
+3. 复制 preseed 的 `decomposition-log.jsonl`、`workflow-steps.jsonl` → `logs/{ID}/`
+4. 复制 preseed 已有 `outputs/` → `outputs/{ID}/`
+5. 从 `active-task-tracker.next_child` 继续阶段 D，**跳过**阶段 A–C
+
+---
+
+## 阶段 D：EXECUTING（逐步执行 + 依赖分流）
+
+**每步前置检查**（不可跳过）：
+
+1. 读取当前子任务 → 检查是否标记了 `skill_gap`
+
+```
+  ├─ 无 skill_gap → 正常进入执行（步骤 3）
+  │
+  └─ 有 skill_gap（技能不可获取 或 用户选了 B「仅创建待办」）→
+       ├─ 技能不可获取（GitHub 404 等）→ 标记 paused
+       └─ 技能可获取但用户未安装       → 标记 paused
+
+        依赖判断（扫描后续子任务的 input_from）：
+         ├─ 后续有子任务的 input_from.from_task 指向当前子任务？
+         │    → 🛑 BLOCKED_DEPENDENCY
+         │      写入 tep-state.json → BLOCKED_DEPENDENCY
+         │      写入 workflow-steps: {"status": "paused", "reason": "blocked_dependency"}
+         │      管线暂停。提示：「子任务 X 缺技能，且子任务 Y 依赖 X 的产出，无法继续。
+         │      请处理能力缺口后从 X 继续。」
+         │
+         └─ 无依赖 → ✅ 跳过
+             写入 workflow-steps: {"status": "paused", "reason": "skill_gap"}
+             继续 next_child
+```
+
+2. **执行期二次提醒**（仅当 skill_gap 的技能后来可获取时触发）：
+   若当前子任务标记了 `skill_gap` 但技能现已在 `skill-registry` 中可用（用户在本轮管线执行后手动安装了）：
+
+   ```
+   ⚠ 子任务 X 依赖 skill-Y，当前已可用。
+   [安装并执行] [跳过，人工执行] [取消]
+   ```
+
+3. 若顺利进入执行：按 `next_child` **串行**执行，每步完成后写入 `logs/{ID}/workflow-steps.jsonl`：
+   ```json
+   {"step": 1, "subtask_id": "...", "action": "...", "output": "...", "verified": true}
+   ```
+4. 每步验证产出路径与 `output_to` 一致；失败走三分类（retry/skip/abort）并记入 workflow-steps
+5. 全部子任务完成（含 paused）→ `tep-state.json` → `DONE`（若有 paused 子任务则标注 `PARTIAL`）
+
+**禁止**：跳过 workflow-steps 直接写 final 产物。
+
+---
+
+## 阶段 E：收束与 pipeline_audit
+
+1. 运行验收：
+   ```bash
+   python Skills_Library/scripts/v012-drill-validate.py {ID}
+   ```
+2. 写入 `logs/summary-{ID}.json`，**必须**含 `pipeline_audit`（见 `v012-runtime-schema.json`）
+3. 输出 Step T 总结；AskQuestion 确认 mark-done
+4. 仅验证通过后：`python Skills_Library/scripts/todo-reminder.py --mark-done {ID}`
+
+---
+
+## 验收自检清单
+
+| # | 检查项 |
+|:---:|:---|
+| 1 | `tep-state.json` 含 SLOT_DISCOVERY、DECOMPOSE、PLAN_REVIEW、PENDING_CREATE、SKILL_AUDIT、EXECUTING、DONE |
+| 2 | `slots.json` 必填槽位均为 filled |
+| 3 | `decomposition-log.jsonl` ≥1 行 |
+| 4 | `active-task-tracker.json` 子任务数 ≥ min_subtasks；缺技能子任务标记了 `skill_gap` |
+| 5 | `workflow-steps.jsonl` ≥ 子任务数；paused 的步骤标注 `reason` |
+| 6 | `load-check.json` 存在 |
+| 7 | final 产出在 `outputs/{ID}/` |
+
+---
+
+## 与 flow-simulation-execute 的关系
+
+本规则 **取代** 练习场景下的「阶段 2 单次 TIP 执行」。仍保留写保护与 Step T 格式，但 **pipeline_audit 未通过 = partial_fail**。

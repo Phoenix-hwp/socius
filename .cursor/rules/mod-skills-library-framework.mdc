@@ -13,6 +13,7 @@ glossary:
     - flow-skill-toggle.mdc（技能开关工作流）
   - mod-skill-evaluation.mdc（评估体系：准入 + 表现 + 巡检 + 匹配）
   - Skills_Library/task-type-registry.md（任务类型锚点）
+guard_replaceable: framework
 ---
 
 # Skills Library 统一框架
@@ -89,5 +90,5 @@ glossary:
 - [ ] 安全闸门各项是否均已检查并通过？
 - [ ] 试运行是否在隔离环境（git worktree）中执行？
 - [ ] 部署/移除前是否已通过 AskQuestion 确认？
-- [ ] **执行前**：是否已完成快照（git stash / 基线 commit）并按 `flow-skill-execute.mdc` 做路径限制？
+- [ ] **执行前**：是否已完成快照（`git stash` / 本地基线）并按 `flow-skill-execute.mdc` 做路径限制？
 - [ ] **执行后**：是否已做差异审查（git diff --stat + 逐路径 diff）并确认无越权写入？

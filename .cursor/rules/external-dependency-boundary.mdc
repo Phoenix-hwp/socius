@@ -1,6 +1,14 @@
 ---
 description: 外部依赖边界 — 内核安全隔离，Skills 插拔式接入
 alwaysApply: true
+severity: safety
+task_triggers:
+  - external_skill_load
+  - external_tool_call
+  - skill_deploy
+requires:
+  - flow-high-risk-safety.mdc
+  - flow-skill-acquire.mdc
 Lifecycle: 长期
 Created: 2026-05-12
 glossary:
@@ -10,6 +18,7 @@ glossary:
     - kernel-runtime.mdc（内核约定）
     - script-coding-constraints.mdc（编码约束）
     - post-git-pull-three-layer-awareness.mdc（拉取后对齐）
+guard_replaceable: false
 ---
 
 # 外部依赖边界
@@ -65,9 +74,9 @@ glossary:
 
 > 本段呼应 `pre-change-impact-enumeration.mdc` §5（执行后差异审查）和 `flow-skill-execute.mdc`（Skills 执行三部曲）。
 
-- **Skills 执行前**：必须记录基线（`git rev-parse HEAD`）或 `git stash`，详见 `flow-skill-execute.mdc` §A。
-- **执行后**：必须执行 `git diff --stat` 差异审查，确认无越权写入后方可放行。
-- **回滚权限**：用户始终保留用基线 commit 一键回滚的权利（`git reset --hard <基线>`），Agent 不得在未确认前提交或推送变更。
+- **Skills 执行前**：必须记录本地基线（`git rev-parse HEAD`）或 `git stash`，详见 `flow-skill-execute.mdc` §A。
+- **执行后**：必须执行本地差异审查（`git diff --stat`），确认无越权写入后方可放行。
+- **回滚权限**：用户始终保留用本地基线一键回滚的权利（`git reset --hard <基线>`），Agent 不得在未确认前提交或推送变更。
 
 ## Agent 自检（涉及外部能力时）
 

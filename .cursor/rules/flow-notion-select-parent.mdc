@@ -6,6 +6,7 @@ glossary:
   module: Notion
   operation: select_parent
   depends: [mod-notion-precondition, mod-notion-crud-framework]
+guard_replaceable: false
 ---
 
 # Notion 目录落点（父级选择）操作流程

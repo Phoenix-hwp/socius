@@ -11,6 +11,7 @@ glossary:
     - external-dependency-boundary.mdc（外部依赖边界）
     - pre-change-impact-enumeration.mdc（§5 执行后差异审查通用原则）
     - flow-skill-acquire.mdc（技能获取工作流）
+guard_replaceable: partial
 ---
 
 # 技能执行工作流
@@ -74,18 +75,13 @@ Read `Skills_Library/skills/<skill-name>/SKILL.md`，确认：
 - **禁止**写入：`.cursor/rules/`、`.cursor/hooks/`、`.cursor/hooks.json`、`.git/`、`10-Topics/Cursor-command-aliases.md`、`kernel-runtime.mdc`
 - **需确认**写入：`10-Topics/`（非别名表）、`Daily-Backups/`、项目目录
 
-### B1.1 禁止操作清单（强制）
+### B1.1 禁止操作清单
 
-以下操作在技能执行期间**无条件禁止**，即使目标路径在允许范围内：
+> **Guard 轨道**：递归删除 / 通配杀进程 / 跨盘符递归 / Git 破坏操作均由 `safety_gate.py` 的五组正则（`RECURSIVE_DELETE / WILDCARD_KILL / CROSS_DRIVE / GIT_DESTRUCTIVE / OUT_OF_WORKSPACE`）自动拦截。Agent 无需逐条检查。
+>
+> **Fallback 轨道**（Guard 不可用时）：Agent 按 `flow-high-risk-safety.mdc` 红色警戒流程执行。
 
-| 禁止操作 | 示例命令 | 原因 |
-|:---|:---|:---|
-| 递归删除目录 | `rm -rf`、`rm -r`、`Remove-Item -Recurse -Force`、`rmdir /s /q`、`rd /s /q`、`del /s` | 错误 CWD 时级联删除风险（2026-05-12 事故） |
-| 通配进程名杀进程 | `taskkill /f /im node.exe`、`killall node`、`pkill node` | 可能误杀 shim、Cursor 自身进程，导致模型断连 |
-| 跨盘符递归操作 | 任何包含 `D:\`、`C:\` 等盘符的递归删除/移动 | 隔离失效时可波及整个盘 |
-| 清空 Git 历史 | `git reset --hard`、`git clean -fdx` | 破坏落锚基线，回滚锚点丢失 |
 
-**B1.1 拦截流程**：若技能或 Agent 准备执行以上任何操作 → 立即中断 → 输出 `⛔ 禁止操作: <命令全文>，原因: <匹配的禁止项>` → AskQuestion `[授权执行（已理解灾难风险）] [取消]` → 仅当用户明确授权后方可继续。
 
 ### B2 越权拦截
 
@@ -110,7 +106,14 @@ Read `Skills_Library/skills/<skill-name>/SKILL.md`，确认：
 git diff --stat
 ```
 
-### C2 逐路径详细审查
+### C2 逐路径详细审查（TOP GUN 模式）
+
+对每个变更文件执行 `git diff -- <path>`，做内容级分析——不只看路径，要看每次变更的逻辑（CP-069 TOP GUN 案例启发：战后不只看战报，而是逐帧回放每一场战斗）：
+
+- 该变更对应的意图是什么？
+- 是否匹配 Skill 声明的目标？
+- 是否产生了非预期副作用？
+- 是否存在「改 A 触发了 B 变化」的连锁效应？
 
 按路径分类展示：
 
@@ -132,6 +135,18 @@ git diff --stat
 - 越权变更：K 个文件 ⚠
 - 基线：<commit_hash>
 ```
+
+### C4：3F 自我调试（当执行结果不理想时，CP-070）
+
+若审查发现非预期变更或执行结果不符合预期，不立即回滚，先走 3F 诊断（CP-070）：
+
+| F | 动作 |
+|:---|:---|
+| **Focus**（聚焦） | 定位具体失败点——哪个步骤出错？哪个文件被错误写入？哪个参数不对？ |
+| **Feedback**（反馈） | 读取错误输出日志、用户纠正内容、或 `git diff` 变更内容，收集所有反馈信号 |
+| **Fix it**（修正） | 针对性调整 Skill 配置/参数/执行步骤 → 重运行 → 再次审查 |
+
+3F 完成后重新进入 §C1-C3 审查。最多迭代 2 次——2 次后仍不理想则走 §D 回滚。
 
 ---
 

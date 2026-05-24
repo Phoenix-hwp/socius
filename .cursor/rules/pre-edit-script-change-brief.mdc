@@ -1,11 +1,19 @@
 ---
 description: 修改脚本或自动化入口前，先简述改后行为与验收口径，降低预期偏差与反复修改
 alwaysApply: true
+severity: safety
+task_triggers:
+  - script_modify
+  - hook_modify
+requires:
+  - pre-change-impact-enumeration.mdc
+  - script-coding-constraints.mdc
 glossary:
   layer: 横切
   purpose: 脚本修改前预期说明 — 四类信息强制预告
   sequence: 2  # ①影响枚举 → ②脚本预告 → ③编码自检
   consumes: [pre-change-impact-enumeration（影响枚举结果→验收口径）]
+guard_replaceable: false
 ---
 
 # 脚本修改前预期说明（简要）

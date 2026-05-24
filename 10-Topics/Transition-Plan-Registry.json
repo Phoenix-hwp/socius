@@ -9,7 +9,13 @@
       "id": "T01",
       "description": "能力封装路径1→2：gateway别名登记协议 → 专用封装规则",
       "current": "path_1_gateway_alias_protocol",
-      "threshold": { "type": "count", "metric": "encapsulation_conflicts", "op": ">=", "value": 3, "current": 0 },
+      "threshold": {
+        "type": "count",
+        "metric": "encapsulation_conflicts",
+        "op": ">=",
+        "value": 3,
+        "current": 0
+      },
       "upgrade": "path_2_dedicated_rule",
       "discussion_criteria": "current >= value 时拉出来讨论是否升级"
     },
@@ -17,7 +23,14 @@
       "id": "T02",
       "description": "别名路由→P008 迁移",
       "current": "alias_route",
-      "threshold": { "type": "fsm", "metric": "consecutive_successes", "op": ">=", "value": 5, "source": "Task-Type-Registry.json", "current": 0 },
+      "threshold": {
+        "type": "fsm",
+        "metric": "consecutive_successes",
+        "op": ">=",
+        "value": 5,
+        "source": "Task-Type-Registry.json",
+        "current": 0
+      },
       "upgrade": "P008_intent_evaluation",
       "discussion_criteria": "来源表连续成功≥5且 migration_ready===true 时讨论"
     },
@@ -25,43 +38,93 @@
       "id": "T03",
       "description": "脚本重构整合",
       "current": "待启动",
-      "threshold": { "type": "external", "trigger": "Scripts_Refactor_Plan 复审通过" },
+      "threshold": {
+        "type": "external",
+        "trigger": "Scripts_Refactor_Plan 复审通过"
+      },
       "discussion_criteria": "外部触发，无自动阈值"
     },
     {
       "id": "T04",
       "description": "GitHub Skills 接入",
       "current": "待首次接入",
-      "threshold": { "type": "event", "trigger": "首次接入 GitHub Skills 后验证" },
+      "threshold": {
+        "type": "event",
+        "trigger": "首次接入 GitHub Skills 后验证"
+      },
       "discussion_criteria": "事件驱动"
     },
     {
       "id": "T05",
       "description": "技能评估体系复审",
       "current": "待复审",
-      "threshold": { "type": "time", "value": "2026-05-17", "metric": "1-2天后复核" },
-      "discussion_criteria": "到达时间后审计时讨论"
+      "threshold": {
+        "type": "time",
+        "value": "2026-05-17",
+        "metric": "1-2天后复核"
+      },
+      "discussion_criteria": "到达时间后审计时讨论（已于 2026-05-23 审计时复审——方案迁移到 P044 待办 + training-plan.json §t05_review；T05 本身上移至已复审）",
+      "last_reviewed": "2026-05-23"
     },
     {
       "id": "T06",
       "description": "Active-Task-Tracker schema 预留",
       "current": "预留中",
-      "threshold": { "type": "external", "trigger": "任务分解系统接线" },
+      "threshold": {
+        "type": "external",
+        "trigger": "任务分解系统接线"
+      },
       "discussion_criteria": "外部触发"
     },
     {
       "id": "T07",
       "description": "Decomposition-Log 预留",
       "current": "预留中",
-      "threshold": { "type": "external", "trigger": "自拆解能力上线" },
+      "threshold": {
+        "type": "external",
+        "trigger": "自拆解能力上线"
+      },
       "discussion_criteria": "外部触发"
-    },
+    }
+  ],
+  "archive": [
     {
       "id": "T08",
       "description": "4个stub文件清理",
       "current": "已完成",
-      "threshold": { "type": "done", "completed": "2026-05-15" },
-      "discussion_criteria": "已执行，待归档"
+      "threshold": {
+        "type": "done",
+        "completed": "2026-05-15"
+      },
+      "discussion_criteria": "已执行，待归档",
+      "archived_date": "2026-05-20",
+      "archived_reason": "4个stub文件已在2026-05-15清理完毕"
+    },
+    {
+      "id": "T09",
+      "description": "去 Cursor 绑定 → P068 渐进式原地重构",
+      "current": "cursor_dependent",
+      "threshold": {
+        "type": "external",
+        "trigger": "P068 Phase 0-4 全部完成 + Cursor 双轨验证通过"
+      },
+      "upgrade": "phoenix_core_independent",
+      "discussion_criteria": "P068 全链路通过后讨论 V008 愿景达成度，决定是否关闭 V008",
+      "linked_vision": "V008",
+      "linked_plan": "P068"
+    },
+    {
+      "id": "T10",
+      "description": "仿真练习 → P067 全链路闭环",
+      "current": "simulation_partial_coverage",
+      "threshold": {
+        "type": "external",
+        "trigger": "P067 S1-001~S1-005 全部完成 + 仿真反馈回路生效验证通过"
+      },
+      "upgrade": "simulation_full_coverage",
+      "discussion_criteria": "P067 完成后讨论 V012 TEP 管线的成熟度评估",
+      "linked_vision": "V012",
+      "linked_plan": "P067"
     }
   ]
 }

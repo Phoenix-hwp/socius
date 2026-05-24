@@ -4,6 +4,9 @@ Lifecycle: 长期
 glossary:
   layer: 2-模块框架层
   module: Conversation
+guard_replaceable: framework
+
+> **Guard 轨道**：对话备份/读取/续聊是纯 Agent-文件系统交互，无对应 Guard 代码模块。对话内容的 State Persistence 由 `state_persistence.py` 管理，断档恢复由 `recovery.py` 管理，但具体备份落点/路由/格式仍由本框架 + flow-* 定义。
 ---
 
 # 对话备份与恢复统一框架

@@ -3,6 +3,9 @@
   "hooks": {
     "sessionStart": [
       {
+        "command": "cmd /c echo %date% %time% sessionStart hook fired >> %TEMP%\\cursor-hook-diag.log 2>&1"
+      },
+      {
         "command": "cmd /c .cursor\\tools\\cleanup_temp_backups.cmd --days=15 >nul 2>&1"
       },
       {

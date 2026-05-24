@@ -5,6 +5,8 @@ glossary:
   layer: 2-模块框架层
   module: Notion
   depends: []
+  guard_coverage: "none — 网络确认是纯 Agent-user 交互流，无 Guard 模块可覆盖"
+guard_replaceable: false
 ---
 
 # Notion 模块前置条件

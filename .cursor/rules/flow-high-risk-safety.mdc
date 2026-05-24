@@ -1,125 +1,44 @@
 ---
-description: 高风险操作防护 — 递归删除 / 强制杀进程 / 跨盘符操作 / Git 破坏性操作的安全约束
+description: 高风险操作防护 — Guard 安全闸门的 .mdc 规则化身。步骤 1-4 已由 safety_gate.py 代码化。步骤 5-6 + Fallback 轨道为 Agent 行为规范，不可替代。
 alwaysApply: true
+severity: safety
+task_triggers:
+  - high_risk_command
+requires: []
 Lifecycle: 长期
 Created: 2026-05-13
+Updated: 2026-05-23
 glossary:
   layer: 横切
-  purpose: 高风险操作防护 — 递归删除 / 强制杀进程 / 跨盘符 / Git 破坏性操作的安全约束
-  downstream:
-    - flow-skill-acquire.mdc（Skill 试运行场景的特化清理约束）
-    - flow-skill-execute.mdc（Skill 执行场景的 B1.1 禁止操作清单）
-    - external-dependency-boundary.mdc（外部依赖边界与降级策略）
-    - git-cross-device-and-secrets.mdc（跨设备路径与密钥保护）
-  - pre-edit-script-change-brief.mdc（脚本修改前预期说明 — 暗含边界风险）
+  purpose: 高风险操作防护 — Guard 轨道自动，Fallback 轨道手动
+  guard_implemented_in: "phoenix-agent/src/p008/safety_gate.py"
+guard_replaceable: true
 ---
 
 # 高风险操作防护
 
-## 适用范围
+> Guard 轨道上步骤 1-4（检测→暂停→CWD→预览）已由 `safety_gate.py` 完全代码化，正常运行时不需 Agent 关注。
 
-Agent 在 **任何上下文**（Skill 执行、试运行清理、日常文件管理、Git 操作）中，凡准备执行以下高风险操作类型之一，均受本规则约束。
+## 步骤 5-6（Agent 行为规范）
 
-## 触发条件（满足任一条即触发）
-
-1. **递归删除**：命令含 `rm -rf`、`rm -r`、`Remove-Item -Recurse`、`rmdir /s /q`、`rd /s /q`、`del /s`、`rmdir /s` 等递归删除语义
-2. **通配杀进程**：`taskkill /f /im <进程名>`（通配进程名）、`killall`、`pkill`、`Stop-Process -Name *`
-3. **跨盘符高风险操作**：递归删除/移动命令中包含盘符（`D:\`、`C:\` 等），或目标路径以 `\`（根）结尾
-4. **Git 破坏性操作**：`git reset --hard`、`git clean -fdx`、`git checkout -- <通配路径>`（非精确文件路径）
-5. **工作区范围外删除**：目标路径不在仓库根 `CURSOR_PROJECT_DIR` 或其子目录内
-
----
-
-## 红色警戒流程（强制）
-
-当 Agent 检测到即将执行的命令命中以上任一触发条件时，执行以下步骤，**任何步骤不得跳过**：
-
-### 步骤 1：立即暂停
-
-不执行、不预执行、不尝试。
-
-### 步骤 2：回显完整命令
-
-向用户逐字展示即将执行的命令全文（不缩写、不截断）。
-
-### 步骤 3：展示当前工作目录
-
-```
-cd  (Windows cmd)
-pwd (Linux/macOS)
-```
-
-确认当前 CWD 在仓库范围内（`CURSOR_PROJECT_DIR` 或其子目录）。
-
-### 步骤 4：展示影响范围预览
-
-- **删除操作**：先列出将被删除的内容
-  ```
-  dir <目标路径>  (Windows)
-  ls -la <目标路径>  (Linux/macOS)
-  ```
-- **杀进程**：先列出将被杀死的进程
-  ```
-  tasklist /fi "imagename eq <进程名>"  (Windows)
-  ps aux | grep <进程名>  (Linux/macOS)
-  ```
-
-### 步骤 5：AskQuestion 二次确认
-
-```
-[确认执行以上操作] [取消]
-```
+当 Guard 输出拦截结果时，Agent 必须使用 AskQuestion 工具：
 
 - 选项文本中**必须**包含完整命令原文
-- 标题须包含 `⚠ 高风险操作`
+- 标题须包含 `[WARNING] High-Risk Operation`
 - 不得用 Y/N、1/2 等简写替代
+- 框架强制：先收益后风险（双面）
 
-### 步骤 6：执行与验证
+确认后执行 → 立即验证结果 → 若执行失败，不得自动重试或换更激进方式，必须再次 AskQuestion。
 
-- 确认后执行
-- 执行后立即验证结果（如删除后确认目录不存在、杀进程后确认 PID 已消失）
-- 若执行失败（进程占用等），不得自动重试或换更激进的方式；必须再次 AskQuestion
+## Fallback 轨道（Guard 不可用时）
 
----
+当 Guard 返回 `guard_available: false` 时，Agent 须自行执行完整红色警戒流程（步骤 1-6）。
 
-## 各模块特化约束（指针）
+触发条件自检（任一命中 → 进入完整流程）：
 
-本规则定义**通用最低标准**。以下模块有更严格的场景特化约束，互不替代：
+- [ ] 递归删除：`rm -rf` / `-Recurse` / `/s` / `del /s`
+- [ ] 通配杀进程：`taskkill /im` / `killall` / `pkill`
+- [ ] 目标路径在仓库范围外
+- [ ] Git 破坏性操作：`reset --hard` / `clean -fdx`
 
-| 模块 | 特化规则 | 额外约束 |
-|:---|:---|:---|
-| Skill 试运行清理 | `flow-skill-acquire.mdc` §F | 清理方式白名单 + 禁止递归删除替代方案 + 事后记录 |
-| Skill 执行 | `flow-skill-execute.mdc` §B1.1 | 禁止操作清单 + 拦截流程 |
-
----
-
-## 例外条件
-
-以下情况可跳过红色警戒流程（直接执行，不触发 AskQuestion）：
-
-1. **目标在 `.trash/` 内且非递归**：`del .trash/foo.txt`（单文件删除）— 但 `del /s .trash\*`（递归）仍触发
-2. **Git 暂存区操作**：`git reset HEAD <单文件>`、`git restore --staged <单文件>` — 但 `git reset --hard` 仍触发
-3. **用户已在本轮对话中明确授权**「直接执行，忽略高风险提示」（口头全局授权，仅当前对话有效）
-
----
-
-## 与已有规则的关系
-
-| 规则 | 触发时机 | 分工 |
-|:---|:---|:---|
-| `flow-skill-acquire.mdc` §F | Skill 试运行清理 | 清理方式白名单 + 进程管理 |
-| `flow-skill-execute.mdc` §B1.1 | Skill 执行 | 禁止操作清单 + 拦截 |
-| **本规则** | **任何上下文的高风险操作** | **通用红色警戒流程** |
-| `external-dependency-boundary.mdc` | 外部能力边界 | 降级策略 + 执行前后的 Git 基线 |
-
-四者互不替代。本规则是三条特化规则的**通用兜底**：即使某个操作不发生在 Skill 上下文中（如用户普通对话中的文件管理），红色警戒仍然生效。
-
----
-
-## Agent 自检（每次准备执行命令前）
-
-- [ ] 即将执行的命令是否包含递归删除（`rm -rf` / `-Recurse` / `/s` / `del /s`）？
-- [ ] 是否包含通配进程名杀进程（`taskkill /im` / `killall` / `pkill`）？
-- [ ] 目标路径是否在仓库范围外？（如 `D:\` 根、`C:\Users\` 等）
-- [ ] 若是 Git 操作，是否为破坏性操作（`reset --hard` / `clean -fdx`）？
-- [ ] 若任一为「是」→ 进入红色警戒流程，不得跳过
+> → 特化约束见 `flow-skill-acquire.mdc` §F（清理白名单）/ `flow-skill-execute.mdc` §B1.1（禁止操作清单）。

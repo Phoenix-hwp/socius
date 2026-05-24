@@ -1,6 +1,18 @@
 ---
-description: 内核运行规则 — 知识库约定 + 会话开端续接与收束 + 轮次确认 + 多轮长记忆
-alwaysApply: true
+description: 内核运行规则 — 知识库约定 + 会话开端续接与收束 + 轮次确认 + 多轮长记忆（条件级：仅会话开端/收束/计划任务时加载，非全时段）
+Lifecycle: 长期
+Created: 2026-05-12
+alwaysApply: false
+severity: conditional
+task_triggers:
+  - session_start
+  - task_continuation
+  - session_close
+  - multi_round_upgrade
+  - tep_resume
+requires:
+  - gateway-command-router.mdc
+  - flow-behavior-auto-receipt.mdc
 glossary:
   layer: 横切
   purpose: 会话管理、知识库约定、多轮长记忆 — 覆盖网关未覆盖的默认运行逻辑
@@ -9,6 +21,7 @@ replaces:
   - round-start-checkpoint-confirmation.mdc
   - long-memory-round-workflow.mdc
   - long-memory-knowledge-base.mdc
+guard_replaceable: false
 ---
 
 # 内核运行规则
@@ -41,49 +54,64 @@ replaces:
 - **档案路径**：优先 `10-Topics/Cursor-usage-profile-and-templates.md`；可用 `CURSOR_OBSIDIAN_PROFILE` 覆盖。
 - **开端**：优先依赖 `.cursor/hooks.json` 的 `sessionStart` 注入。若上下文中未见到注入内容，则 Read 上述路径后再作答。
 
-### 1.2 任务续接
+### 1.2 M0 经验索引预查（任务续接前）
 
-- 同时 Read `10-Topics/Active-Task-Tracker.json`。按活跃任务策略续接：匹配关键词自动续接、展示列表等轻确认、直接新需求不展示列表。细则见 `flow-behavior-auto-receipt.mdc`。
+- 先 Read `10-Topics/experience-index.jsonl`。按 `task_type` + `keywords` 匹配本次任务相关的历史经验（最近 20 行内搜索）。
+- 若有匹配 → 提取匹配行的 `task_id` / `p008_level` / `result` / `behavior_log_line` / `decision_log_line` / `activation_log_lines`，按需精读对应日志行，注入为续接上下文。
+- 若无匹配 → 静默跳过，不阻塞任务续接。
 
-### 1.2b 会话开端自动拉取与待办检查（任务续接之后）
+### 1.2a 跨设备上下文移交摘要（会话开端强制，M0 经验索引之前）
 
-> **设计意图**：跨设备场景下，另一台设备创建的待办只有 pull 才能同步到本地；但本地昨天设的待办今天也需要提醒（无论远端是否有更新）。因此 sessionStart 自动执行 fetch/pull，然后做「每日首次」待办检查。
+- 先 Read `10-Topics/context-handoff.json`。
+- 若文件不存在 → 静默跳过，继续执行 §1.2 M0 经验索引预查。
+- 若文件存在 → 解析 `date` 字段进行 TTL 判断：
+  - **距今 < 24 小时**：自动载入移交摘要，注入为续接上下文。在回复中标注：
+    ```
+    📦 已从 [last_device] 恢复上下文：[active_task] — 距今约 [N] 小时。
+    ```
+    载入后 **跳过** §1.2 M0 经验索引预查（移交摘要已提供精准上下文，不需要再按关键词匹配历史经验）。
+  - **距今 ≥ 24 小时**：不载入移交摘要，静默跳过，正常执行 §1.2 M0 经验索引预查。标注 `📦 移交摘要已过期（>24h），降级为 M0 索引查询`。
 
-#### 步骤 1：自动对齐远端
+### 1.3 任务续接
 
-1. 执行 `git fetch`（只读，不合并）。
-2. 检查远端是否有新提交（`git rev-list --count HEAD..origin/main`）。
-3. **若有新提交** → 执行 `git pull --ff-only`（处理 stash 如需），然后执行 `post-git-pull-three-layer-awareness.mdc` 的 A/B/C 步骤（C 步骤中的待办检查已统一走 Shell `skills_Library/scripts/todo-reminder.py`）。**跳过本节的待办检查**（由 post-pull 步骤 C 统一处理）。
-4. **若无新提交** → 跳过 pull，直接进入下方的「每日首次待办检查」。
+- 再 Read `10-Topics/Active-Task-Tracker.json`。按活跃任务策略续接：匹配关键词自动续接、展示列表等轻确认、直接新需求不展示列表。细则见 `flow-behavior-auto-receipt.mdc`。
 
-#### 步骤 2：每日首次待办检查（交互式）
+### 1.3a TEP 连载恢复（V012 — 子任务跨天续接）
 
-> **统一入口**：待办扫描与状态更新已封装为 `skill-todo-reminder`（Shell：`python Skills_Library/scripts/todo-reminder.py`）。内核仅负责触发入口，完整逻辑在 skill 内自闭环。
+触发：`Active-Task-Tracker` 中存在 `status="进行中"` 且包含 `last_checkpoint` 的条目。
 
-1. 执行 Shell：`python Skills_Library/scripts/todo-reminder.py --scan`，获取 JSON 输出。
-2. 若 `"skipped": true` → **跳过**，本轮不做待办提醒。
-3. 若 `"skipped": false`：
-   - 解析 `overdue`（到期）、`upcoming`（即将到期，days_until ∈ [1,3]）、`in_progress`（进行中）
-   - 三组合并，弹出第一层 `AskQuestion`（`allow_multiple: true`）：
-     ```
-     📋 待办提醒（每日检查）
-     
-     prompt: "以下待办已到期或即将到期，选择要处理的项："
-     
-     options（按 days_until 升序排列）：
-       [Pxxx] ◀ 今天/进行中 — <topic>
-       [Pxxx] 📅 <N>天后 — <topic>
-       [跳过全部] 稍后处理
-     ```
-   - 若用户选了 `[跳过全部]` → 执行 Shell：`python Skills_Library/scripts/todo-reminder.py --set-reminded`，结束本节。
-   - 若用户选了一个或多个待办 → 进入逐项操作弹窗（同 post-git-pull 步骤 C2-C3）。
-4. 全部操作完成后，执行 Shell：`python Skills_Library/scripts/todo-reminder.py --set-reminded`。
+执行步骤：
 
-> 手动 pull 后由 `post-git-pull-three-layer-awareness.mdc` 步骤 C 处理，同样通过 Shell 调用 `todo-reminder.py --scan`。
->
-> 待办的自动完成检测在收束时执行（`flow-behavior-auto-receipt.mdc` 步骤 C#8）。
+1. **筛选进行中条目**：从 `active` 数组提取所有 `status="进行中"` 的条目。
+2. **读取 last_checkpoint**：提取 `method`、`input_from`、`output_to`、`intermediate_products`、`parameters`。
+3. **依赖校验**：
+   - 对 `input_from` 中每条 `{from, asset}`，检查 `asset` 对应的文件/产出物是否存在。
+   - 全部存在 → 正常续接。
+   - 部分缺失 → 标注 `⚠ 上游依赖缺失：[asset1, asset2]`，询问用户是否继续（可能需重新执行上游）。
+   - 全部缺失 → 标注 `🔴 连载链断裂，所有上游依赖缺失`，建议重新执行整条链路。
+4. **生成续接提示**（格式）：
+   ```
+   📎 TEP 连载恢复：{parent_task}
+   
+   ▶ 当前子任务：{current_child} — {action}
+   🔒 锁定方法：{method}
+   📦 已完成的上游产物：[asset1 ✅, asset2 ✅, asset3 ⚠ 缺失]
+   📤 本步产出路径：{output_to}
+   
+   是否继续执行此子任务？
+   ```
+5. **AskQuestion 确认**：`[继续执行 {current_child}] [跳过此项] [查看全链路状态]`
+   - `继续执行`：注入 last_checkpoint 为上下文，正常执行子任务。
+   - `跳过此项`：标记该子任务为 `已跳过`，检查是否有 `next_child` 可用。
+   - `查看全链路状态`：展开整条 parent_task 的所有子任务状态（从 Pending-Plan-Tracker 读）。
+6. **执行上下文注入**：续接时将 `method` 字段注入 LLM#2 的 `confirmation_statement` 参数，确保执行方法一致性。将 `intermediate_products` 路径和 `parameters` 作为已知上下文注入。
+7. **无进行中条目**：静默跳过 TEP 连载检查，继续执行 §1.2b（待办提醒）。
 
-### 1.3 L3 闸门检查（续接任务之前）
+### 1.3b 待办提醒
+
+> 不再通过 sessionStart 钩子自动触发。用户输入「待办」/「查看待办」时，由 `gateway-command-router.mdc` 路由到 `Skills_Library/scripts/todo-reminder.py --scan` 执行。
+
+### 1.4 L3 闸门检查（续接任务之前）
 
 1. 读取 `10-Topics/Behavior-Fit-Log.jsonl`，统计 `format: "compact"` 的行数。
 2. 若 ≥20 且 `.cursor/rules/flow-behavior-l3-analysis.mdc` 不存在 → 🔒 强制阻断 → AskQuestion `[确认创建 L3 分析规则] [稍后（下次提醒）]`

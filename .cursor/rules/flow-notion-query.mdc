@@ -6,6 +6,7 @@ glossary:
   module: Notion
   operation: query
   depends: [mod-notion-precondition, mod-notion-crud-framework]
+guard_replaceable: false
 ---
 
 # Notion 查询页面工作流

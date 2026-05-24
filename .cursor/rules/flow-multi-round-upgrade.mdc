@@ -4,6 +4,7 @@ glossary:
   layer: 3-工作流执行层
   module: MultiRound
   depends: [mod-multi-round-framework, mod-project-memo-framework]
+guard_replaceable: false
 ---
 
 # 多轮项目升级流程

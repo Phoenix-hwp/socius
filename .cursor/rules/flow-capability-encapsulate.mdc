@@ -4,6 +4,14 @@ glossary:
   layer: 3-工作流执行层
   module: CapabilityEncapsulate
   depends: [flow-behavior-auto-receipt, 10-Topics/Cursor-command-aliases.md, Skills_Library/skill-registry.json]
+  guard_replaceable: false
+  pipeline_markers:
+    rule: "Agent 在能力封装的**每一步完成后**必须在回复末尾输出 `[✓ Step_ID]` 标记。所有 4 步均为 required=true——Guard 下次启动时自动扫描缺失标记并阻断。"
+    close_check: "**收束前自检（强制）**：在最后一步 Step 4（确认并落盘）前，Agent 必须回溯检查前面 3 步（Step_1/Step_2/Step_3）是否均有完成标记。若有缺失 → 补充 `[✓ Step_ID]（补标）` 后落盘。"
+    format:
+      done: "[✓ Step_ID]"
+      skip: "[⏭ Step_ID: reason]"
+    definitions: ".cursor/workflow-definitions.json → capability_encapsulation"
 ---
 
 # 能力封装工作流（B1 被动模式）
@@ -37,6 +45,17 @@ glossary:
 | ≤3 | 别名组合 | `10-Topics/Cursor-command-aliases.md`（新增一行） | 能力注册表（标记为轻量） |
 | 4-7 | `flow-*.mdc` | `.cursor/rules/flow-<capability>.mdc` | 能力注册表 + gateway 别名表 |
 | ≥8 | Skill | `skills-cursor/<capability>/SKILL.md` | 能力注册表 |
+
+### 步骤 2-bis：性质判定（知识 vs 技能，CP-069）
+
+复杂度判定后，确认封装产物的**认知性质**：
+
+| 性质 | 判定标准 | 额外标注 |
+|:---|:---|:---|
+| `skill` | 包含明确的输入 → 输出 → 执行动作链 | 照常走后续步骤 |
+| `knowledge` | 纯概念/框架/定义，无执行动作，产物是「知道什么」而非「做什么」 | 在产物 frontmatter 标注 `capability_nature: "knowledge"` + 在回执末尾追加「💡 此产物为知识型——后续可通过操作转化（template-generator.md）落地为可执行 Skill」 |
+
+> CP-069 核心教训：知识传授 ≠ 技能训练。封装时要区分这二者——Skill 是「怎么做」，知识是「怎么理解」。
 
 ---
 

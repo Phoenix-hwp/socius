@@ -4,6 +4,7 @@ glossary:
   layer: 3-工作流执行层
   module: MultiRound
   depends: [mod-multi-round-framework]
+guard_replaceable: false
 ---
 
 # 对话归属判断流程

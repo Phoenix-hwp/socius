@@ -13,13 +13,15 @@ glossary:
     - task-init-protocol.mdc Step 2-KB（知识脑前置查询）
     - mod-decision-framework.mdc §二（KB 预载入 → 维度降级标记）
     - flow-behavior-auto-receipt.mdc §C#13（收束时协议有效性反馈）
-    - Knowledge-Brain/activation-log.jsonl（运行时激活日志：追踪每条协议的 activated/effective）
+    - Knowledge-Brain/activation-log.jsonl（运行时激活日志：追踪每条协议的 activated/effective/bystander_count）
   runtime_features:
     - 三源认知模型（大模型主持 + 网络核查 + 知识脑提醒）
     - 对话双向通道（向下消费/向上反馈/向上写入）
     - 小注式矛盾仲裁
     - 上下文窗口管理（注入标注 + stale 检测 + 挤出）
     - 验证状态时间衰减
+    - bystander 降权（激活但未被采用计数 ≥5 → 该 task_type 停用）
+    - 休眠机制（30 天未激活→排除候选池，90 天未激活→提示审查）
 ---
 
 # 自描述激活规范
@@ -163,7 +165,7 @@ activation:
 
 ## 四、三层激活过滤器
 
-不靠一套规则决定是否激活。三层逐级过滤：
+不靠一套规则决定是否激活。三层逐级过滤，外加一层先备检查：
 
 ```
 候选协议/Skill
@@ -171,6 +173,10 @@ activation:
   ├─ [过滤器 1：自描述]  — 相关性筛选
   │   匹配 task_types + concept_anchor + decision_signal
   │   该不该进候选池？
+  │
+  ├─ [过滤器 1.5：先备检查]  — 理解前提
+  │   该协议的前置概念在本次对话中是否已建立？
+  │   若未建立 → 降权（×0.2）并附带 fallback_path
   │
   ├─ [过滤器 2：经验层]  — 上下文校准
   │   查 Behavior-Fit-Log 的历史激活记录
@@ -217,6 +223,34 @@ Step 4: 截断 — 单任务 ≤5 条协议注入上下文
 
 **输出**：注入上下文的协议列表 + 置信度标注
 
+### 过滤器 1.5：先备检查（理解前提）
+
+**触发时机**：过滤器 1 的候选池产出后
+
+**数据源**：协议 frontmatter 的 `cognitive_prerequisite` 字段
+
+**检查逻辑**：
+
+```
+对候选池中每条协议:
+  若 protocol.cognitive_prerequisite == null or prerequisite_concepts == []:
+    跳过检查——无前置依赖
+  逐条检查 prerequisite_concepts:
+    在当前对话中，该 concept_anchor 是否已被建立？
+    （"已建立" = 当前对话中出现过此概念、或有同 concept_anchor 的协议已被激活）
+      ✅ 全部已建立 → 权重正常，继续过滤器 2
+      ❌ 部分未建立 → 权重 ×0.2，协议标记："⚠ 前置缺失：{缺失概念列表}。建议先消化 fallback_path"
+      ❌ 全部未建立 → 权重 ×0.1，协议标记："⚠ 前置全缺。该协议不在当前对话的 ZPD 内，建议按 fallback_path 预加载后再使用"
+
+  区分两种缺失：
+    若缺失的前置概念在 concept-tree 中有 ≥1 份协议 → 🟢 可直接按 fallback_path 预加载
+    若缺失的前置概念在 concept-tree 中是空节点（无协议） → 🟡 标注"前置概念缺失，无法自动补课"
+```
+
+**输出**：带先备标注的候选协议列表 + 建议预加载链
+
+**副作用**：当 Agent 在回复中提到一个需要降权的协议时，不只是说"我建议用 X"，而是"X 的部分思想依赖 Y 的前置概念——让我花 30 秒解释这个前提，否则后续决策可能突兀"
+
 ### 过滤器 2：经验层（上下文校准）
 
 **触发时机**：过滤器 1 的候选池产出后
@@ -233,6 +267,10 @@ Step 4: 截断 — 单任务 ≤5 条协议注入上下文
       NO → 保持优先级
     该 task_type 下上次触发时 effective = true？
       YES → 提升优先级（该场景已验证有效）
+  查该 task_type 下 bystander_count:
+    bystander_count ≥ 5 且 effective_count = 0？
+      YES → 该 task_type 下自动降权（⛔ 不再进候选池）—— 总被激活但从没被用上
+      NO → 继续正常过滤
 ```
 
 **输出**：校准后的优先级排序 + 风险标注
@@ -291,8 +329,9 @@ Step 4: 截断 — 单任务 ≤5 条协议注入上下文
 | **误触发** | 不该激活的协议被激活，干扰 Agent 判断 | 用户纠正 → `activation_miscalibration` 记录 → 收紧 decision_signal 边界 |
 | **漏触发** | 该激活的协议没激活，Agent 踩坑 | 收束时知识脑缺口复盘 → 补充 activation 字段 → 提升同类场景优先级 |
 | **过载** | 候选池协议太多，塞爆上下文 | 截断为 ≤5 条 → 超量条目标注「未加载，按需查阅」 |
-| **语义漂移** | 协议的 activation 写得很好，但概念域变了 | 周期 L3 分析 → 检测长期未激活的协议 → 提示审查 |
+| **语义漂移** | 协议的 activation 写得很好，但概念域变了 | 休眠机制检测长期未激活 → 30 天排除候选池 → 90 天提示审查 |
 | **能力不可用** | 协议激活了但建议的 Skill 不可用（被禁用/降权） | 过滤器 3 检测 → 提示「协议触发了但建议能力暂不可用」 |
+| **bystander 衰减** | 协议总被激活但 Agent 从不采纳 | bystander_count ≥ 5 且 effective_count = 0 → 该 task_type 下自动降权，不再进候选池 |
 
 ---
 
@@ -344,6 +383,59 @@ Step 5: 大模型重新整合
 | 涉及事实性主张（日期/版本/规范/数据） | 大模型 + 网络 | +3-10s |
 | 涉及你之前讨论过的特定主题 | 大模型 + 知识脑 | +0.3-1s |
 | 领域术语 + 事实性主张 + 有存档经验 | 三源全开 | +3-10s |
+
+---
+
+## 八-bis：三源认知模型 — 获取模式（知识获取方向）
+
+> **对称于 §八 的执行模式**：执行模式是"任务来了，三源怎么帮我做"，获取模式是"知识缺了，三源怎么帮我找"。信源角色不变，流向反序。
+
+### 信源角色（与执行模式一致）
+
+| 信源 | 角色 | 获取模式中的职责 |
+|:---|:---|:---|
+| **大模型** | 知识探针 | 列出候选框架名 + 一句话核心原理 + 记忆依据标签（training_data / unsure） |
+| **网络检索** | 来源验证员 | G1 五级评级（S/A/B/C/F）+ 独立出处确认 + 批评记录搜索 |
+| **知识脑** | 互证裁判 | 新入库协议与已有协议的主张碰撞检测（矛盾/互补/重叠/独立） |
+
+### 获取流程
+
+```
+Step 1: 意图澄清（仅探索驱动型）
+  用户："收集所有决策矩阵的框架"
+  → Agent 拆解为结构化分类 + 澄清标准 → 用户确认
+
+Step 2: 大模型做知识探针
+  → 按确认的分类逐类列出已知框架名 + 一句话核心原理
+  → 标注记忆依据：training_data（确定有） / unsure（推断有）
+  → 仅 training_data 的候选进入下一步
+
+Step 3: 网络检索做来源验证
+  → 对每个候选框架搜索独立出处
+  → G1 评级（S/A/B/C/F）
+  → F 级直接丢弃，S-C 级入库
+  → 额外搜索批评/证伪记录
+
+Step 4: 知识脑做自标注入库
+  → 自动标注 verification + confidence_at_entry
+  → 入库回执输出到对话（不弹确认）
+  → 进入消化管线 → Step R + Step S
+
+Step 5: 实战验证（G3）
+  → 入库后，后续任务中激活 → effective_count / bystander_count
+  → 置信度自动升降
+  → P3 同域互证触发矛盾检测
+```
+
+### 与执行模式的对比
+
+| 维度 | 执行模式（§八） | 获取模式（本段） |
+|:---|:---|:---|
+| **流向** | 用户问题 → 三源 → 答案 | 知识缺口 → 三源 → 协议 |
+| **大模型的角色** | 理解 + 生成 | 列出 + 记忆依据 |
+| **网络的角色** | 版本/规范核实 | 来源真实性验证 |
+| **知识脑的角色** | 纠偏 + 经验注入 | 互证裁判 |
+| **最终产物** | 回答/方案 | 协议落盘 |
 
 ### 话题缓存
 
@@ -472,6 +564,52 @@ Stale（话题切换，N+10 轮后）
 退役（退出上下文，下次话题切回时重新注入）
 ```
 
+### 休眠机制（长期未激活协议）
+
+协议在运行时层（`activation-log.jsonl`）跟踪 `last_activated_at`：
+
+| 状态 | 条件 | 行为 |
+|:---|:---|:---|
+| **热** | 30 天内至少被激活 1 次 | 正常参与三层过滤器 |
+| **休眠（dormant）** | 距 `last_activated_at` > 30 天 | 从候选池排除（过滤器 1 之前），不参与匹配 |
+| **休眠队列（dormant_queue）** | 距 `last_activated_at` > 90 天 | 提示审查 `activation` 字段（task_types / concept_anchor 是否写错）、`concept-tree.json` 概念锚是否变迁、协议内容是否过时 |
+
+**不自动删除**——休眠协议保留在 `protocols/` 目录，仅从运行时激活路径排除。审查后由人工决定：归档 / 重新激活 / 更新 activation 字段。
+
+> **与验证状态时间衰减（§4b）的区别**：验证状态时间衰减管理的是 `effective_count` 的时效（上次生效是什么时候），休眠机制管理的是 `activation`（上次被激活是什么时候）。两者互不替代：一条协议可能定期被激活但从未生效（bystander），也可能验证有效但长期未被激活（休眠）。
+
+### activation-log.jsonl 运行时字段（补充说明）
+
+`activation-log.jsonl` 中每条协议按 `task_type` 聚合，存储以下运行时计数（仅动态数据——静态 definition 在协议 frontmatter）：
+
+```json
+{
+  "protocol_id": "CP-020",
+  "task_type": "diagramming",
+  "activated_count": 8,
+  "effective_count": 3,
+  "bystander_count": 5,
+  "miscue_count": 0,
+  "last_activated_at": "2026-04-20",
+  "last_effective_at": "2026-04-15",
+  "dormant": false
+}
+```
+
+| 字段 | 类型 | 说明 |
+|:---|:---|:---|
+| `protocol_id` | string | 协议 ID（CP-xxx） |
+| `task_type` | string | 任务类型（按 task_types 分组） |
+| `activated_count` | number | 被激活的总次数（进入候选池） |
+| `effective_count` | number | 生效的次数（Agent 执行中引用了该协议） |
+| `bystander_count` | number | 激活了但未采用的次数（进了候选池但 Agent 未引用） |
+| `miscue_count` | number | 误用次数（effective=false） |
+| `last_activated_at` | ISO date | 最近一次激活时间 |
+| `last_effective_at` | ISO date | 最近一次生效时间 |
+| `dormant` | boolean | 是否休眠（last_activated_at > 30 天 → true，重新激活 → false） |
+
+> **bystander_count 的重置条件**：同 task_type 下 effective_count 从 0 变为 ≥1 时，bystander_count 重置为 0（该协议终于被用上了，之前的 bystander 累积不再有意义）。
+
 ### 冷启动阶段
 
 协议积累 ≤5 条时不做 stale 检测和挤出。当协议池首次达到 5 条时，开始启用窗口管理。
@@ -569,7 +707,7 @@ CP-xxx: effective_count: 1, last_effective: 2026-01-15
 ### 任务执行时检查
 
 - [ ] 是否执行了知识脑查询（按分层触发规则）？
-- [ ] 候选池是否经三层过滤器逐级裁剪？
+- [ ] 候选池是否经三层过滤器 + 先备检查层逐级裁剪？
 - [ ] 注入上下文的协议是否 ≤5 条？
 - [ ] 注入时是否标注了置信度标记（🔶/⚠/✅/⛔）？
 - [ ] 同 concept_anchor 下命中多条时是否执行了小注式矛盾仲裁？
@@ -580,3 +718,4 @@ CP-xxx: effective_count: 1, last_effective: 2026-01-15
 - [ ] 话题切换时是否检查了 stale 协议？
 - [ ] 用户修正信号是否被正确识别和暂存？
 - [ ] 经验暂存是否包含了 source_round 和 source_quote？
+- [ ] 激活降权协议时是否附带 fallback_path 预加载建议？

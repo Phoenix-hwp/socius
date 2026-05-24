@@ -4,6 +4,9 @@ glossary:
   layer: 3-工作流执行层
   module: Conversation
   depends: [mod-conversation-framework, flow-conversation-routing]
+guard_replaceable: partial
+
+> **Guard 轨道**：对话文件的序列化/恢复由 `state_persistence.py` 管理。备份落盘和路由逻辑仍由本工作流定义，无对应 Guard 代码。
 ---
 
 # 对话备份流程

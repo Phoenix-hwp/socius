@@ -1,9 +1,19 @@
 ---
-description: 生命周期分层存储与清理规则
-alwaysApply: true
+description: 生命周期分层存储与清理规则（条件级：仅在文件创建/删除/清理时加载）
+alwaysApply: false
+severity: conditional
+task_triggers:
+  - file_create
+  - file_delete
+  - cleanup_session_close
+requires:
+  - pre-change-impact-enumeration.mdc
+  - flow-high-risk-safety.mdc
 glossary:
   layer: 横切
   purpose: 文件生命周期管理 — 瞬态/临时/阶段/长期四分级 + 软删除 + 模板定级确认
+  guard_coverage: "minimal — SchemaValidator 未来可校验 frontmatter Lifecycle 必填，但删除策略/歧义保护/模板定级均为 Agent-user 交互，不可代码化"
+guard_replaceable: false
 ---
 
 # 文件生命周期规则

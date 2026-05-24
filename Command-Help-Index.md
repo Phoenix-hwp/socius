@@ -61,8 +61,6 @@ help
 升级为多轮
 总结本轮对话
 确认合并
-提交git
-Git同步
 ```
 
 ## 6) 全局执行策略（风险分级自动执行）
@@ -117,15 +115,10 @@ help
 | Notion 目录选项 | — | `.cursor/mcp/notion_cascader_directory_choices.json`（见 `10-Topics/script-option-ids.md`） | — | — |
 | 刷新目录选项 | — | `.cursor/mcp/refresh_notion_directory_choices.cmd` | — | — |
 
-## 9) Git / Gitee（工作区同步）（三层架构）
+## 9) 工作区同步
 
-| 指令 | 别名 | 用途 | 框架 | 工作流 |
-|---|---|---|---|---|
-| 提交git | Git同步、推仓库、提交远端 | add → commit → pull --rebase → push。强制推送与破坏性操作须确认。 | `mod-git-crud-framework.mdc` | `flow-git-commit.mdc` |
-| 拉取git | 拉取远端、直接拉取 | 一句到位 `git pull --rebase`，不做差异审查 | `mod-git-crud-framework.mdc` | `flow-git-pull.mdc` |
-| 安全拉取 | 审查拉取、拉取审查 | fetch → 展示差异 → 用户选 [1]覆盖 [2]合并 [3]保留 | `mod-git-crud-framework.mdc` | `flow-git-safe-pull.mdc` |
-| 新设备初始化 | 初始化、初始化设备、换机设置、设备初始化 | 工作区根运行 `bootstrap-on-pull.cmd`；占位、环境、Shim、ngrok、API Key 检测与汇总；详见 `模型配置说明.md` | `git-cross-device-and-secrets.mdc` | — |
-| git到新设备 | 克隆到新路径、同步到新位置 | 确认后，将 Git 仓库拉取到用户指定的自定义路径（支持新设备初始化）。包含路径选择、冲突处理、失败兜底。 | `flow-git-clone-to-custom-path.mdc` | `flow-git-clone-to-custom-path.mdc` |
+> ⛔ **Git 同步模块已于 2026-05-18 移除**。工作区通过网盘（OneDrive/坚果云等）同步全量文件。
+> `.gitignore` 同时作为未来云盘同步忽略规则的预留设计，包含 `.git/` 等不应跨设备同步的内容。
 
 
 > 定位：为本工作区所有项目提供**知识参考补充层**，作为网络信息的辅助与沉淀。
@@ -223,17 +216,17 @@ help
 
 | 指令 | 别名 | 说明 | 关联规则 |
 |:---|:---|:---|:---|
-| 待办 | 查看待办、调整待办 | 弹出两阶段 AskQuestion 链：多选待办 → 逐项操作（查看备忘/推迟/标记完成/标记进行中/跳过） | `Skills_Library/scripts/todo-reminder.py` |
+| 待办 | 查看待办、调整待办、调取待办 | 两阶段 AskQuestion；**V012-DRILL-*** 须走 V012 全链路沙箱 | `todo-reminder.py` + `flow-v012-drill-bridge.mdc` |
 | 学习 | 学习知识、阅读卡片 | 读取知识源（卡片/Notion/网页/PDF）→ 结构化总结 → 逐点讨论四个输出端（审视/操作/协议/融汇）→ 写入 `Knowledge-Brain/protocols/` 待验证 | `Knowledge-Brain/framework.md` |
 
 ### 系统审计
 
 | 指令 | 别名 | 用途 | 框架 | 工作流 |
 |:---|:---|:---|:---|:---|
-| 系统检查 | 自检、审计、巡检系统、健康检查 | 全系统六大维度（架构/数据/注册表/编码/过渡方案/技能）健康扫描，输出结构化报告 | `mod-system-audit.mdc` | — |
+| 系统检查 | 自检、审计、巡检系统、健康检查 | 全系统七大维度（架构/四层架构/数据/注册表/编码/过渡方案/代码质量/认知自省）健康扫描，输出结构化报告 | `mod-system-audit.mdc` | — |
 
 自动触发：
-- **每日首次**：sessionStart 自动 fetch/pull 后 OR 手动 pull 后，弹出待办提醒弹窗（同日不再重复）
+- **每日首次**：sessionStart 时弹出待办提醒弹窗（同日不再重复）
 - **关键词命中**：对话命中 `resume_keywords` 时，回复末尾追加「⏰ 待办关联」提示（加粗醒目，不阻断）
 - **收束完成检测**：收束时自动检测 `pending` + `in_progress` 项是否实际完成 → AskQuestion 确认
 

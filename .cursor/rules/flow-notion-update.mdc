@@ -6,6 +6,7 @@ glossary:
   module: Notion
   operation: update
   depends: [mod-notion-precondition, mod-notion-crud-framework]
+guard_replaceable: false
 ---
 
 # Notion 更新页面工作流

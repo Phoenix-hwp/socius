@@ -4,6 +4,16 @@ glossary:
   layer: 3-工作流执行层
   module: BehaviorPreferences
   depends: [mod-behavior-crud-framework, Behavior-Dimensions-Registry]
+guard_replaceable: false
+  pipeline_markers:
+    rule: "Agent 在自动收束的**每个步骤(A-E)完成后**必须在回复末尾输出 `[✓ Step_ID]` 标记。Step A(轮级快照)和 Step E(任务级归纳+日志落盘)为 required=true，Step B/C/D 可选——Guard 下次启动时自动扫描缺失标记并阻断。"
+    close_check: "**收束前自检（强制）**：在最后一步 E（落盘）前，Agent 必须回溯检查本轮 A/D 是否均有完成标记。若有缺失 → 补充 `[✓ Step_ID]（补标）` 后落盘。"
+    format:
+      done: "[✓ Step_ID]"
+      skip: "[⏭ Step_ID: reason]"
+    definitions: ".cursor/workflow-definitions.json → behavior_auto_receipt"
+
+> **Guard 轨道**：任务级反馈评分由 `feedback.py` 执行。收束时的 Decision-Log 写入由 `decision_log.py` 执行。收束流程本身的触发/交互/AskQuestion 由 Agent 执行，无 Guard 代码覆盖，保留本工作流完整步骤。
 ---
 
 # 行为偏好自动收束工作流
@@ -132,6 +142,21 @@ glossary:
 
 ---
 
+### C0：收束前自我诊断（心理表征比对，CP-067）
+
+在填写快照之前，Agent 在脑中快速运行一次「预期 vs 实际」比对（CP-067 功用⑤）：
+
+1. 我预期的任务完成路径是什么？（如「2 步完成，用户直接接受」）
+2. 实际情况是什么？（如「花了 4 步，用户纠正了 2 次」）
+3. 差距暴露了我的哪些心理表征缺陷？
+   - 是拆解粒度不对？（该拆的更细/更粗）
+   - 是领域知识不足？（对该任务域的模式积累不够）
+   - 是策略选择偏差？（用错了方法路径）
+
+此诊断不出现在快照字段中，仅作为 Agent 的内部反思工具。诊断结果影响后续同类型任务的策略选择。
+
+---
+
 ## 步骤 C：任务完成自动收束（仅当任务状态变更时）
 
 触发条件：`10-Topics/Active-Task-Tracker.json` 中任一任务状态从 `进行中` → `已完成`。
@@ -201,7 +226,7 @@ glossary:
    | ① 有效 | 任务 `result: "success"` + Agent 在执行中参考了该协议 + 无用户纠正涉及该协议的主张 | `effective: true` | 写入 `activation-log.jsonl`，该协议 `effective_count += 1` |
    | ② 协议错误 | 用户纠正了 Agent，且纠正内容**直接反驳**协议核心主张（如协议说「用 A 标准判断」，用户说「不对，应该用 B」） | `effective: false, miscue: "protocol"` | 写入 `activation-log.jsonl`，记录 `miscue_type: "protocol_wrong"`，附 `pended_review: true` |
    | ③ 场景误用 | 用户纠正了 Agent，但纠正的是**场景选择**（如「这个场景不该用这份协议」），而非协议内容本身 | `effective: false, miscue: "scene"` | 写入 `activation-log.jsonl`，记录 `miscue_type: "scene_mismatch"`，附 `pended_review: true` |
-   | ④ 不确定 | 协议被激活但难以判定是否有用（无明确纠正信号，但任务中未明显参考该协议） | `effective: null` | 写入 `activation-log.jsonl`，`effective: null`，不做计数变更 |
+   | ④ 未采用 | 协议被激活但 Agent 本轮执行中未明显参考该协议（既无引用也无纠正） | `effective: null` | 写入 `activation-log.jsonl`，`effective: null`，该协议 `bystander_count += 1`。同 task_type 下 `bystander_count ≥ 5` 且 `effective_count = 0` → 下次同一 task_type 时该协议不进入候选池（由激活引擎过滤器 2 降权） |
 
    4. **②/③ 的区分规则**（Agent 自判，不弹窗）：
       - Agent 检查用户纠正发生时，该协议是否处于激活触发态（activation engine 标记）
@@ -215,12 +240,61 @@ glossary:
       ```
    6. **写入 `Knowledge-Brain/activation-log.jsonl`**（新建或追加一行）：
       ```json
-      {"date":"<ISO>","task_id":"<ID>","protocol_id":"<CP-xxx>","task_type":"<type>","concept_anchor":"<anchor>","effective":<true|false|null>,"miscue_type":<null|"protocol_wrong"|"scene_mismatch">,"pended_review":<false|true>,"note":"<≤30字简述>"}
+      {"date":"<ISO>","task_id":"<ID>","protocol_id":"<CP-xxx>","task_type":"<type>","concept_anchor":"<anchor>","effective":<true|false|null>,"miscue_type":<null|"protocol_wrong"|"scene_mismatch">,"pended_review":<false|true>,"bystander_count":<number>,"note":"<≤30字简述>"}
       ```
+      - `activated_count` 对①②③④均 `+1`（协议被激活）
+      - `effective_count` 仅①时 `+1`
+      - `bystander_count` 仅④时 `+1`
+      - `bystander_count` 重置条件：若本轮评估后同 task_type 下 `effective_count` 从 0 变为 ≥1，则该 task_type 的 `bystander_count` 重置为 0（该协议终于被用上了，之前累积的旁观不再有意义）
    7. 全部协议评估完毕后，更新 `Decision-Log.jsonl` 对应条目：
       - `kb_effective`：全部协议 `effective=true` → `true`；任一 `effective=false` → `false`；全部 `effective=null` → `null`
       - `kb_miscued`：`effective=false` 的协议 ID 列表
    8. 评估后在回执末尾标注 `📊 KB 协议反馈 xN 已写入 activation-log`。
+   
+   8-bis. **写入 `10-Topics/experience-index.jsonl`**（M0 统一经验索引 — 步骤 C 末尾强制，与 activation-log 同步）：
+      1. 取本轮任务的基础信息：`task_id` / `task_type` / `date` / `p008_level`（从 Decision-Log 取） / `result`
+      2. 取本轮写入的各日志源的行号范围：
+         - `behavior_log_line`：本轮最后写入的 Behavior-Fit-Log 行号（若步骤 C 未写行为日志，填 `null`）
+         - `decision_log_line`：本轮最后写入的 Decision-Log 行号（若本轮无决策，填 `null`）
+         - `hot_log_lines`：本轮 Round-Behavior-Hot 的行号范围 `[start, end]`（若无，填 `null`）
+         - `warm_log_lines`：本轮 Round-Behavior-Warm 的行号范围（同上）
+         - `activation_log_lines`：本轮 activation-log 的行号范围（同上）
+      3. 提取 `keywords`：从任务描述 + 本轮执行的操作中取 3-7 个关键词（用于后续续接检索匹配）
+      4. 追加一行到 `experience-index.jsonl`（单行 JSON，不含换行符）
+   
+   9. **待消化池检测**（步骤 C 末尾强制，无论任务是否状态变更）：
+      1. 检查 `Knowledge-Brain/pending-digestion.json` 是否存在且 `candidates` 数组非空。
+      2. 若为空或不存在 → 跳过，标注 `📋 待消化池为空，跳过`。
+      3. 若非空 → 输出待消化池摘要：
+         ```
+         📋 待消化池：本轮任务中获取了 N 条候选知识，即将进入消化管线。
+            [立即消化]  [稍后处理]
+         ```
+      4. `[立即消化]`：逐条走消化管线（Step 0 源分解 → Step 1.5 诠释自检 → Step 1-4 分类路由 → P2 四问闸门 → Step R 读后总结 → Step S 全域巡检）。消化完成后清空 `pending-digestion.json`。
+      5. `[稍后处理]`：保留 `pending-digestion.json`，下次收束时再次提醒。标注 `📋 待消化池保留（N 条待处理）`。
+
+14. **跨设备上下文移交摘要**（步骤 C 末尾强制，无论任务是否状态变更）：
+   1. Agent 自评本轮对话的核心上下文状态：
+      - `active_task`：本轮主要讨论的任务/主题（≤30 字）
+      - `pending_items`：本轮未完成的待处理事项（若有多轮项目，从 Master_Control 待处理池取前 3 条；若无归属，取本轮讨论中已提出但未解决的事项，≤3 条）
+      - `behavioral_tone`：本轮对话的行为模式简述（如「方案设计模式，结构化讨论」/「快速问答模式，用户主导」/「探索调试模式」）
+   2. 获取当前设备标记（`hostname`）。
+   3. 从本轮 `Decision-Log.jsonl` 条目中提取 `kb_protocols_activated` 作为 `active_protocols`；提取最近的决策简述作为 `last_decision`。
+   4. 生成移交摘要 JSON 并 **覆盖写入** `10-Topics/context-handoff.json`（单 JSON 对象，非 JSONL）：
+      ```json
+      {
+        "date": "<ISO>",
+        "last_device": "<hostname>",
+        "active_task": "<≤30字简述>",
+        "pending_items": ["<事项1>", "<事项2>"],
+        "behavioral_tone": "<行为模式简述>",
+        "active_protocols": ["<CP-xxx>"],
+        "last_decision": "<最近关键决策简述，若无则 null>"
+      }
+      ```
+   5. 写入后在回执末尾标注 `📦 上下文移交摘要已写入（TTL 24h）`。
+
+   > **设计意图**：跨设备同日续接 — 用户在设备 A 上结束会话后换到设备 B，Agent 在会话开端自动读取移交摘要。若距今 <24h 则直接注入上下文；≥24h 降级为手动 `继续对话`。文件覆盖写入（非追加），始终只存最后一次会话的上下文快照。
 
 ---
 
@@ -242,6 +316,10 @@ Agent 扫描本轮对话，按三层策略提取经验：
 - T2：用户语气斩钉截铁（"直接...最稳"、"一般我会..."、"先改...再..."）、正在纠正 Agent 操作、属工具操作/流程步骤/偏好声明领域、本轮任务中已被实际使用且成功
 - T3：用户语气试探（"可能..."、"我觉得..."、"我也很难讲明白"）、正在和 Agent 一起思考/讨论、属方法论/架构范式/认知模型领域、尚未落地验证或属于远期方向
 
+### C-bis.0 认知纠正行为约定（天赋归因，CP-064/CP-072）
+
+若本轮对话中用户用「天赋」「天生」「基因决定」等解释某项能力差异，Agent 在收束时应标注 `special` 字段中追加 `天赋归因纠正`，并在经验提取时引用 CP-064 的归因链（基因只在极少数生理极限上起作用 → 技能是习得的 → 追问训练方法）。
+
 ### C-bis.1 T1 硬事实 → 静默写入 `known_issues`
 
 1. 扫描本轮方法调用记录，识别满足以下全部条件的硬事实：
@@ -255,7 +333,7 @@ Agent 扫描本轮对话，按三层策略提取经验：
 
 ### C-bis.2 T2 轻经验 → 批量确认 → 写入 `User-Knowledge-Registry`
 
-1. 收集本轮所有 T2 类经验（用户明确分享的操作经验/流程偏好）
+1. 收集本轮所有 T2 类经验（用户明确分享的操作经验/流程偏好），以及**从外部知识源消化并经 `classifier.md` Step R 标记为「可转化为工作流规则」的、可映射到 Agent 决策点的认知模式**。
 2. 若 T2 列表非空 → 一条 `AskQuestion` 展示全部 T2 条目：
    - 标题：`经验提取 — 轻经验（批量确认）`
    - prompt：列出本轮所有 T2 条目（编号 + 摘要 + 领域），每条 1 行简述

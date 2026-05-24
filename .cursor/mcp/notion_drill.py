@@ -21,6 +21,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from notion_sdk import NotionClient
+from notion_sdk.config import LONG_CONTENT_THRESHOLD, BATCH_SIZE as DEFAULT_BATCH_SIZE
 
 
 # ---------------------------------------------------------------------------
@@ -106,8 +107,8 @@ class NotionDrillIngestor:
         self,
         client: NotionClient,
         *,
-        max_summary_blocks: int = 50,
-        max_summary_chars: int = 2000,
+        max_summary_blocks: int = DEFAULT_BATCH_SIZE,
+        max_summary_chars: int = LONG_CONTENT_THRESHOLD["chars"],
     ) -> None:
         """Initialize with a configured NotionClient.
 

@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "description": "Lollapalooza 因子注册表 — 复用 CP-125 的 14 类核心逻辑谬误分类作为可叠加的低风险因子。多种因子同向叠加 → Lollapalooza 效应（CP-119）。",
+    "created": "2026-05-22",
+    "source": "CP-119 Lollapalooza效应 + CP-125 逻辑谬误分类与对策",
+    "purpose": "供 Lollapalooza 效应检测器（future P051）消费：扫描本轮操作的 risk_flags → 匹配因子 → 检测 ≥3 因子同向叠加 → 触发 Lollapalooza 预警"
+  },
+  "factors": [
+    {
+      "factor_id": "CF-001",
+      "name": "人身攻击",
+      "category": "相关谬误",
+      "detection_trigger": "Agent 拒绝或贬低用户观点时引用了用户的身份/背景/经验而非论证内容",
+      "risk_weight": 1,
+      "direction": "认知偏差 — 错误废弃",
+      "agent_scenario": "\"这条规则是新人写的，肯定不靠谱\""
+    },
+    {
+      "factor_id": "CF-002",
+      "name": "诉诸权威",
+      "category": "相关谬误",
+      "detection_trigger": "Agent 仅凭权威来源（官方文档/协议编号）接受结论，忽略实际测试结果或反例",
+      "risk_weight": 2,
+      "direction": "认知偏差 — 过度依赖权威",
+      "agent_scenario": "\"官方文档说这样就行，尽管实际测试失败了\""
+    },
+    {
+      "factor_id": "CF-003",
+      "name": "诉诸情感",
+      "category": "相关谬误",
+      "detection_trigger": "Agent 用紧迫感/恐惧/同情等情感词句代替技术分析作为决策理由",
+      "risk_weight": 1,
+      "direction": "认知偏差 — 情感替代理性",
+      "agent_scenario": "\"如果不这么做系统就会崩溃——用户会很痛苦\"（无技术证据）"
+    },
+    {
+      "factor_id": "CF-004",
+      "name": "稻草人",
+      "category": "相关谬误",
+      "detection_trigger": "Agent 将用户观点扭曲为更极端/更弱版本后反驳",
+      "risk_weight": 2,
+      "direction": "认知偏差 — 歪曲对方立场",
+      "agent_scenario": "\"你说要增加安全检查→那岂不是每一步都要确认？太慢了\""
+    },
+    {
+      "factor_id": "CF-005",
+      "name": "红鲱鱼",
+      "category": "相关谬误",
+      "detection_trigger": "Agent 引入无关话题或过往成功转移对当前问题的注意力",
+      "risk_weight": 1,
+      "direction": "认知偏差 — 注意力转移",
+      "agent_scenario": "\"这个 bug 确实存在，但我们上次的部署很成功啊\""
+    },
+    {
+      "factor_id": "CF-006",
+      "name": "偷换概念",
+      "category": "歧义谬误",
+      "detection_trigger": "Agent 在同一论辩中切换词语含义（如\"安全\"在\"无崩溃\"和\"无数据丢失\"之间切换）",
+      "risk_weight": 2,
+      "direction": "认知偏差 — 语义歧义",
+      "agent_scenario": "\"这个操作是安全的\"（刚才安全=无崩溃风险，现在安全=无数据丢失风险）"
+    },
+    {
+      "factor_id": "CF-007",
+      "name": "含糊其词",
+      "category": "歧义谬误",
+      "detection_trigger": "Agent 的指令或解释存在语法歧义——可被多种方式解读",
+      "risk_weight": 2,
+      "direction": "执行偏差 — 歧义指令",
+      "agent_scenario": "\"修改 A 和 B 的配置文件\"（是修改 A 文件 + B 文件，还是修改 A 和 B 共用的文件？）"
+    },
+    {
+      "factor_id": "CF-008",
+      "name": "循环论证",
+      "category": "预设谬误",
+      "detection_trigger": "Agent 将需要证明的结论作为前提使用（\"这个规则正确因为它是规则\"类推理）",
+      "risk_weight": 2,
+      "direction": "认知偏差 — 自证循环",
+      "agent_scenario": "\"这个规则是正确的，因为它是 .mdc 文件里写的\""
+    },
+    {
+      "factor_id": "CF-009",
+      "name": "复杂问句",
+      "category": "预设谬误",
+      "detection_trigger": "Agent 给出的选项预设了未经证明的前提（如只给 A/B 选项但未确认是否排除了 C）",
+      "risk_weight": 1,
+      "direction": "决策偏差 — 预设排斥",
+      "agent_scenario": "AskQuestion 只给 A 和 B 两个选项，但用户可能的正确答案是 C"
+    },
+    {
+      "factor_id": "CF-010",
+      "name": "假两难",
+      "category": "预设谬误",
+      "detection_trigger": "Agent 将多选项缩减为仅两个选项并向用户呈现为\"唯一选择\"",
+      "risk_weight": 2,
+      "direction": "决策偏差 — 选项缩小",
+      "agent_scenario": "\"要么全自动，要么全手动，没有中间路线\""
+    },
+    {
+      "factor_id": "CF-011",
+      "name": "后此故因此",
+      "category": "因果谬误",
+      "detection_trigger": "Agent 仅凭时间先后推断因果关系（\"操作 X 之后出现 Y，所以 X 导致 Y\"）",
+      "risk_weight": 2,
+      "direction": "认知偏差 — 虚假因果",
+      "agent_scenario": "\"部署了新版本后系统就慢了，肯定是新版本的问题\""
+    },
+    {
+      "factor_id": "CF-012",
+      "name": "虚假相关",
+      "category": "因果谬误",
+      "detection_trigger": "Agent 将同时出现的两个事件认定为因果（\"每次 X 发生时 Y 也发生，所以 X 导致 Y\"）",
+      "risk_weight": 2,
+      "direction": "认知偏差 — 虚假相关",
+      "agent_scenario": "\"每次我们修改 .mdc 规则后 Guard 都会报告异常，所以 .mdc 修改会导致异常\""
+    },
+    {
+      "factor_id": "CF-013",
+      "name": "以偏概全",
+      "category": "归纳谬误",
+      "detection_trigger": "Agent 从 ≤2 次测试/观察结果推断全体的结论（\"测试 N 次失败→该 Skill 不可用\"）",
+      "risk_weight": 3,
+      "direction": "认知偏差 — 样本不足",
+      "agent_scenario": "\"这个 Skill 在两次测试中都失败了 → 这个 Skill 不可用\""
+    },
+    {
+      "factor_id": "CF-014",
+      "name": "赌徒谬误",
+      "category": "归纳谬误",
+      "detection_trigger": "Agent 认为独立事件的概率会平衡（\"连续 N 次成功→下次应该安全\"）",
+      "risk_weight": 1,
+      "direction": "认知偏差 — 概率误判",
+      "agent_scenario": "\"连续 3 次执行都成功了，下次执行应该很安全\""
+    }
+  ],
+  "lollapalooza_rules": {
+    "trigger_threshold": 3,
+    "description": "本轮操作触发 ≥3 条因子且同向性阈值 ≥ 0.6 → Lollapalooza 预警",
+    "direction_groups": {
+      "认知偏差": {
+        "factors": ["CF-001", "CF-002", "CF-003", "CF-004", "CF-005", "CF-006", "CF-008", "CF-011", "CF-012", "CF-013", "CF-014"],
+        "description": "Agent 推理中的系统性认知错误——这些因子同向叠加导致坚持错误决策或低估风险"
+      },
+      "执行偏差": {
+        "factors": ["CF-007"],
+        "description": "Agent 指令或输出中的歧义和模糊性——可导致意外执行结果"
+      },
+      "决策偏差": {
+        "factors": ["CF-009", "CF-010"],
+        "description": "Agent 在选项设计和呈现中的偏差——限制用户决策空间导致次优选择"
+      }
+    },
+    "escalation": {
+      "yellow": "≥3 因子触发，同向性 0.6-0.8 → 升级为黄色预警，强制 AskQuestion",
+      "red": "≥5 因子触发 OR ≥3 因子触发且同向性 >0.8 → 升级为红色预警，强制 L3"
+    }
+  },
+  "concept_anchors": {
+    "Lollapalooza.effect": "CP-119",
+    "fallacy.classification": "CP-125",
+    "cognitive.bias.scan": "CP-126 (元认知偏见扫描)"
+  }
+}

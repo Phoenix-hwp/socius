@@ -4,6 +4,7 @@ glossary:
   layer: 3-工作流执行层
   module: ProjectMemo
   depends: [mod-project-memo-framework]
+guard_replaceable: false
 ---
 
 # 追加项目备忘流程

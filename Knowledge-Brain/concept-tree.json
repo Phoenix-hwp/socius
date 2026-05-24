@@ -3,10 +3,18 @@
   "_schema": {
     "<concept_anchor>": {
       "parent": "<parent_concept_anchor or null>",
-      "children": ["<child_concept_anchor>"],
-      "siblings": ["<sibling_concept_anchor>"],
-      "related": ["<cross-domain_concept_anchor>"],
-      "protocols": ["<CP-xxx>"],
+      "children": [
+        "<child_concept_anchor>"
+      ],
+      "siblings": [
+        "<sibling_concept_anchor>"
+      ],
+      "related": [
+        "<cross-domain_concept_anchor>"
+      ],
+      "protocols": [
+        "<CP-xxx>"
+      ],
       "first_seen": "<YYYY-MM-DD>"
     }
   },
@@ -16,234 +24,404 @@
     "new_child": "创建子概念时，回填parent的children列表",
     "cross_domain": "人工添加related字段，跨域概念桥接"
   },
-
   "BPMN.activity": {
     "parent": "BPMN",
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-001"],
+    "protocols": [
+      "CP-001"
+    ],
     "first_seen": "2026-05-16"
   },
   "BPMN": {
     "parent": null,
-    "children": ["BPMN.activity"],
+    "children": [
+      "BPMN.activity"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "BusinessModel.Canvas": {
     "parent": "BusinessModel",
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-002"],
+    "protocols": [
+      "CP-002"
+    ],
     "first_seen": "2026-05-16"
   },
   "BusinessModel": {
     "parent": null,
-    "children": ["BusinessModel.Canvas"],
+    "children": [
+      "BusinessModel.Canvas"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "ProductValidation.PMF": {
     "parent": "ProductValidation",
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-003"],
+    "protocols": [
+      "CP-003"
+    ],
     "first_seen": "2026-05-16"
   },
   "ProductValidation": {
     "parent": null,
-    "children": ["ProductValidation.PMF"],
+    "children": [
+      "ProductValidation.PMF"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "Strategy.SWOT": {
     "parent": "Strategy",
     "children": [],
     "siblings": [],
-    "related": ["BusinessModel.Canvas"],
-    "protocols": ["CP-004"],
+    "related": [
+      "BusinessModel.Canvas"
+    ],
+    "protocols": [
+      "CP-004"
+    ],
     "first_seen": "2026-05-16"
   },
   "Strategy": {
     "parent": null,
-    "children": ["Strategy.SWOT"],
+    "children": [
+      "Strategy.SWOT"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "Company.Lifecycle": {
     "parent": "Company",
     "children": [],
     "siblings": [],
-    "related": ["BusinessModel.Canvas", "Strategy.SWOT"],
-    "protocols": ["CP-005"],
+    "related": [
+      "BusinessModel.Canvas",
+      "Strategy.SWOT"
+    ],
+    "protocols": [
+      "CP-005"
+    ],
     "first_seen": "2026-05-16"
   },
   "Company": {
     "parent": null,
-    "children": ["Company.Lifecycle"],
+    "children": [
+      "Company.Lifecycle"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "ProductDecision.KANO": {
     "parent": "ProductDecision",
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-006"],
+    "protocols": [
+      "CP-006"
+    ],
     "first_seen": "2026-05-16"
   },
   "ProductDecision.IdeaFilter": {
     "parent": "ProductDecision",
     "children": [],
-    "siblings": ["ProductDecision.KANO"],
-    "related": ["ProductValidation.PMF"],
-    "protocols": ["CP-009"],
+    "siblings": [
+      "ProductDecision.KANO"
+    ],
+    "related": [
+      "ProductValidation.PMF"
+    ],
+    "protocols": [
+      "CP-009"
+    ],
     "first_seen": "2026-05-16"
   },
   "ProductDecision": {
     "parent": null,
-    "children": ["ProductDecision.KANO", "ProductDecision.IdeaFilter"],
+    "children": [
+      "ProductDecision.KANO",
+      "ProductDecision.IdeaFilter"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "B2BProduct.Evolution": {
     "parent": "B2BProduct",
     "children": [],
     "siblings": [],
-    "related": ["Company.Lifecycle"],
-    "protocols": ["CP-007"],
+    "related": [
+      "Company.Lifecycle"
+    ],
+    "protocols": [
+      "CP-007"
+    ],
     "first_seen": "2026-05-16"
   },
   "B2BProduct": {
     "parent": null,
-    "children": ["B2BProduct.Evolution"],
+    "children": [
+      "B2BProduct.Evolution"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "RequirementAnalysis.13Elements": {
     "parent": "RequirementAnalysis",
     "children": [],
     "siblings": [],
-    "related": ["ProductDecision.KANO"],
-    "protocols": ["CP-008"],
+    "related": [
+      "ProductDecision.KANO"
+    ],
+    "protocols": [
+      "CP-008"
+    ],
     "first_seen": "2026-05-16"
   },
   "RequirementAnalysis": {
     "parent": null,
-    "children": ["RequirementAnalysis.13Elements"],
+    "children": [
+      "RequirementAnalysis.13Elements"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
     "first_seen": "2026-05-16"
   },
-
   "Reading.Levels": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-010"],
+    "protocols": [
+      "CP-010"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.ActiveQuestions": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-011"],
+    "protocols": [
+      "CP-011"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Classification": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-012"],
+    "protocols": [
+      "CP-012"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Structure": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-013"],
+    "protocols": [
+      "CP-013"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Terminology": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-014"],
+    "protocols": [
+      "CP-014"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Propositions": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-015"],
+    "protocols": [
+      "CP-015"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Criticism": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-016"],
+    "protocols": [
+      "CP-016"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Disagreement": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Syntopical", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-017"],
+    "protocols": [
+      "CP-017"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Syntopical": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Growth"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Growth"
+    ],
     "related": [],
-    "protocols": ["CP-018"],
+    "protocols": [
+      "CP-018"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading.Growth": {
     "parent": "Reading",
     "children": [],
-    "siblings": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical"],
+    "siblings": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical"
+    ],
     "related": [],
-    "protocols": ["CP-019"],
+    "protocols": [
+      "CP-019"
+    ],
     "first_seen": "2026-05-16"
   },
   "Reading": {
     "parent": null,
-    "children": ["Reading.Levels", "Reading.ActiveQuestions", "Reading.Classification", "Reading.Structure", "Reading.Terminology", "Reading.Propositions", "Reading.Criticism", "Reading.Disagreement", "Reading.Syntopical", "Reading.Growth"],
+    "children": [
+      "Reading.Levels",
+      "Reading.ActiveQuestions",
+      "Reading.Classification",
+      "Reading.Structure",
+      "Reading.Terminology",
+      "Reading.Propositions",
+      "Reading.Criticism",
+      "Reading.Disagreement",
+      "Reading.Syntopical",
+      "Reading.Growth"
+    ],
     "siblings": [],
     "related": [],
     "protocols": [],
@@ -252,37 +430,64 @@
   "PyramidPrinciple.structure": {
     "description": "任何结构化输出都应结论先行、以上统下、归类分组、逻辑递进——不限于文章，也包括代码架构、任务拆解、方案设计",
     "parent": null,
-    "children": ["PyramidPrinciple.scqa", "PyramidPrinciple.reasoning", "PyramidPrinciple.construction", "PyramidPrinciple.logic-order", "PyramidPrinciple.summarizing", "PyramidPrinciple.problem-definition", "PyramidPrinciple.structured-analysis", "PyramidPrinciple.written-presentation"],
+    "children": [
+      "PyramidPrinciple.scqa",
+      "PyramidPrinciple.reasoning",
+      "PyramidPrinciple.construction",
+      "PyramidPrinciple.logic-order",
+      "PyramidPrinciple.summarizing",
+      "PyramidPrinciple.problem-definition",
+      "PyramidPrinciple.structured-analysis",
+      "PyramidPrinciple.written-presentation",
+      "PyramidPrinciple.mece"
+    ],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-045"],
+    "protocols": [
+      "CP-045"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.scqa": {
     "description": "SCQA讲故事——让任何听众在30秒内理解'为什么是现在、为什么是这个问题、要回答什么'。不限于商务写作，也适用于技术方案、教学、bug说明",
     "parent": "PyramidPrinciple.structure",
     "children": [],
-    "siblings": ["PyramidPrinciple.reasoning", "PyramidPrinciple.construction"],
+    "siblings": [
+      "PyramidPrinciple.reasoning",
+      "PyramidPrinciple.construction"
+    ],
     "related": [],
-    "protocols": ["CP-046"],
+    "protocols": [
+      "CP-046"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.reasoning": {
     "description": "关键句层次优先用归纳法，演绎推理放低层且不超过4步",
     "parent": "PyramidPrinciple.structure",
     "children": [],
-    "siblings": ["PyramidPrinciple.scqa", "PyramidPrinciple.construction"],
+    "siblings": [
+      "PyramidPrinciple.scqa",
+      "PyramidPrinciple.construction"
+    ],
     "related": [],
-    "protocols": ["CP-047"],
+    "protocols": [
+      "CP-047"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.construction": {
     "description": "构建金字塔先尝试自上而下(主题→疑问→回答)，不清时自下而上(列要点→找关系→得结论)",
     "parent": "PyramidPrinciple.structure",
     "children": [],
-    "siblings": ["PyramidPrinciple.scqa", "PyramidPrinciple.reasoning"],
+    "siblings": [
+      "PyramidPrinciple.scqa",
+      "PyramidPrinciple.reasoning"
+    ],
     "related": [],
-    "protocols": ["CP-048"],
+    "protocols": [
+      "CP-048"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.logic-order": {
@@ -291,7 +496,9 @@
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-049"],
+    "protocols": [
+      "CP-049"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.summarizing": {
@@ -300,7 +507,9 @@
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-050"],
+    "protocols": [
+      "CP-050"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.problem-definition": {
@@ -309,7 +518,9 @@
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-051"],
+    "protocols": [
+      "CP-051"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.structured-analysis": {
@@ -318,7 +529,9 @@
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-052"],
+    "protocols": [
+      "CP-052"
+    ],
     "first_seen": "2026-05-17"
   },
   "PyramidPrinciple.written-presentation": {
@@ -327,7 +540,1110 @@
     "children": [],
     "siblings": [],
     "related": [],
-    "protocols": ["CP-053"],
+    "protocols": [
+      "CP-053"
+    ],
     "first_seen": "2026-05-17"
+  },
+  "CognitivePsychology.Definition": {
+    "description": "认知心理学是把心智当作信息加工系统来研究——从感知输入到行为输出的全过程",
+    "parent": "CognitivePsychology",
+    "children": [],
+    "siblings": [
+      "CognitivePsychology.Perspectives",
+      "CognitivePsychology.Models",
+      "CognitivePsychology.Methods"
+    ],
+    "related": [
+      "Reading.Levels"
+    ],
+    "protocols": [
+      "CP-073"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "CognitivePsychology.Perspectives": {
+    "description": "理解认知有四个互补视角：信息加工的序列阶段、神经科学的脑基础、计算机的模拟验证、进化的功能追问",
+    "parent": "CognitivePsychology",
+    "children": [],
+    "siblings": [
+      "CognitivePsychology.Definition",
+      "CognitivePsychology.Models",
+      "CognitivePsychology.Methods"
+    ],
+    "related": [
+      "PyramidPrinciple.structure"
+    ],
+    "protocols": [
+      "CP-074"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "CognitivePsychology.Models": {
+    "description": "隐喻启思路、模型可检验、理论解释现象、视角引方向——认知科学的四层抽象阶梯",
+    "parent": "CognitivePsychology",
+    "children": [],
+    "siblings": [
+      "CognitivePsychology.Definition",
+      "CognitivePsychology.Perspectives",
+      "CognitivePsychology.Methods"
+    ],
+    "related": [],
+    "protocols": [
+      "CP-075"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "CognitivePsychology.Methods": {
+    "description": "认知研究法分两大门：实验法测量心理-物理关联，个案法记录独特损伤",
+    "parent": "CognitivePsychology",
+    "children": [],
+    "siblings": [
+      "CognitivePsychology.Definition",
+      "CognitivePsychology.Perspectives",
+      "CognitivePsychology.Models"
+    ],
+    "related": [],
+    "protocols": [
+      "CP-076"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "CognitivePsychology": {
+    "parent": null,
+    "children": [
+      "CognitivePsychology.Definition",
+      "CognitivePsychology.Perspectives",
+      "CognitivePsychology.Models",
+      "CognitivePsychology.Methods"
+    ],
+    "siblings": [],
+    "related": [
+      "Reading"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "CognitiveNeuroscience.NeuralBasis": {
+    "description": "1000亿神经元×1000突触=宇宙级网络。赫布律：同时激活→联结强，不同步→弱。认知=涌现属性",
+    "parent": "CognitiveNeuroscience",
+    "children": [],
+    "siblings": [
+      "CognitiveNeuroscience.FunctionalLocalization",
+      "CognitiveNeuroscience.HemisphericSpecialization"
+    ],
+    "related": [
+      "CognitivePsychology.Perspectives"
+    ],
+    "protocols": [
+      "CP-077"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "CognitiveNeuroscience.FunctionalLocalization": {
+    "description": "百年争论结论：低级功能可定位，高级认知分布于全脑，冗余并行运作",
+    "parent": "CognitiveNeuroscience",
+    "children": [],
+    "siblings": [
+      "CognitiveNeuroscience.NeuralBasis",
+      "CognitiveNeuroscience.HemisphericSpecialization"
+    ],
+    "related": [],
+    "protocols": [
+      "CP-078"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "CognitiveNeuroscience.HemisphericSpecialization": {
+    "description": "左脑管语言分析，右脑管空间面孔识别。正常人大脑整体运作，非'左脑/右脑人'",
+    "parent": "CognitiveNeuroscience",
+    "children": [],
+    "siblings": [
+      "CognitiveNeuroscience.NeuralBasis",
+      "CognitiveNeuroscience.FunctionalLocalization"
+    ],
+    "related": [],
+    "protocols": [
+      "CP-079"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "CognitiveNeuroscience": {
+    "parent": null,
+    "children": [
+      "CognitiveNeuroscience.NeuralBasis",
+      "CognitiveNeuroscience.FunctionalLocalization",
+      "CognitiveNeuroscience.HemisphericSpecialization"
+    ],
+    "siblings": [],
+    "related": [
+      "CognitivePsychology"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "Perception.SensationVsPerception": {
+    "description": "感觉=物理探测，知觉=高级解释。同一刺激不同知觉——背景知识决定所见",
+    "parent": "Perception",
+    "children": [],
+    "siblings": [
+      "Perception.SensoryMemory",
+      "Attention.SelectiveAttention"
+    ],
+    "related": [
+      "CognitivePsychology.Perspectives"
+    ],
+    "protocols": [
+      "CP-080"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Perception.SensoryMemory": {
+    "description": "视像≈1秒视野快照，声像≈4秒听觉胶水。感觉存储器=给大脑争取加工时间的缓冲器",
+    "parent": "Perception",
+    "children": [],
+    "siblings": [
+      "Perception.SensationVsPerception"
+    ],
+    "related": [],
+    "protocols": [
+      "CP-081"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Perception": {
+    "parent": null,
+    "children": [
+      "Perception.SensationVsPerception",
+      "Perception.SensoryMemory",
+      "Perception.ConstructiveVsDirect",
+      "Perception.PatternRecognition"
+    ],
+    "siblings": [],
+    "related": [
+      "CognitivePsychology"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "Perception.ConstructiveVsDirect": {
+    "description": "建构论=感觉+记忆主动建构；直接论=环境信息被动拾取。前者解释高级理解，后者解释早期检测",
+    "parent": "Perception",
+    "children": [],
+    "siblings": [
+      "Perception.SensationVsPerception",
+      "Perception.SensoryMemory",
+      "Perception.PatternRecognition"
+    ],
+    "related": [
+      "Perception.SensationVsPerception"
+    ],
+    "protocols": [
+      "CP-083"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Perception.PatternRecognition": {
+    "description": "模板→特征→原型→自下而上+自上而下：四种理论的递进描述模式识别的不同层级",
+    "parent": "Perception",
+    "children": [],
+    "siblings": [
+      "Perception.SensationVsPerception",
+      "Perception.SensoryMemory",
+      "Perception.ConstructiveVsDirect"
+    ],
+    "related": [
+      "Perception.ConstructiveVsDirect"
+    ],
+    "protocols": [
+      "CP-084"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Attention.SelectiveAttention": {
+    "description": "通道容量瓶颈→必须选择。早期过滤/中期衰减/晚期选择——争论焦点：何时滤掉无关信息",
+    "parent": "Attention",
+    "children": [],
+    "siblings": [],
+    "related": [
+      "Perception.SensoryMemory"
+    ],
+    "protocols": [
+      "CP-082"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Attention": {
+    "parent": null,
+    "children": [
+      "Attention.SelectiveAttention"
+    ],
+    "siblings": [],
+    "related": [
+      "CognitivePsychology"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "Memory.WorkingMemory": {
+    "description": "短时记忆≠被动箱子。工作记忆=语音环路+视觉空间展板+情景缓冲器+中央执行机构——主动工作台",
+    "parent": "Memory",
+    "children": [],
+    "siblings": [],
+    "related": [
+      "Attention.SelectiveAttention"
+    ],
+    "protocols": [
+      "CP-085"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Memory": {
+    "parent": null,
+    "children": [
+      "Memory.WorkingMemory",
+      "Memory.LevelsOfProcessing",
+      "Memory.EpisodicVsSemantic",
+      "Memory.Forgetting"
+    ],
+    "siblings": [],
+    "related": [
+      "CognitivePsychology"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "Memory.LevelsOfProcessing": {
+    "description": "加工深度决定记忆持久性。浅层=易忘，深层语义=持久，自我参照=最深",
+    "parent": "Memory",
+    "children": [],
+    "siblings": [
+      "Memory.WorkingMemory",
+      "Memory.EpisodicVsSemantic"
+    ],
+    "related": [],
+    "protocols": [
+      "CP-086"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Memory.EpisodicVsSemantic": {
+    "description": "程序记忆=怎么做(小脑)；语义记忆=世界知识(皮层)；情节记忆=亲身经历(额颞叶)。K.C.案例证明分离",
+    "parent": "Memory",
+    "children": [],
+    "siblings": [
+      "Memory.WorkingMemory",
+      "Memory.LevelsOfProcessing"
+    ],
+    "related": [
+      "CognitiveNeuroscience"
+    ],
+    "protocols": [
+      "CP-087"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Memory.Forgetting": {
+    "description": "遗忘≠消失。七种机制+虚假记忆。记忆是建构而非回放——可被引导问题植入",
+    "parent": "Memory",
+    "children": [],
+    "siblings": [
+      "Memory.WorkingMemory",
+      "Memory.LevelsOfProcessing",
+      "Memory.EpisodicVsSemantic"
+    ],
+    "related": [],
+    "protocols": [
+      "CP-088"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Consciousness": {
+    "description": "意识=对环境刺激+心理事件的觉察。AWARE五成分：注意/觉醒/构筑/知识回忆/情感。核心功能=做计划而非本能",
+    "parent": null,
+    "children": [],
+    "siblings": [],
+    "related": [
+      "Attention"
+    ],
+    "protocols": [
+      "CP-089"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Language": {
+    "description": "语言=层级结构(音素→词素→句法→命题)。乔姆斯基：表层vs深层。布洛卡=产出；威尔尼克=理解。Whorf：语言可能塑造知觉",
+    "parent": null,
+    "children": [],
+    "siblings": [],
+    "related": [
+      "Consciousness",
+      "Knowledge"
+    ],
+    "protocols": [
+      "CP-092"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Development.CognitiveDev": {
+    "parent": "Development",
+    "children": [],
+    "siblings": [],
+    "related": [
+      "Thinking",
+      "Consciousness"
+    ],
+    "protocols": [
+      "CP-093"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Development": {
+    "parent": null,
+    "children": [
+      "Development.CognitiveDev"
+    ],
+    "siblings": [],
+    "related": [
+      "CognitivePsychology"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "Thinking.LogicAndDecision": {
+    "parent": "Thinking",
+    "children": [],
+    "siblings": [
+      "Thinking.ProblemSolving"
+    ],
+    "related": [
+      "Language",
+      "Consciousness"
+    ],
+    "protocols": [
+      "CP-094"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Thinking.ProblemSolving": {
+    "parent": "Thinking",
+    "children": [],
+    "siblings": [
+      "Thinking.LogicAndDecision"
+    ],
+    "related": [
+      "Development",
+      "Knowledge"
+    ],
+    "protocols": [
+      "CP-095"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Thinking": {
+    "parent": null,
+    "children": [
+      "Thinking.LogicAndDecision",
+      "Thinking.ProblemSolving"
+    ],
+    "siblings": [],
+    "related": [
+      "CognitivePsychology",
+      "Consciousness",
+      "Language"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "AI.CognitiveModels": {
+    "parent": "AI",
+    "children": [],
+    "siblings": [],
+    "related": [
+      "Thinking",
+      "Language",
+      "Consciousness"
+    ],
+    "protocols": [
+      "CP-096",
+      "CP-096-bis",
+      "CP-097"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "AI": {
+    "parent": null,
+    "children": [
+      "AI.CognitiveModels"
+    ],
+    "siblings": [],
+    "related": [
+      "CognitivePsychology",
+      "Thinking"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "Knowledge": {
+    "parent": null,
+    "children": [
+      "Knowledge.Representation",
+      "Knowledge.MentalImagery"
+    ],
+    "siblings": [],
+    "related": [
+      "Memory",
+      "CognitivePsychology"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-18"
+  },
+  "Knowledge.Representation": {
+    "description": "知识表征=语义网络+ACT三重编码+PDP联结。专家不存更多而是按原理组织",
+    "parent": "Knowledge",
+    "children": [],
+    "siblings": [
+      "Knowledge.MentalImagery"
+    ],
+    "related": [
+      "Memory.EpisodicVsSemantic"
+    ],
+    "protocols": [
+      "CP-090"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "Knowledge.MentalImagery": {
+    "description": "心理表象=功能上与真实感知等价的内部表征。心理旋转证明二阶同构",
+    "parent": "Knowledge",
+    "children": [],
+    "siblings": [
+      "Knowledge.Representation"
+    ],
+    "related": [
+      "Perception"
+    ],
+    "protocols": [
+      "CP-091"
+    ],
+    "first_seen": "2026-05-18"
+  },
+  "SystemsThinking": {
+    "parent": null,
+    "children": [
+      "SystemsThinking.Archetypes",
+      "SystemsThinking.Modeling",
+      "SystemsThinking.Leverage"
+    ],
+    "siblings": [],
+    "related": [
+      "Thinking.ProblemSolving",
+      "BusinessArchitecture",
+      "ProductManagement"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-20"
+  },
+  "SystemsThinking.Archetypes": {
+    "description": "10个系统基模：增长极限/转移负担/饮鸩止渴/公地悲剧/强者愈强/恶性竞争/目标侵蚀/增长与投资不足/意外对手/吸引力原则",
+    "parent": "SystemsThinking",
+    "children": [],
+    "siblings": [
+      "SystemsThinking.Modeling",
+      "SystemsThinking.Leverage"
+    ],
+    "related": [
+      "Thinking.ProblemSolving"
+    ],
+    "protocols": [
+      "CP-098"
+    ],
+    "first_seen": "2026-05-20"
+  },
+  "SystemsThinking.Modeling": {
+    "description": "CLD因果回路图(定性) + SFD存量流量图(定量)，互补建模工具",
+    "parent": "SystemsThinking",
+    "children": [],
+    "siblings": [
+      "SystemsThinking.Archetypes",
+      "SystemsThinking.Leverage"
+    ],
+    "related": [
+      "BPMN",
+      "UML"
+    ],
+    "protocols": [
+      "CP-099"
+    ],
+    "first_seen": "2026-05-20"
+  },
+  "SystemsThinking.Leverage": {
+    "description": "Meadows十二杠杆点：按干预效力从参数(最低)到超越范式(最高)的12级分层",
+    "parent": "SystemsThinking",
+    "children": [],
+    "siblings": [
+      "SystemsThinking.Archetypes",
+      "SystemsThinking.Modeling"
+    ],
+    "related": [
+      "SystemsThinking.Archetypes",
+      "Thinking.ProblemSolving"
+    ],
+    "protocols": [
+      "CP-100"
+    ],
+    "first_seen": "2026-05-20"
+  },
+  "DecisionFramework": {
+    "parent": null,
+    "children": [
+      "DecisionFramework.Cynefin",
+      "DecisionFramework.StructuredReasoning",
+      "DecisionFramework.RACI"
+    ],
+    "siblings": [],
+    "related": [
+      "Thinking.LogicAndDecision",
+      "SystemsThinking"
+    ],
+    "protocols": [],
+    "first_seen": "2026-05-20"
+  },
+  "DecisionFramework.Cynefin": {
+    "description": "Cynefin五域：清晰/繁杂/复杂/混沌/失序→先判域再匹配策略",
+    "parent": "DecisionFramework",
+    "children": [],
+    "siblings": [
+      "DecisionFramework.StructuredReasoning",
+      "DecisionFramework.RACI"
+    ],
+    "related": [
+      "SystemsThinking",
+      "Thinking.ProblemSolving"
+    ],
+    "protocols": [
+      "CP-101"
+    ],
+    "first_seen": "2026-05-20"
+  },
+  "DecisionFramework.StructuredReasoning": {
+    "description": "决策树(期望值回推) + 贝叶斯推理(新证据更新信念)——不确定下的结构化决策分析",
+    "parent": "DecisionFramework",
+    "children": [],
+    "siblings": [
+      "DecisionFramework.Cynefin",
+      "DecisionFramework.RACI"
+    ],
+    "related": [
+      "Thinking.LogicAndDecision"
+    ],
+    "protocols": [
+      "CP-102"
+    ],
+    "first_seen": "2026-05-20"
+  },
+  "DecisionFramework.RACI": {
+    "description": "RACI矩阵：R(执行)/A(审批=唯一)/C(咨询)/I(知情)四角色责任分配",
+    "parent": "DecisionFramework",
+    "children": [],
+    "siblings": [
+      "DecisionFramework.Cynefin",
+      "DecisionFramework.StructuredReasoning"
+    ],
+    "related": [
+      "ProductManagement"
+    ],
+    "protocols": [
+      "CP-103"
+    ],
+    "first_seen": "2026-05-20"
+  },
+  "PyramidPrinciple.mece": {
+    "description": "MECE穷举不重叠拆解法——分类无重叠无遗漏。金字塔原理结构顺序的核心，麦肯锡问题拆解第一原则",
+    "parent": "PyramidPrinciple.structure",
+    "children": [],
+    "siblings": [
+      "PyramidPrinciple.scqa",
+      "PyramidPrinciple.reasoning",
+      "PyramidPrinciple.construction",
+      "PyramidPrinciple.logic-order",
+      "PyramidPrinciple.summarizing",
+      "PyramidPrinciple.problem-definition",
+      "PyramidPrinciple.structured-analysis",
+      "PyramidPrinciple.written-presentation",
+      "PyramidPrinciple.mece"
+    ],
+    "related": [
+      "PyramidPrinciple.logic-order",
+      "PyramidPrinciple.structured-analysis"
+    ],
+    "protocols": [
+      "CP-104"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Communication.SUCCES": {
+    "description": "SUCCES创意黏性六原则——让想法被记住并传播。跨界沟通、产品设计、教学、营销的通用框架",
+    "parent": null,
+    "children": [],
+    "siblings": [],
+    "related": [
+      "PyramidPrinciple.structure"
+    ],
+    "protocols": [
+      "CP-105"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "DataModeling.ER": {
+    "description": "ER实体关系建模——实体+关系+属性三要素+基数四类型。Peter Chen 1976，数据库概念设计基石",
+    "parent": null,
+    "children": [],
+    "siblings": [],
+    "related": [
+      "DataModeling.Dimensional"
+    ],
+    "protocols": [
+      "CP-106"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "DataModeling.Dimensional": {
+    "description": "维度建模——事实表(度量)+维度表(上下文)，星型(Speed)vs雪花(Space)。Kimball方法论，OLAP分析基石",
+    "parent": null,
+    "children": [],
+    "siblings": [],
+    "related": [
+      "DataModeling.ER"
+    ],
+    "protocols": [
+      "CP-107"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "DataModeling.LATCH": {
+    "description": "LATCH信息架构五原则——Location/Alphabet/Time/Category/Hierarchy。Wurman 1989，信息组织的五种有限方式",
+    "parent": null,
+    "children": [],
+    "siblings": [],
+    "related": [
+      "DataModeling.ER",
+      "PyramidPrinciple.logic-order"
+    ],
+    "protocols": [
+      "CP-108"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "QualityManagement.PDCA": {
+    "description": "PDCA持续改进环——Plan-Do-Check-Act四步迭代。Shewhart 1920s→Deming 1950s→日本质量革命，Lean/Six Sigma/ISO 9001底层方法论",
+    "parent": null,
+    "children": [
+      "QualityManagement.5Whys",
+      "QualityManagement.TOC"
+    ],
+    "siblings": [],
+    "related": [
+      "Cynefin",
+      "SystemThinking"
+    ],
+    "protocols": [
+      "CP-109"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "QualityManagement.5Whys": {
+    "description": "5 Whys根因分析——连续追问5次Why穿透表象到系统根因。Sakichi Toyoda 1930s→Taiichi Ohno 1950s丰田标准教材",
+    "parent": "QualityManagement.PDCA",
+    "children": [],
+    "siblings": [
+      "QualityManagement.TOC"
+    ],
+    "related": [
+      "Cynefin"
+    ],
+    "protocols": [
+      "CP-110"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "QualityManagement.TOC": {
+    "description": "约束理论TOC瓶颈管理五步法——识别/挖尽/服从/提升/重复。Goldratt 1984《目标》，铁链比喻，DBR生产排程",
+    "parent": "QualityManagement.PDCA",
+    "children": [],
+    "siblings": [
+      "QualityManagement.5Whys"
+    ],
+    "related": [
+      "Cynefin",
+      "SystemThinking"
+    ],
+    "protocols": [
+      "CP-111"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "BehavioralEconomics": {
+    "parent": "CognitivePsychology",
+    "children": [
+      "BehavioralEconomics.DualProcess",
+      "BehavioralEconomics.ProspectTheory",
+      "BehavioralEconomics.PlanningFallacy"
+    ],
+    "siblings": [],
+    "related": [
+      "BPMN",
+      "RACI"
+    ],
+    "protocols": [
+      "CP-112",
+      "CP-113",
+      "CP-114"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "BehavioralEconomics.DualProcess": {
+    "description": "System 1(快/直觉/自动) + System 2(慢/审慎/逻辑)。Kahneman 2011。System 2 懒惰，常采纳System 1的快速判断",
+    "parent": "BehavioralEconomics",
+    "children": [],
+    "siblings": [
+      "BehavioralEconomics.ProspectTheory",
+      "BehavioralEconomics.PlanningFallacy"
+    ],
+    "related": [
+      "CognitivePsychology.Definition",
+      "CognitivePsychology.Models"
+    ],
+    "protocols": [
+      "CP-112"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "BehavioralEconomics.ProspectTheory": {
+    "description": "前景理论——损失厌恶(2×)、参考点依赖、框架效应。Kahneman&Tversky 1979。2002诺贝尔奖",
+    "parent": "BehavioralEconomics",
+    "children": [],
+    "siblings": [
+      "BehavioralEconomics.DualProcess",
+      "BehavioralEconomics.PlanningFallacy"
+    ],
+    "related": [
+      "SystemThinking",
+      "CognitivePsychology"
+    ],
+    "protocols": [
+      "CP-113"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "BehavioralEconomics.PlanningFallacy": {
+    "description": "计划谬误——工期低估是系统性的(非经验不足)。解决：外部视角+分布信息而非点估计。Kahneman&Tversky 1979",
+    "parent": "BehavioralEconomics",
+    "children": [],
+    "siblings": [
+      "BehavioralEconomics.DualProcess",
+      "BehavioralEconomics.ProspectTheory"
+    ],
+    "related": [
+      "CognitivePsychology"
+    ],
+    "protocols": [
+      "CP-114"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism": {
+    "description": "查理·芒格思想体系——以减少错误为核心的跨学科决策哲学。核心概念：多元思维模型、逆向思维、能力圈、双轨分析、Lollapalooza效应、检查清单、激励机制、诚实策略",
+    "parent": "CognitivePsychology",
+    "children": [
+      "Mungerism.MentalModels",
+      "Mungerism.Invert",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.Lollapalooza",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.IncentiveSuperpower",
+      "Mungerism.HonestyStrategy"
+    ],
+    "siblings": [
+      "BehavioralEconomics"
+    ],
+    "related": [
+      "BehavioralEconomics",
+      "DecisionMaking",
+      "SystemThinking"
+    ],
+    "protocols": [
+      "CP-115",
+      "CP-116",
+      "CP-117",
+      "CP-118",
+      "CP-119",
+      "CP-120",
+      "CP-121",
+      "CP-122"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.MentalModels": {
+    "description": "多元思维模型——头脑中构建约100种跨学科技能模型的复式框架。对抗'铁锤人倾向'（单一学科视角）。来自数学/物理/化学/生物/工程/心理/经济",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.Invert",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.Lollapalooza",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.IncentiveSuperpower",
+      "Mungerism.HonestyStrategy"
+    ],
+    "related": [
+      "CognitivePsychology.Models",
+      "BehavioralEconomics.DualProcess"
+    ],
+    "protocols": [
+      "CP-115"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.Invert": {
+    "description": "逆向思维——'反过来想，总是反过来想'（雅各比）。先问'怎么一定会失败'→避开失败路径。只想知道将来死在哪里就不去那儿",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.MentalModels",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.Lollapalooza",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.IncentiveSuperpower",
+      "Mungerism.HonestyStrategy"
+    ],
+    "related": [
+      "BehavioralEconomics.ProspectTheory",
+      "Mungerism.ChecklistSystem"
+    ],
+    "protocols": [
+      "CP-116"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.CircleOfCompetence": {
+    "description": "能力圈——知道自己能正确判断的边界。'如果你问起是否超出能力圈，那就意味着你已经在圈外了'。三个选项：可做/不可做/太难理解",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.MentalModels",
+      "Mungerism.Invert",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.Lollapalooza",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.IncentiveSuperpower",
+      "Mungerism.HonestyStrategy"
+    ],
+    "related": [
+      "DecisionMaking"
+    ],
+    "protocols": [
+      "CP-117"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.DualTrackAnalysis": {
+    "description": "双轨分析——同时运行理性轨道（真正利益归属）+潜意识轨道（心理因素自动形成失灵的结论）。Munger的操作性决策框架",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.MentalModels",
+      "Mungerism.Invert",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.Lollapalooza",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.IncentiveSuperpower",
+      "Mungerism.HonestyStrategy"
+    ],
+    "related": [
+      "BehavioralEconomics.DualProcess",
+      "Mungerism.MentalModels"
+    ],
+    "protocols": [
+      "CP-118"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.Lollapalooza": {
+    "description": "Lollapalooza效应——≥3种心理倾向/力量同向叠加，产生远超各部分之和的极端后果（类似核爆的临界质量）。可正可负",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.MentalModels",
+      "Mungerism.Invert",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.IncentiveSuperpower",
+      "Mungerism.HonestyStrategy"
+    ],
+    "related": [
+      "SystemThinking",
+      "Mungerism.MentalModels",
+      "CriticalThinking.Fallacies"
+    ],
+    "protocols": [
+      "CP-119"
+    ],
+    "factor_registry": "phoenix-agent/src/p008/factor_registry.json",
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.ChecklistSystem": {
+    "description": "检查清单系统——效仿飞行员六要素训练模型（全面知识→熟练应用→正逆向思维→严格训练→核对清单→模拟器保持）。四种芒格清单：双轨/决策/简单观念/心理倾向",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.MentalModels",
+      "Mungerism.Invert",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.Lollapalooza",
+      "Mungerism.IncentiveSuperpower",
+      "Mungerism.HonestyStrategy"
+    ],
+    "related": [
+      "BPMN",
+      "Mungerism.Invert"
+    ],
+    "protocols": [
+      "CP-120"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.IncentiveSuperpower": {
+    "description": "激励机制超级威力——激励不仅驱动行为，更扭曲认知（人真诚相信对自己有利=对他人有利）。富兰克林：'诉诸利益，非诉诸理性'。对策：收款机/审计/会计",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.MentalModels",
+      "Mungerism.Invert",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.Lollapalooza",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.HonestyStrategy"
+    ],
+    "related": [
+      "BehavioralEconomics.ProspectTheory",
+      "RACI"
+    ],
+    "protocols": [
+      "CP-121"
+    ],
+    "first_seen": "2026-05-21"
+  },
+  "Mungerism.HonestyStrategy": {
+    "description": "诚实是最好的策略——诚实非道德选择而是理性最优长期策略。谎言需要维护→消耗认知资源。文森狄：'说真话就不必记住谎言'。远离底线而非试探底线",
+    "parent": "Mungerism",
+    "children": [],
+    "siblings": [
+      "Mungerism.MentalModels",
+      "Mungerism.Invert",
+      "Mungerism.CircleOfCompetence",
+      "Mungerism.DualTrackAnalysis",
+      "Mungerism.Lollapalooza",
+      "Mungerism.ChecklistSystem",
+      "Mungerism.IncentiveSuperpower"
+    ],
+    "related": [
+      "RACI",
+      "BehavioralEconomics.ProspectTheory"
+    ],
+    "protocols": [
+      "CP-122"
+    ],
+    "first_seen": "2026-05-21"
+  },
+
+  "Economics": {
+    "display_name": "经济学决策工具",
+    "parent": null,
+    "summary": "微观经济学中与决策直接相关的核心概念——机会成本、边际思考、沉没成本区分。为 Phoenix Agent 的 P008 价值冲突评估和任务选择提供可量化的决策框架",
+    "children": [
+      "Economics.OpportunityCost"
+    ],
+    "related": [
+      "BehavioralEconomics",
+      "Mungerism",
+      "DecisionFramework"
+    ],
+    "protocols": [
+      "CP-128"
+    ],
+    "first_seen": "2026-05-21"
+  },
+
+  "Economics.OpportunityCost": {
+    "display_name": "机会成本与边际决策思维",
+    "parent": "Economics",
+    "summary": "机会成本=放弃的最优替代收益；与沉没成本严格区分；边际思考指导'再做一步是否值得'——CP-128",
+    "children": [],
+    "related": [
+      "BehavioralEconomics.ProspectTheory",
+      "Mungerism.IncentiveSuperpower",
+      "DecisionFramework.RACI"
+    ],
+    "protocols": [
+      "CP-128"
+    ],
+    "first_seen": "2026-05-21"
+  },
+
+  "CriticalThinking": {
+    "display_name": "批判性思维",
+    "parent": "CognitivePsychology",
+    "summary": "评估论证质量的系统方法与元认知监控工具——Toulmin 论证模型、三种推理模式(演绎/归纳/反绎)、逻辑谬误分类与对策、ARS 论证评估标准",
+    "children": [
+      "CriticalThinking.Toulmin",
+      "CriticalThinking.ReasoningModes",
+      "CriticalThinking.Fallacies",
+      "CriticalThinking.ARS"
+    ],
+    "related": [
+      "Mungerism",
+      "Thinking.LogicAndDecision",
+      "DecisionMaking"
+    ],
+    "protocols": [
+      "CP-123",
+      "CP-124",
+      "CP-125",
+      "CP-126"
+    ],
+    "created": "2026-05-21",
+    "first_seen": "2026-05-21"
+  },
+  "CriticalThinking.Toulmin": {
+    "display_name": "Toulmin 论证模型",
+    "summary": "六要素拆解日常论证：Claim→Grounds→Warrant→Backing→Rebuttal→Qualifier",
+    "protocol": "CP-123",
+    "created": "2026-05-21"
+  },
+  "CriticalThinking.ReasoningModes": {
+    "display_name": "三种推理模式",
+    "summary": "演绎(必然)/归纳(概率)/反绎(最佳解释)——Peirce 探究循环",
+    "protocol": "CP-124",
+    "created": "2026-05-21"
+  },
+  "CriticalThinking.Fallacies": {
+    "display_name": "逻辑谬误分类与对策",
+    "summary": "14 类核心谬误分 5 组成因：相关/歧义/预设/因果/归纳",
+    "protocol": "CP-125",
+    "factor_registry": "phoenix-agent/src/p008/factor_registry.json",
+    "created": "2026-05-21"
+  },
+  "CriticalThinking.ARS": {
+    "display_name": "论证评估体系与元认知",
+    "summary": "ARS 三标准(可接受/相关/充分) + 元认知四操作(解释/质疑/校准/扫描)",
+    "protocol": "CP-126",
+    "created": "2026-05-21"
   }
 }

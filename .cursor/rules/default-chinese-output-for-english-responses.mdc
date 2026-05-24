@@ -1,9 +1,14 @@
 ---
-description: Default to Chinese when explanations are in English
-alwaysApply: true
+description: 默认中文输出（条件级：仅在生成中文回复时加载） — 工具/命令英文说明自动转中文，保留技术标识原文
+alwaysApply: false
+severity: conditional
+task_triggers:
+  - generate_response
+requires: []
 glossary:
   layer: 横切
   purpose: 默认中文输出 — 工具/命令英文说明自动转中文，保留技术标识原文
+guard_replaceable: false
 ---
 
 # 默认中文输出（英文说明自动转中文）
