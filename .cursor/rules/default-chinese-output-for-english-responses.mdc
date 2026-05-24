@@ -1,5 +1,5 @@
 ---
-description: 默认中文输出（条件级：仅在生成中文回复时加载工具/命令英文说明自动转中文，保留技术标识原
+description: 默认中文输出（条件级：仅在生成中文回复时加载）：工具/命令英文说明自动转中文，保留技术标识原文
 alwaysApply: false
 severity: conditional
 task_triggers:

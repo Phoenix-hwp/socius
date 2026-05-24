@@ -1,5 +1,5 @@
 ---
-description: 技能开关工作流 单技能开/ 全开全关 / 休眠 / 归档，通过 AskQuestion 面板交互
+description: 技能开关工作流：单技能开关 / 全开全关 / 休眠 / 归档，通过 AskQuestion 面板交互
 alwaysApply: false
 Lifecycle: 长期
 Created: 2026-05-12

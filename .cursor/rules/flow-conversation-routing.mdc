@@ -1,5 +1,5 @@
 ---
-description: 对话归属判断操作细则 上下文推优先，无法判定时询问用户
+description: 对话归属判断操作细则：上下文推断优先，无法判定时询问用户
 glossary:
   layer: 3-工作流执行层
   module: MultiRound

@@ -1,5 +1,5 @@
 ---
-description: 行为偏好自动收束工作双层记录（轮级快+ 任务级归纳），任务完成自动触Behavior-Fit-Log.jsonl
+description: 行为偏好自动收束工作流：双层记录（轮级快照 + 任务级归纳），任务完成自动触发 Behavior-Fit-Log.jsonl
 glossary:
   layer: 3-工作流执行层
   module: BehaviorPreferences

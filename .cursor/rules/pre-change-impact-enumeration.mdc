@@ -1,5 +1,5 @@
-﻿---
-description: 变更前后双保落盘前搜全库引用防漏改，落盘后差异审查防非预期副作用
+---
+description: 变更前影响枚举：重命名/删除/移动/字段名变更前，搜全库引用并同步
 alwaysApply: true
 severity: safety
 task_triggers:
@@ -25,6 +25,7 @@ glossary:
   guard_implemented_in: "guard/src/p008/feedback.py (ObjectiveFeedback 补充 exit_code/schema 评分，非替代 git diff)"
 guard_replaceable: partial
 ---
+description: 变更前影响枚举：重命名/删除/移动/字段名变更前，搜全库引用并同步
 
 # 变更前影响枚
 

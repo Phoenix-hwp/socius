@@ -1,5 +1,5 @@
 ---
-description: V012 TEP 全链路沙箱执槽位发现→交互补全→拆解排期→逐步执行→pipeline 验收
+description: V012 TEP 全链路沙箱执行：槽位发现→交互补全→拆解排期→逐步执行→pipeline 验收
 alwaysApply: false
 Lifecycle: 长期
 Created: 2026-05-24

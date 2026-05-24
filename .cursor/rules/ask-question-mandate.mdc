@@ -1,5 +1,5 @@
 ---
-description: AskQuestion 强制使用横切规则（条件级：仅在需要用户确选择时加载） 凡等待用户确选择的操作必须使AskQuestion 工具，禁止纯文本替代
+description: AskQuestion 强制使用横切规则（条件级：仅在需要用户确认/选择时加载）：凡等待用户确认/选择的操作必须使用 AskQuestion 工具，禁止纯文本替代
 alwaysApply: false
 severity: conditional
 task_triggers:

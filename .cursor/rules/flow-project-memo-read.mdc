@@ -1,5 +1,5 @@
 ---
-description: 查看项目备忘录流读取并展示待复核清单与最近记
+description: 查看项目备忘录流程：读取并展示待复核清单与最近记录
 glossary:
   layer: 3-工作流执行层
   module: ProjectMemo

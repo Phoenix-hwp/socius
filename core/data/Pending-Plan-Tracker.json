@@ -1599,5 +1599,27 @@
       "output_to": "GitHub 仓库",
       "tool_lock": "git"
     }
+  },
+    {
+      "id": "P069",
+      "topic": "人工重写 45 个 .mdc frontmatter description（双编码 mojibake → 正确中文） + 编码防控三层落地",
+      "status": "pending",
+      "planned_date": "2026-06-07",
+      "parent_task": null,
+      "resume_keywords": [
+        "编码",
+        "mojibake",
+        "frontmatter",
+        "description"
+      ],
+      "file": "plans/P069.md",
+      "source_task": null,
+      "deadline": null,
+      "estimated_minutes": 90,
+      "method": "逐文件恢复 description 字段：根据文件名 + 规则内容人工推断原文 → StrReplace 写回。同时落地三层防控：.editorconfig（已完成）+ Guard encoding_validator.py + pre-commit hook 检测 mojibake 特征",
+      "input_from": [],
+      "output_to": ".cursor/rules/*.mdc（description 字段）",
+      "tool_lock": "StrReplace"
+    }
   ]
 }

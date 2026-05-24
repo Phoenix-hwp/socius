@@ -1,5 +1,5 @@
 ---
-description: 外部依赖边界——内核安全隔离，Skills 插拔式接
+description: 外部依赖边界：内核安全隔离，Skills 插拔式接入
 alwaysApply: true
 severity: safety
 task_triggers:

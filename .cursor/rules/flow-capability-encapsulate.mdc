@@ -1,5 +1,5 @@
 ---
-description: 能力封装工作用户显式要求时提取步骤序列，按复杂度分层生成固化产物
+description: 能力封装工作流：用户显式要求时提取步骤序列，按复杂度分层生成固化产物
 glossary:
   layer: 3-工作流执行层
   module: CapabilityEncapsulate

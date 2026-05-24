@@ -1,5 +1,5 @@
 ---
-description: 行为偏好 CRUD 统一框架——定义阶段结构（开端续/ 轮级快照 / 任务收束 / 手动收束），不含具体步骤
+description: 行为偏好 CRUD 统一框架：定义阶段结构（开端续接 / 轮级快照 / 任务收束 / 手动收束），不含具体步骤
 glossary:
   layer: 2-模块框架  module: BehaviorPreferences
 guard_replaceable: framework

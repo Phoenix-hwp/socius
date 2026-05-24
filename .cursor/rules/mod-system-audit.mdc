@@ -1,5 +1,5 @@
-﻿---
-description: 系统审计框架 全系统架数据/编码/技能健康检查，输出结构化报
+---
+description: 系统审计框架：全系统架构/数据/编码/技能健康检查，输出结构化报告
 Lifecycle: 长期
 Created: 2026-05-16
 Updated: 2026-05-23
@@ -23,6 +23,7 @@ alwaysApply: false
 trigger: 用户输入 系统检/ 自检 / 审计 时触
 guard_replaceable: framework
 ---
+description: 系统审计框架：全系统架构/数据/编码/技能健康检查，输出结构化报告
 
 # 系统审计框架
 

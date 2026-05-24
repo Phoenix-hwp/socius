@@ -1,5 +1,5 @@
 ---
-description: 恢复并续聊流按归属路由，多轮项目先读主控再轻确认
+description: 恢复并续聊流程：按归属路由，多轮项目先读主控再轻确认
 glossary:
   layer: 3-工作流执行层
   module: Conversation

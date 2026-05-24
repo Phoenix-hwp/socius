@@ -1,5 +1,5 @@
 ---
-description: 读取历史对话流程 按日期时段检索并展示摘要，支持日常与项目双源
+description: 读取历史对话流程：按日期时段检索并展示摘要，支持日常与项目双源
 glossary:
   layer: 3-工作流执行层
   module: Conversation

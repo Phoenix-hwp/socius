@@ -1,5 +1,5 @@
 ---
-description: 待办×V012-DRILL 桥接——选中 V012-DRILL-* 时强制走 V012 全链路沙
+description: 待办×V012-DRILL 桥接：选中 V012-DRILL-* 时强制走 V012 全链路沙箱
 alwaysApply: false
 Lifecycle: 长期
 Created: 2026-05-24

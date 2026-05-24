@@ -1,5 +1,5 @@
-﻿---
-description: 任务启动协议 强制网关，确Agent 在进入执行前完成边界对齐与结构探针。适用于所有非纯对非纯查询类任glossary:
+---
+description: 任务启动协议：强制网关，确保 Agent 在进入执行前完成边界对齐与结构探针。适用于所有非纯对话/非纯查询类任务。
   layer: 1-网关路由层 purpose: 任务理解（含Cynefin轻量判域）→拆解→材料清单对齐→读材料→提思路→确认，防止直接执行导致方向偏差
   sequence: 1.5-bis-KB（确认需求→交付物介质探针→拆解任务→材料清单对齐→知识脑前置查询→读材料→提思路→执行）
   pipeline_markers:
@@ -20,6 +20,7 @@ description: 任务启动协议 强制网关，确Agent 在进入执行前完成
 alwaysApply: false
 trigger: 用户发出非纯对话/非纯查询类的可执行任guard_replaceable: false
 ---
+description: 任务启动协议：强制网关，确保 Agent 在进入执行前完成边界对齐与结构探针。适用于所有非纯对话/非纯查询类任务。
 
 # 任务启动协议（Task Initiation Protocol
 ## 适用范围

@@ -1,5 +1,5 @@
 ---
-description: 对话备份流程 按归属落盘到日常备份或项目目录的具体步骤
+description: 对话备份流程：按归属落盘到日常备份或项目目录的具体步骤
 glossary:
   layer: 3-工作流执行层
   module: Conversation

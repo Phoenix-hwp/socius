@@ -1,5 +1,5 @@
 ---
-description: 技能执行工作流 执行前快+ 写路径限+ 执行后差异审+ 确认/回滚
+description: 技能执行工作流：执行前快照 + 写路径限制 + 执行后差异审查 + 确认/回滚
 alwaysApply: false
 Lifecycle: 长期
 Created: 2026-05-12

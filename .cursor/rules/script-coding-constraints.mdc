@@ -1,5 +1,5 @@
 ---
-description: 脚本与规则编码约防耦合、防硬编码、保规则文件内部分层（gateway/mod/flow）合
+description: 脚本与规则编码约束：防耦合、防硬编码、保规则文件内部分层（gateway/mod/flow）合规
 alwaysApply: true
 severity: safety
 task_triggers:

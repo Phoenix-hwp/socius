@@ -1,5 +1,5 @@
 ---
-description: 追加项目备忘流程 将信息追加到指定项目的备忘录
+description: 追加项目备忘流程：将信息追加到指定项目的备忘录
 glossary:
   layer: 3-工作流执行层
   module: ProjectMemo

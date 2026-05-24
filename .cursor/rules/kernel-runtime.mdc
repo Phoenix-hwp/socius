@@ -1,5 +1,5 @@
-﻿---
-description: 内核运行规则——知识库约+ 会话开端续接与收束 + 轮次确认 + 多轮长记忆（条件级：仅会话开端/收束/计划任务时加载，非全时段）Lifecycle: 长期
+---
+description: 内核运行规则：知识库约定 + 会话开端续接与收束 + 轮次确认 + 多轮长记忆（条件级：仅会话开端/收束/计划任务时加载，非全时段）
 Created: 2026-05-12
 alwaysApply: false
 severity: conditional
@@ -22,6 +22,7 @@ replaces:
   - long-memory-knowledge-base.mdc
 guard_replaceable: false
 ---
+description: 内核运行规则：知识库约定 + 会话开端续接与收束 + 轮次确认 + 多轮长记忆（条件级：仅会话开端/收束/计划任务时加载，非全时段）
 
 # 内核运行规则
 

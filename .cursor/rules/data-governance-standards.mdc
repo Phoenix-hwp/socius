@@ -1,5 +1,5 @@
-﻿---
-description: 数据治理宪法 全库格式分配、权威源原则、命名规范、写入自检。Guard 轨道上，JSON/JSONL 格式校验SchemaValidator 自动执行
+---
+description: 数据治理宪法：JSON 不存长文本 + 单一权威源 + 格式一致性第一公民。Guard 轨道上 JSON/JSONL 格式校验由 SchemaValidator 自动执行
 alwaysApply: true
 severity: safety
 task_triggers:
@@ -22,6 +22,7 @@ glossary:
   guard_implemented_in: "guard/src/p008/constraint_applier.py (SchemaValidator)"
 guard_replaceable: partial
 ---
+description: 数据治理宪法：JSON 不存长文本 + 单一权威源 + 格式一致性第一公民。Guard 轨道上 JSON/JSONL 格式校验由 SchemaValidator 自动执行
 
 # 数据治理宪法
 
