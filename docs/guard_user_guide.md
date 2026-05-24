@@ -1,4 +1,4 @@
----
+﻿---
 Title: Guard 使用指南与全链路验收清单
 Created: 2026-05-20
 Updated: 2026-05-20
@@ -9,7 +9,7 @@ glossary:
   downstream:
     - P030–P037（所有 Guard 模块产出）
     - gateway-command-router.mdc（双轨兜底规则）
-    - 10-Topics/Guard-Cursor-RACI.md（RACI 矩阵）
+    - plans/Guard-Cursor-RACI.md（RACI 矩阵）
 ---
 
 # Guard 使用指南
@@ -47,7 +47,7 @@ glossary:
 ### 1. 检查 Guard 状态
 
 ```bash
-cd phoenix-agent
+cd guard
 python guard.py --status
 ```
 
@@ -222,7 +222,7 @@ python src/p008/cross_device.py compare --snapshot-a snapshot-A.json --snapshot-
 ## 运行全部测试
 
 ```bash
-cd phoenix-agent
+cd guard
 set PYTHONPATH=%CD%\src
 python src/p008/test_safety_gate.py       # 56 tests
 python src/p008/test_constraint_engine.py # 38 tests

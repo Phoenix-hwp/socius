@@ -1,0 +1,86 @@
+---
+description: 外部依赖边界——内核安全隔离，Skills 插拔式接
+alwaysApply: true
+severity: safety
+task_triggers:
+  - external_skill_load
+  - external_tool_call
+  - skill_deploy
+requires:
+  - flow-high-risk-safety.mdc
+  - flow-skill-acquire.mdc
+Lifecycle: 长期
+Created: 2026-05-12
+glossary:
+  layer: 横切
+  purpose: 外部依赖边界——内核安全隔离，Skills 插拔式接
+  downstream:
+    - kernel-runtime.mdc（内核约定）
+    - script-coding-constraints.mdc（编码约束）
+    - post-git-pull-three-layer-awareness.mdc（拉取后对齐
+guard_replaceable: false
+---
+
+# 外部依赖边界
+
+## 原则
+
+外部能力（GitHub Skills、第三方脚本、远程依赖）采用 **插拔式接*，主体内核独立且安全。两层安全含义：
+1. **防篡*：外部能力不得未经用户确认即修改内核规则、核心数据、git 配置
+2. **防崩*：外部能力失效时系统降级运行，不得阻塞核心流程（对话、知识库读写、Git 同步）
+
+## 架构分层（Clean Architecture / DDD
+
+```
+┌──────────────────────────────────────────────
+ 外层：Skills_Library/skills/  可插      
+ (GitHub 获取、外部脚本、第三方能力)              
+├──────────────────────────────────────────────
+ 中层：模块规则与工作mod-*/flow-*           
+ (Notion CRUD、Git CRUD、Earth Library      
+├──────────────────────────────────────────────
+ 内层（内核）：kernel-runtime.mdc + 横切规则     
+ (会话管理、知识库约定、多轮长记忆、编码约       
+ 内核不依赖外层，外层可依赖内               
+└──────────────────────────────────────────────
+```
+
+## 强制约束
+
+### 对内层（内核 + 模块规则
+
+- **禁止**`kernel-runtime.mdc`、`mod-*`、`flow-*` 中引`Skills_Library/` 路径、外URL GitHub 仓库地址作为逻辑依赖
+- **允许**：内层规则在自检/索引段中记录「存在哪Skills 与本模块相关」（仅作参考指针，不作为执行前提）
+- **允许**：`gateway-command-router.mdc` 中登Skills 相关指令别名（路由到 Skills_Library 工作流，不内联到核心路由逻辑）
+
+### 对外层（Skills_Library/
+
+- 脚本入口统一`Skills_Library/skills/<skill-name>/` 下，通过 `flow-skill-acquire.mdc` 获取、审查、部署
+- 部署时必须通过安全闸门（依赖声明、配置检查、隔离试运行、回滚预案）
+- 所Skills `Skills_Library/skill-registry.json` 中登记，按频率分型管理
+
+### 跨层调用
+
+- 内核/模块 Skills*仅通过用户指令 + 网关路由**触发，不得在核心流程中隐式调用
+- Skills 内核/模块：允许调用（Skill 内读取知识库），Skill 修改内核文件时必须通过 `flow-*` 确认流程
+
+## 降级策略
+
+- Skills_Library 未初始化、config.json 缺失、某 Skill 配置未就绪时*系统正常运行**，仅Skill 不可用
+- Skill 执行失败时：记录`method-reliability-registry.json`，降权或禁用*不阻塞当前对*
+- 用户可通过 `config.json` 一键全开/全关所有外Skills
+
+## 执行阶段强制约束
+
+> 本段呼应 `pre-change-impact-enumeration.mdc` §5（执行后差异审查）和 `flow-skill-execute.mdc`（Skills 执行三部曲）
+
+- **Skills 执行*：必须记录本地基线（`git rev-parse HEAD`）或 `git stash`，详`flow-skill-execute.mdc` §A
+- **执行*：必须执行本地差异审查（`git diff --stat`），确认无越权写入后方可放行
+- **回滚权限**：用户始终保留用本地基线一键回滚的权利（`git reset --hard <基线>`），Agent 不得在未确认前提交或推送变更
+
+## Agent 自检（涉及外部能力时
+
+- [ ] 外部能力的入口是否在 `Skills_Library/skills/` 下，而非散落`.cursor/` 或仓库根
+- [ ] 内核规则是否被外部能力隐式依赖？（若违规
+- [ ] 外部能力失败时，核心对话流程是否仍可继续？（若否 需加降级）
+- [ ] 外部能力修改内核文件时，是否经过 AskQuestion 确认流程

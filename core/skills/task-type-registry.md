@@ -1,4 +1,4 @@
----
+﻿---
 Lifecycle: 阶段
 Title: 任务类型注册表
 Type: 锚点注册表
@@ -17,7 +17,7 @@ related:
 ## 结构说明
 
 每条任务类型包含：
-- **type_id**：唯一标识，与 `10-Topics/Task-Type-Registry.json` 同键。决策引擎以此为外键串联
+- **type_id**：唯一标识，与 `plans/Task-Type-Registry.json` 同键。决策引擎以此为外键串联
 - **类型名**：人类可读名称
 - **父类型**：可选层级归属
 - **触发关键词**：用户自然语言说法（逗号分隔，可无限追加）

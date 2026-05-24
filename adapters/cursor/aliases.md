@@ -1,4 +1,4 @@
----
+﻿---
 Title: Cursor 指令别名清单
 type: cursor-command-aliases
 Created: 2026-04-21
@@ -55,7 +55,7 @@ tags:
 | 评估技能 | 技能评估、技能巡检 | 对备选和已安装技能执行中检：逐技能检查质量变化/风险变化/表现评分趋势 | `.cursor/rules/mod-skill-evaluation.mdc`、`Skills_Library/task-type-registry.md` |
 | 待办 | 查看待办、调整待办、调取待办 | **待办计划交互管理**：Shell `todo-reminder.py --scan --skip-daily-check` → 两阶段 AskQuestion。**V012-DRILL-* 分叉（强制）**：`is_v012_drill=true` → `flow-v012-drill-bridge.mdc` → `flow-v012-pipeline-execute.mdc`；mark-done 须 `v012-drill-validate.py` 通过 | `todo-reminder.py` + `flow-v012-drill-bridge.mdc` |
 | 系统检查 | 自检、审计、巡检系统、健康检查 | **全系统健康扫描**：覆盖 D1 架构规范、D2 数据治理、D3 注册表对齐、D4 编码规范、D5 过渡方案、D6 技能健康，输出结构化报告与待处理清单 | `.cursor/rules/mod-system-audit.mdc` |
-| 学习 | 学习知识、阅读卡片 | **知识脑学习**：Agent 读取指定知识源（Notion 笔记/网页/PDF）→ 结构化总结核心思维模型 → 逐点和用户讨论四个输出端（审视现有系统 / 操作转化 / 新协议 / 融汇创新）→ 讨论结论写入 `Knowledge-Brain/protocols/`（标注 `[待验证]`）→ 实践验证后按协议归宿路由迁移 | `Knowledge-Brain/framework.md`（概念总纲：`10-Topics/Knowledge-Brain.md`） |
+| 学习 | 学习知识、阅读卡片 | **知识脑学习**：Agent 读取指定知识源（Notion 笔记/网页/PDF）→ 结构化总结核心思维模型 → 逐点和用户讨论四个输出端（审视现有系统 / 操作转化 / 新协议 / 融汇创新）→ 讨论结论写入 `Knowledge-Brain/protocols/`（标注 `[待验证]`）→ 实践验证后按协议归宿路由迁移 | `Knowledge-Brain/framework.md`（概念总纲：`plans/Knowledge-Brain.md`） |
 | 语音 | 说、语音 | **语音朗读摘要**：设置 voice_mode=summary，Agent 回复时将概要/结论/建议投喂 TTS 朗读；文字仍完整显示在 UI | `Skills_Library/scripts/speak.py`（技能：`skill-tts-speak`） |
 | 说全文 | 全文、语音全文 | **语音朗读全文**：设置 voice_mode=full，Agent 回复时将完整内容投喂 TTS 朗读
 || 仿真 | 模拟、沙箱仿真、仿真练习 | **仿真机制通用入口**：列出可用仿真场景让用户选 → 从任务池匹配任务 → 输出启动简报 → 确认后进入沙箱执行 → 收束输出 Step T 总结 | `.cursor/rules/flow-simulation-execute.mdc`（框架：`mod-simulation-framework.mdc`） |

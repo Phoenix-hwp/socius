@@ -1,4 +1,4 @@
----
+﻿---
 Title: 认知层（知识脑）备忘
 Lifecycle: 长期
 Created: 2026-05-17
@@ -14,7 +14,7 @@ Module: Knowledge-Brain
 - **① 知识预载入**：`task-init-protocol.mdc` 新增 Step 2-KB，任务启动时调用 activation.md 过滤器 1 预加载协议 → P008 A/C 各降一级
 - **③ 任务收束反馈**：`flow-behavior-auto-receipt.mdc` §C#13 四态有效性判断 → 写入 `activation-log.jsonl`
 - **P1 FSM 降级**：规则占位已写入 `mod-decision-framework.mdc` §三 FSM 知识联动，待数据积累后启用
-- 存疑备忘：`00-Inbox/存疑_知识脑与决策层联动_2026-05-17.md`（A-F 六点，饭后讨论）
+- 存疑备忘：`inbox/存疑_知识脑与决策层联动_2026-05-17.md`（A-F 六点，饭后讨论）
 - 新增子能力文件：`Knowledge-Brain/activation-log.jsonl`（运行时激活跟踪）
 
 ### 1. 消化《金字塔原理大全集》第1批 ✅ 2026-05-17

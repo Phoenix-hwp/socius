@@ -1,0 +1,159 @@
+---
+description: 技能获取工作流 安全闸门 + 隔离试运+ 确认部署
+alwaysApply: false
+Lifecycle: 长期
+Created: 2026-05-12
+glossary:
+  layer: 3-工作流执行层
+  purpose: 技能获取工作流 安全闸门 + 隔离试运+ 确认部署
+  downstream:
+    - mod-skills-library-framework.mdc（Skills Library 框架    - external-dependency-boundary.mdc（外部依赖边界）
+    - flow-high-risk-safety.mdc（高风险操作防护    - flow-skill-execute.mdc（技能执行工作流  - .cursor/method-reliability-registry.json（方法可靠性注册表guard_replaceable: false
+guard_replaceable: false
+  pipeline_markers:
+    rule: "Agent 在技能获取的**每个阶段(A-F)完成*必须在回复末尾输`[Stage_ID]` 标记。所6 阶段(Sections A-F)均为 required=true——Guard 下次启动时自动扫描缺失标记并阻断
+    close_check: "**收束前自检（强制）**：在最后一F（确认部署）前，Agent 必须回溯检查前5 阶段（A/B/C/D/E）是否均有完成标记。若有缺补充 `[Stage_ID]（补标）` 后执F
+    format:
+      done: "[A]" / "[B]" / ...
+      skip: "[A: reason]"
+    definitions: ".cursor/workflow-definitions.json skill_acquire"
+---
+
+# 技能获取工作流
+
+## 触发条件
+
+- 用户说「获取技能」「安装技能」「接GitHub 能力」「添Skill」等
+- 用户提供 GitHub URL 或本地技能路
+## §A 技能发
+1. 用户提供技能来源：
+   - **GitHub URL**（如 `https://github.com/user/repo`）→ 直接进入 §B
+   - **名称检*（如「找一Python 代码审查 skill」）GitHub 搜索，展示候选清   - **本地路径**（如 `D:\my-skills\my-skill`）→ 验证目录下存`SKILL.md`
+2. 展示候选技能摘要（名称、描述、依赖、风险信号），AskQuestion 确认选择   - **强制**：名称检索或 GitHub 搜索路径下，搜索结果必须通过 AskQuestion 呈现选项、等待用户选择后进§B；不得以空白输出或纯文本结束本轮
+## §B 安全闸门（四维检查）
+
+对选定的技能执行以下检查，**任一不通过则阻*
+### B1 依赖声明
+- 检`SKILL.md` `requirements.txt` / `package.json` 中依赖声- 列出所有外部依赖（pip/npm/系统工具- 检查依赖是否与当前环境兼容
+
+### B2 配置检- 检查是否存`config.example.json` 或等效模- 模板中无不安全默认值（`password: "admin"`- 若不存在模板 不阻断，但标注「缺少配置模板
+### B3 功能范围
+- 检`SKILL.md` 中声明的写入范围
+- 写入范围必须`Skills_Library/skills/<name>/` 或用户明确授权的路径- **禁止**声明需要写`.cursor/rules/`、`.git/`、内核文
+### B4 安全信号
+- 扫描入口脚本中的高风险模式：
+  - `eval()` / `exec()` / `subprocess(shell=True)` 🚫 高风  - `os.system()` 中风  - 网络请求到非声明域名 中风- 展示风险清单，每项标注风险等
+### 闸门结果
+- 全部通过 进入 §C 试运- 中风展示清单，AskQuestion [继续（已知风险）] [放弃]
+- 🚫 高风强制阻断，AskQuestion [强制继续（已理解风险）] [放弃]
+
+## §C 隔离试运
+### C0 落锚（试运行前强制）
+
+> **定位**：试运行前必须建立可恢复基线。若试运行过程中发生任何文件系统级灾难（跨目录删除、进程级联崩溃等），此基线是一键恢复的唯一锚点。worktree 仅提供文件系统隔离，不提供进程级沙盒；落锚是安全网的最后一道防线
+**步骤**
+1. **清洁度检*（复`flow-skill-execute.mdc` §A1 逻辑）：
+   ```
+   git status --porcelain
+   ```
+   - 工作区干净 进入步骤 2
+   - 工作区有未提交变AskQuestion `[暂存后继续] [先提交再继续] [取消试运行]`
+     - `[暂存后继续]` `git stash push -m "skill-trial-pre-<skill-name>"`
+     - `[先提交再继续]` 引导用户完成提交后继     - `[取消试运行]` 终止
+
+2. **记录基线**   ```
+   git rev-parse HEAD  # 记录基线 commit
+   ```
+   Agent 内部记录：`试运行基 <commit_hash>`
+
+3. **验证基线存在**   ```
+   git cat-file -t <commit_hash>
+   ```
+   确认返回 `commit`，否则中止并提示用户
+4. **锁定原则**：落锚完成后，Agent 在任何后续步骤中**不得**执行 `git reset --hard`、`git clean -fdx` 等破坏性操作（这些操作留给用户决策或灾难恢复时使用）
+### C1 创建隔离环境
+```bash
+# 在仓库根执行
+git worktree add .trash/skill-trial/<skill-name> HEAD
+cd .trash/skill-trial/<skill-name>
+
+# 进入隔离环境后立即确认当前目echo 当前隔离环境: %CD%  (Windows cmd)
+# pwd (Linux/macOS)
+```
+
+### C2 部署技- 将技能文件复制到隔离环境中的 `Skills_Library/skills/<skill-name>/`
+- 安装依赖（在隔离环境中）
+- 执行 `SKILL.md` 中声明的验证步骤
+
+### C3 验证
+- 运行技能的自检/测试（如有）
+- 执行一次空载调用（dry-run），确认无崩- 检查隔离环境中是否有非预期文件变更
+
+### C4 报告
+- 输出试运行报告：成功/失败 + 日志摘要
+- 失败 自动回滚（`git worktree remove .trash/skill-trial/<skill-name>`- 成功 进入 §D
+
+## §D 部署确认
+
+展示部署摘要- 技能名称、来源、频率分- 依赖清单
+- 试运行结- 写入范围
+
+AskQuestion- 单选项：`[确认部署] [回滚（放弃）]`
+- 附：`[修改频率分型]`（如用户需调整常用/高频/低频/特定
+### 确认部署1. 将技能文件从试运行环境复制到实际 `Skills_Library/skills/<skill-name>/`
+2. `Skills_Library/skill-registry.json` 中登。
+3. 更新 `Skills_Library/config.json`（默认启用）
+4. **清理试运行环* **唯一允许方式**：`git worktree remove .trash/skill-trial/<skill-name>`
+   - **强制**：清理前必须回显当前工作目录（`cd` / `pwd`）和即将执行的命令全   - **禁止**：使`rmdir /s /q`、`Remove-Item -Recurse -Force`、`del /s`、`rm -rf` 等文件系统递归删除命令清理试运行目   - **禁止**：使`taskkill /f /im node.exe`（通配进程名）等模糊杀进程命令
+   - `git worktree remove` 失败（进程占用）*不允*强制杀进程后继续；必须 AskQuestion `[手动处理占用后重试] [放弃清理（留待手动处理）]`
+5. 回执部署成功 + 技ID
+
+## §E 失败兜底
+
+- GitHub 不可提示检查网络，保留 URL 待重- git worktree 创建失败 检git 版本（需 .5），磁盘空间
+- 依赖安装失败 展示错误日志，AskQuestion [跳过依赖（可能不可用）] [放弃]
+
+## §F 清理安全约束（强制）
+
+### F1 清理方式白名
+| 操作 | 允许方式 | 禁止方式 |
+|:---|:---|:---|
+| 清理试运worktree | `git worktree remove <path>` | `rmdir /s /q`、`Remove-Item -Recurse -Force`、`rm -rf` |
+| 删除目录 | `dir`/`ls` 确认内容 AskQuestion `rmdir`（非递归）或 `Remove-Item`（无 `-Recurse`| 任何`-Recurse` / `/s` / `-rf` 的递归删除 |
+| 杀进程（被占用时） | `taskkill /pid <PID>`（精PID| `taskkill /f /im node.exe`（通配进程名）、`killall node` |
+| 清理临时文件 | `del <具体文件` | `del /s *.*`（通配递归删除|
+
+### F2 递归删除红色警戒（强制）
+
+触发条件：任何即将执行的命令包含以下模式之一- `rm -rf` / `rm -r`
+- `Remove-Item` + `-Recurse` + `-Force`
+- `rmdir /s /q`
+- `del /s`
+- `rd /s /q`
+
+**红色警戒流程**1. **立即暂停**：不得执2. **回显完整命令**：逐字展示给用。
+3. **展示 CWD**：`cd` `pwd`，确认当前工作目录在仓库范围4. **展示影响范围**：`dir <目标路径>` `ls -la <目标路径>` 预览将被删除的内5. AskQuestion `[确认执行以上删除] [取消]`
+   - 选项文本中必须包含完整命令原文，不得缩写
+
+### F3 进程管理安全
+
+- 在试运行环境（worktree）中，所`npm install` / `pip install` 等依赖安装操作视*有后台进程残留风*
+- 清理试运行前，先确认无活跃的子进程：
+  ```
+  tasklist /fi "imagename eq node.exe"  (Windows)
+  # ps aux | grep node  (Linux/macOS)
+  ```
+- 若发现占用，**禁止**使用 `taskkill /f /im node.exe`（会误杀 shim、Cursor 自身等），必须列 PID 后由用户手动处理或精确杀
+
+### F4 事后记录
+
+每次试运行清理完成后，记录到 `method-reliability-registry.json`- 技能名称、试运行结果（成失败- 清理方式（`git worktree remove` / 手动- 是否有进程占用、是否手动处
+---
+
+## 与外部依赖边界的关系
+
+本工作流`external-dependency-boundary.mdc` 中「插拔式接入」的执行实现。Any deployment through this workflow guarantees the kernel layer remains untouched.
+
+## 横切引用
+
+- **高风险操作通用防护**：本工作§F 约束`flow-high-risk-safety.mdc` 互不替代。§F 是针Skill 试运行场景的特化约束；通用约束（跨模块适用）以 `flow-high-risk-safety.mdc` 为准

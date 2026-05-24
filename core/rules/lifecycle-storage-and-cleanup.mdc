@@ -1,0 +1,91 @@
+---
+description: 生命周期分层存储与清理规则（条件级：仅在文件创建/删除/清理时加载）
+alwaysApply: false
+severity: conditional
+task_triggers:
+  - file_create
+  - file_delete
+  - cleanup_session_close
+requires:
+  - pre-change-impact-enumeration.mdc
+  - flow-high-risk-safety.mdc
+glossary:
+  layer: 横切
+  purpose: 文件生命周期管理 瞬临时/阶段/长期四分+ 软删+ 模板定级确认
+  guard_coverage: "minimal SchemaValidator 未来可校frontmatter Lifecycle 必填，但删除策略/歧义保护/模板定级均为 Agent-user 交互，不可代码化"
+guard_replaceable: false
+---
+
+# 文件生命周期规则
+
+## 四层分级总览
+
+| Lifecycle | 含义 | 存放位置 | 清理方式 | 时效 |
+|:---|:---|:---|:---|:---|
+| **瞬* | 调试 diff、脚本中间输出、一次性转储、用完即| 不限（靠 `Lifecycle: 瞬态` frontmatter 标记识别| Agent 收束*物理删除**（跳过软删除，不AskQuestion| 用后即删 |
+| **临时** | 无归属对话备份、`inbox/` 临时捕获 | `Daily-Backups/`、`inbox/` | 软删15 天自动物理删| 15 |
+| **阶段** | 项目备忘、项目对话备| `<项目目录>/` | 手动确认后删除（不自动过期） | |
+| **长期** | 永久知识资产 | `Knowledge-Assets/` | 默认不删| |
+
+- **瞬态类**：不限存放路径。Agent 在会话收束时扫描全库 `Lifecycle: 瞬态` 的文件并物理删除。推荐前缀 `TEMP_`
+- **临时*：存放在 `Daily-Backups/` `inbox/`，默认保15 天并自动清理
+- **阶段*：存放在具体项目目录，删除须二次确认
+- **长期*：存放在根目`Knowledge-Assets/`，默认不删除
+
+**项目归属备份**：`<项目目录>/对话备份/` 文件 `Lifecycle` `临时`，5 天自动清理
+
+## 状态字段（强制
+
+- 新增或改写生命周期文件时，必须在 frontmatter 中声`Lifecycle: 瞬态` / `临时` / `阶段` / `长期`
+- 瞬态文件推荐前缀 `TEMP_`，临时文件推荐前缀 `TEMP_`（与瞬态同前缀，区分靠 `Lifecycle` frontmatter），阶段文件推荐前缀 `STAGE_`
+
+## 删除策略
+
+### 瞬态文件清理（强制
+
+- frontmatter 中声`Lifecycle: 瞬态` 的文件（不限存放路径），*瞬态生命周*，不经过回收站
+- Agent 在会话收束时自动扫描全库 `Lifecycle: 瞬态` 文件，执行物理删除（`Remove-Item` / `rm`），**不弹 AskQuestion 确认**
+- 瞬态文*不受软删除保*：设计意图是它们用完即弃，没有恢复价值
+- `temp/` 目录本身保留（不删除），仅作`.gitignore` 排除的便利目录，不是瞬态文件的强制归宿
+- `.gitignore` 已排`temp/`
+
+### 软删除（回收站）默认行为
+
+- **All Agent 发起的文件删/ 移动操作，默认走软删*：移动到 `.trash/`（回收站），禁止直接调用 `Remove-Item` / `rm` / `unlink` 等永久删除命令
+- **瞬态文件例*：`temp/` 下文件直接物理删除，不走回收站（见上方「瞬态文件清理」）
+- **仅以下情况可永久删除**（且须先经过 AskQuestion 确认）：
+  - 用户在确认弹窗中选择了「永久删除
+  - 自动清理脚本按过期规则执行（仅限 `TMP_` 前缀文件5 天）
+- 软删除时**保留原始路径结构**，避免同名文件冲突与上下文丢失：
+  - 例：`docs/foo.md` `.trash/docs/foo.md`
+  - 例：`.cursor/rules/bar.mdc` `.trash/.cursor/rules/bar.mdc`
+
+### 回收站清空规
+
+- 软删除文件默认保**30 *0 天后自动物理删除（比临时文件 15 天延长一倍，给误删恢复缓冲）
+- 用户说「清空回收站」或「清trash」时，Agent 须：
+  1. 列出 `.trash/` 下所有待清文
+  2. 弹出 AskQuestion `[确认清空] [取消]`
+  3. 物理删除后追加一行操作记录到 `.trash/purge-log.md`（日期、文件名、原始路径、触发方式）
+- **回收站不Git 版本控制**（`.gitignore` 已排`.trash/`），清空时不可提交到 Git
+
+### 歧义保护（防 Agent 误判用户意图
+
+当用户原话具有以下语义特征时，视*陈述意图**而非委托执行，Agent **必须先通过 AskQuestion 确认后再动作**，不可直接动手：
+
+| 触发| 例句 | 处理方式 |
+|:---|:---|:---|
+| `我会……` / `我打算……` / `我准备……` | 「我会手动移出| 弹出 AskQuestion `[确认执行] [忽略（不操作）]` |
+| `我自己……` | 「我自己删| 同上 |
+| 对已有文件状态的口头假设 | 「这个文件不需要同步| 同上 |
+
+仅在用户给出明确的执行委托意图时（如 `帮我删` / `你删一下` / `直接……`），方可跳过歧义确认
+
+### 原有清理路径（保留）
+
+- 临时清理：软删除`.trash/soft-delete/daily-backups/`5 天自动物理删除）
+- 阶段清理：白名单 + 交互确认，软删除`.trash/soft-delete/stage-files/`。细则见 `flow-behavior-auto-receipt.mdc` 步骤 D `.cursor/config/stage-delete-whitelist.txt`
+
+## 模板定级确认（强制）
+
+- 产出"可复用结论模时不得直接定级为长期，必须先通过 AskQuestion 询问用户；仅在用户确认后执行迁移、标记和引用更新

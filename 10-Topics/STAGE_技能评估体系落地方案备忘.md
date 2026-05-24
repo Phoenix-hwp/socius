@@ -1,4 +1,4 @@
----
+﻿---
 Lifecycle: 阶段
 Title: 技能评估体系落地方案备忘
 Type: 方案备忘
@@ -12,7 +12,7 @@ related:
   - Skills_Library/skill-registry.json（已安装技能，追加 task_types + performance_score）
   - Skills_Library/skill-performance-log.jsonl（表现评分日志）
   - Skills_Library/Skills_Library_Architecture.md（架构文档更新）
-  - 10-Topics/Cursor-command-aliases.md（新增评估技能/技能巡检指令）
+  - plans/Cursor-command-aliases.md（新增评估技能/技能巡检指令）
   - .cursor/rules/gateway-command-router.mdc（新增评估体系索引 + 路由行）
 ---
 

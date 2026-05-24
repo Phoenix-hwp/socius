@@ -1,4 +1,4 @@
----
+﻿---
 Title: 行为偏好双端统一结构模板（临时）
 Lifecycle: 瞬态
 Created: 2026-04-24
@@ -19,9 +19,9 @@ notion_page_id: 34c299d0-5ba8-8169-97fd-dbff1eceadef
 
 | 侧 | 主文档位置 | 对应章节 |
 |----|------------|----------|
-| Cursor / Obsidian | `10-Topics/Cursor-usage-profile-and-templates.md` | §2 错别字 · **§3 下第 1–9 节** · §6 契合度日志 |
+| Cursor / Obsidian | `plans/Cursor-usage-profile-and-templates.md` | §2 错别字 · **§3 下第 1–9 节** · §6 契合度日志 |
 | Notion | `Notion_Knowledge / 行为偏好（供 Notion AI 参考）` | 全文按下列 1–9 节对齐 |
-| **同步流程** | `10-Topics/Behavior-Preferences-Sync-Playbook.md` | 锚点、对拍顺序、检查清单（**维护时必读**） |
+| **同步流程** | `plans/Behavior-Preferences-Sync-Playbook.md` | 锚点、对拍顺序、检查清单（**维护时必读**） |
 
 整理目标：**两文档的第 1–9 节标题与语义一致**；细节允许 Notion 多折叠块与案例，Cursor 多表格。
 

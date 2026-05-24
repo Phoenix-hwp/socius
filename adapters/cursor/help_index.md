@@ -1,4 +1,4 @@
-# 指令帮助索引
+﻿# 指令帮助索引
 
 > 用途：快速查看当前可用指令、别名与用途。
 > 调用方式：`help` 或 `查看帮助`。
@@ -111,8 +111,8 @@ help
 | Notion删除 | 删除Notion | 定位 → 二次确认 → `确认删除` | `mod-notion-crud-framework.mdc` | `flow-notion-delete.mdc` |
 | Notion查询 | 查询Notion | 关键词 → 定位 → 摘要 | `mod-notion-crud-framework.mdc` | `flow-notion-query.mdc` |
 | （可选）CRUD 向导 | — | `.cursor/mcp/notion_write_menu.cmd`；GUI `.cursor/tools/notion_gui_menu.ps1` | — | — |
-| Notion 统一入口规范 | — | `10-Topics/Notion-统一入口规范.md` | — | — |
-| Notion 目录选项 | — | `.cursor/mcp/notion_cascader_directory_choices.json`（见 `10-Topics/script-option-ids.md`） | — | — |
+| Notion 统一入口规范 | — | `plans/Notion-统一入口规范.md` | — | — |
+| Notion 目录选项 | — | `.cursor/mcp/notion_cascader_directory_choices.json`（见 `plans/script-option-ids.md`） | — | — |
 | 刷新目录选项 | — | `.cursor/mcp/refresh_notion_directory_choices.cmd` | — | — |
 
 ## 9) 工作区同步
@@ -205,12 +205,12 @@ help
 
 | 机制 | 文件 | 触发 |
 |:---|:---|:---|
-| 任务状态跟踪 | `10-Topics/Active-Task-Tracker.md` | 会话开始/结束 |
-| 轮级行为快照（双文件） | `10-Topics/Round-Behavior-Hot.jsonl` + `Round-Behavior-Warm.jsonl` | 每轮结尾自动 |
+| 任务状态跟踪 | `plans/Active-Task-Tracker.md` | 会话开始/结束 |
+| 轮级行为快照（双文件） | `plans/Round-Behavior-Hot.jsonl` + `Round-Behavior-Warm.jsonl` | 每轮结尾自动 |
 | 任务完成自动收束 | `flow-behavior-auto-receipt.mdc` | 任务 → 已完成时 |
 | 手动收束（完整版） | `kernel-runtime.mdc` §2.2 | `/收束` / `结束对话` |
 | 续接 | `kernel-runtime.mdc` §1.2 | 会话开始 |
-| 维度注册表 | `10-Topics/Behavior-Dimensions-Registry.md` | 新增/启用/禁用时 |
+| 维度注册表 | `plans/Behavior-Dimensions-Registry.md` | 新增/启用/禁用时 |
 
 ### 待办计划管理（交互式）
 
@@ -234,9 +234,9 @@ help
 
 | 类型 | 路径 | 说明 |
 |:---|:---|:---|
-| 任务跟踪 | `10-Topics/Active-Task-Tracker.md` | 活跃任务 + 归档，四状态流转 |
-| 行为快照 | `10-Topics/Round-Behavior-Hot.jsonl` + `10-Topics/Round-Behavior-Warm.jsonl` | 每轮热/温双文件摘要 |
-| 维度定义 | `10-Topics/Behavior-Dimensions-Registry.md` | 维度注册表，支持增/启/禁 |
+| 任务跟踪 | `plans/Active-Task-Tracker.md` | 活跃任务 + 归档，四状态流转 |
+| 行为快照 | `plans/Round-Behavior-Hot.jsonl` + `plans/Round-Behavior-Warm.jsonl` | 每轮热/温双文件摘要 |
+| 维度定义 | `plans/Behavior-Dimensions-Registry.md` | 维度注册表，支持增/启/禁 |
 | 自动收束规则 | `.cursor/rules/flow-behavior-auto-receipt.mdc` | 双层记录工作流 |
 | 会话规则 | `.cursor/rules/kernel-runtime.mdc` | 开端续接 + 收束触发 |
 

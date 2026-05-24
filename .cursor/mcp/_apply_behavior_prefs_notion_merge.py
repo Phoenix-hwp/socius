@@ -1,4 +1,4 @@
-"""Partial merge: replace Notion sync tail from 'Cursor / Obsidian 工作区同步' onward; preserve blocks above."""
+﻿"""Partial merge: replace Notion sync tail from 'Cursor / Obsidian 工作区同步' onward; preserve blocks above."""
 from __future__ import annotations
 
 import json
@@ -87,7 +87,7 @@ def main() -> int:
 
     preamble = """## Cursor / Obsidian 工作区同步（2026-05-09）
 
-本块由 Agent 根据工作区档案 `10-Topics/Cursor-usage-profile-and-templates.md` 与节选文件 `.cursor/mcp/_sync_behavior_prefs_body.md` 写入。**双端手册**：`10-Topics/Behavior-Preferences-Sync-Playbook.md`。与上文「行为偏好」互补：上文偏 Notion 协作与执行记录；此处偏 Cursor 规则与双端默认值。即时对话指令优先。
+本块由 Agent 根据工作区档案 `plans/Cursor-usage-profile-and-templates.md` 与节选文件 `.cursor/mcp/_sync_behavior_prefs_body.md` 写入。**双端手册**：`plans/Behavior-Preferences-Sync-Playbook.md`。与上文「行为偏好」互补：上文偏 Notion 协作与执行记录；此处偏 Cursor 规则与双端默认值。即时对话指令优先。
 
 ---
 

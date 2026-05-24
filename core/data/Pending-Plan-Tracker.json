@@ -1,8 +1,8 @@
-{
+﻿{
   "meta": {
     "description": "待办计划追踪 — 支持备忘关联、每日首次提醒（手动「待办」指令触发）、自动完成检测。长文本已外迁到 plans/ 目录，JSON 仅保留短标识 + 文件指针。",
     "last_reminded": "",
-    "data_governance": "符合原则1：description >50字的 plan 已外迁到 10-Topics/plans/<id>.md，JSON 仅存 id + topic + status + file_pointer",
+    "data_governance": "符合原则1：description >50字的 plan 已外迁到 plans/plans/<id>.md，JSON 仅存 id + topic + status + file_pointer",
     "reminder_rules": {
       "overdue": "planned_date <= 今天 + status=pending → 每日首次交互弹窗（用户输入「待办」手动触发），同日跳过",
       "upcoming": "planned_date 在未来 3 天 + status=pending → 每日首次交互弹窗合并展示",

@@ -1,0 +1,86 @@
+---
+description: 脚本与规则编码约防耦合、防硬编码、保规则文件内部分层（gateway/mod/flow）合
+alwaysApply: true
+severity: safety
+task_triggers:
+  - script_create
+  - script_modify
+  - rule_create
+  - rule_modify
+requires:
+  - pre-change-impact-enumeration.mdc
+  - pre-edit-script-change-brief.mdc
+  - data-governance-standards.mdc
+glossary:
+  layer: 横切
+  purpose: 脚本编码约束 共享模块优先、禁止运行时跨界耦合、禁止硬编码、规则文件内部分层合规自检
+  sequence: 3
+  consumes: [pre-edit-script-change-brief]
+guard_replaceable: partial
+---
+
+# 脚本与规则编码约
+
+## 适用范围
+
+*新增或实质修*以下对象时，须在落盘前完成下方「自检清单」：
+- `.cursor/mcp/*.py`、`.cursor/hooks/*.py`、`.cursor/tools/*.py`
+- `Skills_Library/scripts/*.py`
+- `.cursor/rules/*.mdc`（尤其是 alwaysApply 规则
+
+## 约束清单
+
+### 1. 共享模块优先（DRY）不可代码
+
+- **ID 解析、frontmatter 拆分、card body 拆分**：优先从 `el_parsers`（Earth Library 侧）`notion_sdk/parsers`（Notion 侧）导入
+- **阈值、批次大小、路径常*：优先从 `notion_sdk/config.py` 导入
+- **Markdown Notion blocks 转换**：先评估是否可与 `run_notion_workflow.py` 共用；差异大时在注释中说明原因
+
+### 2. 禁止运行时跨界强耦合 不可代码
+
+- **禁止**通过 `sys.path.insert(0, "../other_dir")` 动态修改路径导入另一脚本
+- **脚本 A 调用脚本 B 的正确方*：同职责共享模块导入；异职责`subprocess.run()` CLI 调用 + stdout JSON 交换
+
+### 3. 禁止硬编码业务路径与默认
+
+- **禁止**写死盘符或固定父目录结构（如 `D:\\Phoenix\\Cursor_Knowledge`）
+- **禁止**写死目录层级假设（如 `Path(__file__).parents[2]` 作为仓库根）
+- **禁止**写死特定页面的相绝对路径作为默认值
+- 应优先读取环境变`CURSOR_PROJECT_DIR`，其次用运行时推导
+- **Guard 轨道**：`device_neutralizer.py` 自动将脚本输出中的盘用户目录替换`~/workspace` 等跨平台抽象*但脚本代码本身的路径引用仍需自检**
+
+### 4. 规则文件须符合内部分层（gateway/mod/flow）不可代码
+
+> 分层表与「新建指令须登记alias 表」的要求保持不变。Guard `guard_replaceable` 标注辅助追踪，但不替代分层自检
+
+### 4-bis. 新增规则须声guard_replaceable 字段（强制）
+
+- 新增 `.mdc` 规则文件时，frontmatter 必须包含 `guard_replaceable` 字段
+  - `true`：该规则的核心约束已Guard 代码化或可被代码化——Guard v0.3 落地后可废弃或降级为注释
+  - `partial`：部分约束可代码化（如数据校设备中性化），但人工自检不可替代
+  - `framework`：模块框架级规则（mod-*/flow-*）——Guard 替代的是执行层，框架层仍需
+  - `false`：不可替代——依Agent 探索/判断/跨文件引用搜索等 Agent 专属能力
+- 标注后登记到 V005（规则削减）的审计清单，避免后续规则膨胀
+- Guard v0.3 落地时，所`guard_replaceable: true` 的规则自动进入废弃候选清
+
+### 5. 新建文件 frontmatter 规范 部分可校
+
+- 所`.md` 须声`Lifecycle: 瞬态` / `临时` / `阶段` / `长期`
+- **Guard 轨道**：`SchemaValidator` 可校frontmatter 必填字段（需注册 frontmatter schema）
+- **Fallback 轨道**：Agent 落盘前自检
+
+### 6. 改动预告同步 不可代码
+
+- 实质性修改前须遵`pre-edit-script-change-brief.mdc`
+
+## Agent 自检（落盘前
+
+| # | 检查项 | 执行方式 |
+|:---:|:---|:---|
+| 1 | 是否有可复用的解配置函数已存在？ | Agent 判断 |
+| 2 | 是否有硬编码的阈值、路径、ID、默认值？ | Agent 判断 |
+| 3 | 是否跨目录运行时导入| Agent 判断 |
+| 4 | 规则文件是否落在正确的三层层级？ | Agent 判断 |
+| 5 | 新增文件是否声明`Lifecycle`| Agent 判断（Guard Future: SchemaValidator|
+| 6 | 跨设备场景是否仍能正常工作？ | Agent 判断（Guard Future: device_neutralizer 路径规范|
+| 7 | 新增/修改钩子时：是否同时提供 Python Node.js 双实现？输出是否UTF-8 一JSON| Agent 判断 |

@@ -1,4 +1,4 @@
-{
+﻿{
   "meta": {
     "description": "Skills Library 技能注册表 — 统一管理所有可插拔能力（内部固化 + 外部获取），按频率分型。task_types 语义为「响应」——声明本技能能响应哪些任务类型。系统级（tier=system）可不声明 task_type。",
     "version": "1.3.0",
@@ -294,10 +294,10 @@
       "performance_score": null,
       "dependencies": [],
       "write_scope": [
-        "10-Topics/Round-Behavior-Hot.jsonl",
-        "10-Topics/Round-Behavior-Warm.jsonl",
-        "10-Topics/Behavior-Fit-Log.jsonl",
-        "10-Topics/Active-Task-Tracker.json"
+        "plans/Round-Behavior-Hot.jsonl",
+        "plans/Round-Behavior-Warm.jsonl",
+        "plans/Behavior-Fit-Log.jsonl",
+        "plans/Active-Task-Tracker.json"
       ],
       "risk_signals": [],
       "entry": {
@@ -328,7 +328,7 @@
       "write_scope": [
         ".cursor/rules/",
         "Skills_Library/",
-        "10-Topics/Cursor-command-aliases.md"
+        "plans/Cursor-command-aliases.md"
       ],
       "risk_signals": [],
       "entry": {
@@ -426,7 +426,7 @@
         "Python >= 3.10"
       ],
       "write_scope": [
-        "10-Topics/Pending-Plan-Tracker.json"
+        "plans/Pending-Plan-Tracker.json"
       ],
       "risk_signals": [],
       "entry": {

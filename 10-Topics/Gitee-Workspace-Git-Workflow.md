@@ -1,4 +1,4 @@
----
+﻿---
 Title: 工作区 Git / Gitee 同步备忘
 Lifecycle: 阶段
 Updated: 2026-05-04
@@ -17,10 +17,10 @@ Updated: 2026-05-05
 
 ## 拉取后的三层架构核对（防重复）
 
-当 **`git pull` / `git pull --rebase` 实际并入了远端新提交**（工作区相对拉取前已有更新）后，在本地 **新增或改写** `.cursor/rules`、钩子、或被 **`10-Topics/Cursor-command-aliases.md`** 映射的脚本之前，建议先阅读：
+当 **`git pull` / `git pull --rebase` 实际并入了远端新提交**（工作区相对拉取前已有更新）后，在本地 **新增或改写** `.cursor/rules`、钩子、或被 **`plans/Cursor-command-aliases.md`** 映射的脚本之前，建议先阅读：
 
 1. `.cursor/rules/gateway-command-router.mdc`（三层架构速查与规则索引）
-2. `10-Topics/Cursor-command-aliases.md`
+2. `plans/Cursor-command-aliases.md`
 3. `Command-Help-Index.md`
 
 Agent 侧强制对齐见横切规则 **`post-git-pull-three-layer-awareness.mdc`**（与 **`flow-git-commit.mdc`** 步骤 5 补充衔接）。

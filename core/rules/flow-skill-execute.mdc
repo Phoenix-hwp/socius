@@ -1,0 +1,189 @@
+---
+description: 技能执行工作流 执行前快+ 写路径限+ 执行后差异审+ 确认/回滚
+alwaysApply: false
+Lifecycle: 长期
+Created: 2026-05-12
+glossary:
+  layer: 3-工作流执行层
+  purpose: 技能执行工作流 执行前快+ 写路径限+ 执行后差异审+ 确认/回滚
+  downstream:
+    - mod-skills-library-framework.mdc（Skills Library 框架
+    - external-dependency-boundary.mdc（外部依赖边界）
+    - pre-change-impact-enumeration.mdc（ 执行后差异审查通用原则
+    - flow-skill-acquire.mdc（技能获取工作流
+guard_replaceable: partial
+---
+
+# 技能执行工作流
+
+## 触发条件
+
+- 用户要求使用某已部署Skill 执行任务
+- 用户在项任务上下文中调用 Skills_Library 中的技
+
+## 原则
+
+在真实工作目录中运行外部技能时，强制执行「三部曲」：
+1. **执行前快* 保存当前状态基
+2. **执行中隔* 限制写入路径，监控越
+3. **执行后审* 差异展示 + 确认保留/回滚
+
+**与获取阶段的区别**：`flow-skill-acquire.mdc` `git worktree` 隔离副本中试运行；本工作流在**真实工作目录**中运行，需要更强的防污染措施
+
+---
+
+## §A 执行前快
+
+### A1 检查工作区清洁
+
+```
+git status --porcelain
+```
+
+- 工作区干净 进入 A2
+- 工作区有未提交变AskQuestion `[暂存后继续] [先提交再继续] [取消执行]`
+  - `[暂存后继续]` `git stash push -m "skill-exec-pre-<skill-name>"`
+  - `[先提交再继续]` 引导用户完成提交后继
+  - `[取消执行]` 终止
+
+### A2 记录基线
+
+```
+git rev-parse HEAD  # 记录基线 commit
+```
+
+Agent 内部记录：`基线: <commit_hash>`
+
+### A3 读取技能声
+
+Read `Skills_Library/skills/<skill-name>/SKILL.md`，确认：
+- 声明的写入范围（`write_scope`
+- 依赖项（`dependencies`
+- 风险信号（`risk_signals`
+
+若写入范围包`.cursor/rules/`、`.git/`、`docs/` 等内核路强制 AskQuestion `[确认授权越权写入] [取消执行]`
+
+---
+
+## §B 执行中隔
+
+### B1 路径限制（Agent 强制执行
+
+技能运行时，Agent 监控其文件操作：
+
+- **允许**写入：`Skills_Library/skills/<skill-name>/`、`声明write_scope`、`.trash/`
+- **禁止**写入：`.cursor/rules/`、`.cursor/hooks/`、`.cursor/hooks.json`、`.git/`、`adapters/cursor/aliases.md`、`kernel-runtime.mdc`
+- **需确认**写入：`docs/`（非别名表）、`Daily-Backups/`、项目目
+
+### B1.1 禁止操作清单
+
+> **Guard 轨道**：递归删除 / 通配杀进程 / 跨盘符递归 / Git 破坏操作均由 `safety_gate.py` 的五组正则（`RECURSIVE_DELETE / WILDCARD_KILL / CROSS_DRIVE / GIT_DESTRUCTIVE / OUT_OF_WORKSPACE`）自动拦截。Agent 无需逐条检查
+>
+> **Fallback 轨道**（Guard 不可用时）：Agent `flow-high-risk-safety.mdc` 红色警戒流程执行
+
+
+
+### B2 越权拦截
+
+若技能在运行时尝试写入禁止路径：
+- Agent 立即中断该写入操
+- 输出 `技<skill-name> 试图写入禁止路径 <path>，已拦截`
+- AskQuestion `[授权本次写入] [跳过本次写入继续] [终止技能执行]`
+
+### B3 执行
+
+- 按技能声明的方式运行（Python/Node/Shell
+- 捕获 stdout/stderr 用于后续审查
+- 记录执行耗时
+
+---
+
+## §C 执行后差异审
+
+### C1 文件变更概览
+
+```
+git diff --stat
+```
+
+### C2 逐路径详细审查（TOP GUN 模式
+
+对每个变更文件执`git diff -- <path>`，做内容级分析——不只看路径，要看每次变更的逻辑（CP-069 TOP GUN 案例启发：战后不只看战报，而是逐帧回放每一场战斗）
+
+- 该变更对应的意图是什么？
+- 是否匹配 Skill 声明的目标？
+- 是否产生了非预期副作用？
+- 是否存在「改 A 触发B 变化」的连锁效应
+
+按路径分类展示：
+
+| 路径 | 变更类型 | 分类 | 动作 |
+|:---|:---|:---|:---|
+| `Skills_Library/skills/<name>/` | 新增/修改 | 预期| |
+| `声明write_scope` | 修改 | 预期| |
+| 其他非禁止路| 修改 | 连锁影响 | 🔗 |
+| 内核路径（`.cursor/rules/` 等） | 修改 | 越权 | 拦截 |
+
+对每越权变更，逐文件展`git diff -- <path>`
+
+### C3 变更摘要
+
+```
+技能执行审查：<skill-name>
+- 预期内变更：N 个文
+- 连锁影响：M 个文
+- 越权变更：K 个文
+- 基线commit_hash>
+```
+
+### C4F 自我调试（当执行结果不理想时，CP-070
+
+若审查发现非预期变更或执行结果不符合预期，不立即回滚，先。
+3F 诊断（CP-070）：
+
+| F | 动作 |
+|:---|:---|
+| **Focus**（聚焦） | 定位具体失败点——哪个步骤出错？哪个文件被错误写入？哪个参数不对|
+| **Feedback**（反馈） | 读取错误输出日志、用户纠正内容、或 `git diff` 变更内容，收集所有反馈信|
+| **Fix it**（修正） | 针对性调Skill 配置/参数/执行步骤 重运再次审查 |
+
+3F 完成后重新进§C1-C3 审查。最多迭2 次— 次后仍不理想则走 §D 回滚
+
+---
+
+## §D 确认/回滚
+
+### 无非预期变更
+
+简短回执「✅ 技`<skill-name>` 执行完毕，N 个文件变更均为预授权范围」，不阻断
+
+### 有连锁影响但无越
+
+展示 🔗 文件清单，AskQuestion `[确认保留] [回滚连锁文件] [回滚全部]`
+
+### 有越权变
+
+强制展示 文件 diff，AskQuestion `[授权保留越权变更] [回滚越权文件] [回滚全部]`
+
+> 回滚越权文件：`git checkout -- <越权文件路径>`
+> 回滚全部：`git reset --hard <基线commit>`（仅限本轮未提交时）
+
+---
+
+## §E 执行后清
+
+- 回滚 stash（如果有）：`git stash pop`（若 A1 中执行了 stash
+- 更新 `skill-registry.json` `last_used` 字段
+- 记录执行结果`method-reliability-registry.json`（成失败/越权次数
+
+---
+
+## 降级与兜
+
+- **git 不可*：跳git 快照，Agent 手动记录文件清单作为基线，手动对
+- **stash 冲突**：保stash，提示用户手动处
+- **技能崩*：自动回滚所有变更到基线（`git reset --hard` + `git stash pop`），输出崩溃日志
+
+## 与通用原则的关
+
+本工作流`pre-change-impact-enumeration.mdc` §5 Skills 场景下的**最高防控等*实现。日常小范围变更（≤2 个文件）走通用 §5 即可；Skills 执行必须走本工作流的三部曲

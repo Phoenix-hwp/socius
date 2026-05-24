@@ -1,0 +1,44 @@
+﻿---
+description: 高风险操作防Guard 安全闸门.mdc 规则化身。步1-4 已由 safety_gate.py 代码化。步5-6 + Fallback 轨道Agent 行为规范，不可替代
+alwaysApply: true
+severity: safety
+task_triggers:
+  - high_risk_command
+requires: []
+Lifecycle: 长期
+Created: 2026-05-13
+Updated: 2026-05-23
+glossary:
+  layer: 横切
+  purpose: 高风险操作防Guard 轨道自动，Fallback 轨道手动
+  guard_implemented_in: "guard/src/p008/safety_gate.py"
+guard_replaceable: true
+---
+
+# 高风险操作防
+
+> Guard 轨道上步1-4（检测→暂停→CWD→预览）已由 `safety_gate.py` 完全代码化，正常运行时不需 Agent 关注
+
+## 步骤 5-6（Agent 行为规范
+
+Guard 输出拦截结果时，Agent 必须使用 AskQuestion 工具
+
+- 选项文本*必须**包含完整命令原文
+- 标题须包`[WARNING] High-Risk Operation`
+- 不得Y/N/2 等简写替
+- 框架强制：先收益后风险（双面
+
+确认后执立即验证结果 若执行失败，不得自动重试或换更激进方式，必须再次 AskQuestion
+
+## Fallback 轨道（Guard 不可用时
+
+Guard 返回 `guard_available: false` 时，Agent 须自行执行完整红色警戒流程（步骤 1-6）
+
+触发条件自检（任一命中 进入完整流程）：
+
+- [ ] 递归删除：`rm -rf` / `-Recurse` / `/s` / `del /s`
+- [ ] 通配杀进程：`taskkill /im` / `killall` / `pkill`
+- [ ] 目标路径在仓库范围外
+- [ ] Git 破坏性操作：`reset --hard` / `clean -fdx`
+
+> 特化约束`flow-skill-acquire.mdc` §F（清理白名单 `flow-skill-execute.mdc` §B1.1（禁止操作清单）

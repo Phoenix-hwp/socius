@@ -1,9 +1,9 @@
----
+﻿---
 Title: Cursor 个人使用档案与快捷话术
 type: cursor-profile
 Created: 2026-04-18
 Updated: 2026-05-09（会话收束：多轮备份架构重构 ①→⑧ 执行完毕 + 审计修复 5 项）
-sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
+sync_playbook: plans/Behavior-Preferences-Sync-Playbook.md
 tags:
   - cursor
   - meta
@@ -17,7 +17,7 @@ aliases:
 ### 开端（尽量自动化）
 
 - 已在 **项目级** Cursor Hook（**工作区根** `.cursor/hooks.json` → Windows 默认：`cmd /c python .cursor/hooks/session_start_profile_launch.py || node .cursor/hooks/session_start_profile_launch.mjs`；启动器内依次尝试 `python` / `python3` /（本机 Windows）`py -3` 执行 `session_start_profile_context.py`，再尝试 `node` 执行 `session_start_profile_context.mjs`，避免双 `sessionStart` 重复注入）注册 **`sessionStart`**：当你把 **Obsidian 工作区根**（含 `Cursor_Knowledge/`）或 **仅 `Cursor_Knowledge` 文件夹**作为 Cursor 工作区根打开并新建 Composer / Agent 会话时，会把「档案全文」注入为 `additional_context`（过长会截断并标注）。注入块会以「Injected by sessionStart hook」开头。
-- **默认档案位置**（脚本按顺序查找，先命中者用）：`<工作区根>/Cursor_Knowledge/10-Topics/Cursor-usage-profile-and-templates.md`，其次 `<工作区根>/10-Topics/Cursor-usage-profile-and-templates.md`。Cursor 会提供 **`CURSOR_PROJECT_DIR`**；若档案在别处，可设置 **`CURSOR_OBSIDIAN_PROFILE`** 为档案 `.md` 的**绝对路径**（优先），然后重启 Cursor。
+- **默认档案位置**（脚本按顺序查找，先命中者用）：`<工作区根>/Cursor_Knowledge/plans/Cursor-usage-profile-and-templates.md`，其次 `<工作区根>/plans/Cursor-usage-profile-and-templates.md`。Cursor 会提供 **`CURSOR_PROJECT_DIR`**；若档案在别处，可设置 **`CURSOR_OBSIDIAN_PROFILE`** 为档案 `.md` 的**绝对路径**（优先），然后重启 Cursor。
 - 若你未看到档案要点：请让 Agent **Read** 上述相对路径之一（存在哪个读哪个）。
 
 ### 收束（需你发送触发语）
@@ -37,7 +37,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 1. Read 本文件（若上下文里尚无最新全文）。
 2. 用简短要点概括**本轮对话里你的实际行为**（任务类型、指令风格、偏好是否一致）。
 3. 对照本文件 **§1–§3**（用途 / 语义意图 / 行为偏好），给出 **契合度**（高/中/低 + 一句理由）。
-4. 在 **`10-Topics/Behavior-Fit-Log.md` §2「契合度分析日志」** 中 **追加一行**（不要删改历史行）；若同时需要更新 §1–§4 的表述，在 `Behavior-Fit-Log.md` §1「迭代记录」追加一条，并对正文做**最小必要**编辑。
+4. 在 **`plans/Behavior-Fit-Log.md` §2「契合度分析日志」** 中 **追加一行**（不要删改历史行）；若同时需要更新 §1–§4 的表述，在 `Behavior-Fit-Log.md` §1「迭代记录」追加一条，并对正文做**最小必要**编辑。
 5. 写回本文件 + `Behavior-Fit-Log.md`（UTF-8，无 BOM），保存后简要回复「已追加日志 / 已更新 §x」。
 
 ---
@@ -106,7 +106,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 
 ## 3. 行为偏好
 
-> **双端结构**：下列 **第 1–9 节** 与 Notion《行为偏好（供 Notion AI 参考）》及 `10-Topics/TEMP_Behavior-Preferences-Unified-Template.md` **同级编号一致**。同步流程、锚点与检查清单见 **`10-Topics/Behavior-Preferences-Sync-Playbook.md`**。  
+> **双端结构**：下列 **第 1–9 节** 与 Notion《行为偏好（供 Notion AI 参考）》及 `plans/TEMP_Behavior-Preferences-Unified-Template.md` **同级编号一致**。同步流程、锚点与检查清单见 **`plans/Behavior-Preferences-Sync-Playbook.md`**。  
 > **优先级**：用户当轮明确指令 > 静态偏好。
 
 ### 1. 使用说明与冲突处理
@@ -116,7 +116,7 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 
 ### 2. Skill 与自动化（Notion）
 
-- **执行记录 / 调用执行记录 Skill**：对话偏好做可复用总结，写入 **固定页**——Notion：行为偏好页 **「执行记录（Skill）」** 等区块；Cursor：**`10-Topics/Behavior-Fit-Log.md` §2** 契合度日志，必要时在偏好主本或 Behavior-Fit-Log §1 补记。**默认不另建子页面**（除非当次明确要求）。
+- **执行记录 / 调用执行记录 Skill**：对话偏好做可复用总结，写入 **固定页**——Notion：行为偏好页 **「执行记录（Skill）」** 等区块；Cursor：**`plans/Behavior-Fit-Log.md` §2** 契合度日志，必要时在偏好主本或 Behavior-Fit-Log §1 补记。**默认不另建子页面**（除非当次明确要求）。
 - Skill 输出建议含：概览、观察到的偏好、约束/禁忌、后续交互建议、置信度、证据摘录（可选）；与 Cursor 规则冲突时以用户当次说明为准，并在修改侧简要注明。
 
 ### 3. 沟通与交互
@@ -150,10 +150,10 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 
 ### 6. 工具与环境
 
-- **工作区 Git / Gitee**：口语 **`提交git`**（及别名 **Git同步** / **推仓库** / **提交远端**）走 **`10-Topics/Gitee-Workspace-Git-Workflow.md`** 与规则 **`flow-git-commit.mdc`**；与 **Notion 写入**（默认对话内六步）相互独立。
+- **工作区 Git / Gitee**：口语 **`提交git`**（及别名 **Git同步** / **推仓库** / **提交远端**）走 **`plans/Gitee-Workspace-Git-Workflow.md`** 与规则 **`flow-git-commit.mdc`**；与 **Notion 写入**（默认对话内六步）相互独立。
 - **工具使用**：尽量自己跑终端与读文件，少让我手动复制。
 - **钩子 / 脚本**：**新建命令型钩子及相关启动脚本时，默认须同时支持 Python 与 Node.js**（互备实现或统一启动器；Windows 为主要环境时可采用与本库 `session_start_profile_launch` 相同思路：`cmd /c python … || node …`；注入类输出保持 UTF-8 一行 JSON）。
-- **指令创建与别名**：**当我要求“创建指令”时，默认即创建执行级规则（`.cursor/rules/*.mdc`）并登记到 `10-Topics/Cursor-command-aliases.md`；执行需同时支持完整指令与别名触发，且每个别名长度为 2-10 个字。**
+- **指令创建与别名**：**当我要求“创建指令”时，默认即创建执行级规则（`.cursor/rules/*.mdc`）并登记到 `plans/Cursor-command-aliases.md`；执行需同时支持完整指令与别名触发，且每个别名长度为 2-10 个字。**
 - **长记忆开场确认**：**默认按“下轮起点”轻确认后直接执行；仅在冲突/歧义时才完整询问“上一轮位置 + 本轮范围（章/阶段/环节）”；范围外内容仅登记待处理。**
 - **Notion 内执行**：先搜索是否已有页面/模板/数据库；新建放在当前相关页面体系下（除非另有指定）；对页面/数据库改动尽量 **一次合并**；标题用 **清晰可检索的中文**（可加 `{行事历}` 等前缀）。
 - **Notion 执行细则（2026-04-25 确认）**：
@@ -191,15 +191,15 @@ Cursor 的 `sessionEnd` 钩子**不能**把分析结果写回笔记（官方为 
 
 | 场景 | 话术（复制使用） |
 |------|------------------|
-| 开场（档案已在 Hook 时可选） | 若档案未载入：先 Read `10-Topics/Cursor-usage-profile-and-templates.md` 再继续。 |
-| 短指令分发 | 先查 `10-Topics/Cursor-command-aliases.md` 是否命中已登记指令，再执行对应动作。 |
+| 开场（档案已在 Hook 时可选） | 若档案未载入：先 Read `plans/Cursor-usage-profile-and-templates.md` 再继续。 |
+| 短指令分发 | 先查 `plans/Cursor-command-aliases.md` 是否命中已登记指令，再执行对应动作。 |
 | **会话收束（写回契合度日志）** | `/收束` 或 `会话收束：` 或 `结束会话` 或 `结束对话` 或 `结束` |
-| 开场对齐上下文 | 先读 `10-Topics/Cursor-usage-profile-and-templates.md`，再回答下面问题： |
+| 开场对齐上下文 | 先读 `plans/Cursor-usage-profile-and-templates.md`，再回答下面问题： |
 | 只要结论 | 用要点列表回答，不要扩写背景；不确定处标「待确认」。 |
 | 深度实现 | 阅读相关代码后给出最小可行改动，并说明风险与测试建议。 |
 | 与知识库同步 | 把本次结论写入 Obsidian：`路径/文件名.md`，用 UTF-8。 |
 | 长记忆续聊开场 | 先读主控文件/备份并回显下轮起点，优先一句轻确认后直接执行；仅在歧义时再完整询问章/阶段/环节。 |
-| 行为偏好双端同步 | 先 Read `10-Topics/Behavior-Preferences-Sync-Playbook.md`，再按其中 1–9 节对拍 Cursor §3 与 Notion 行为偏好页。 |
+| 行为偏好双端同步 | 先 Read `plans/Behavior-Preferences-Sync-Playbook.md`，再按其中 1–9 节对拍 Cursor §3 与 Notion 行为偏好页。 |
 | 复盘一次对话 | 总结：目标 / 已做 / 未做 / 建议下一步；若有可沉淀条目写入知识库。 |
 | 自定义 1 | |
 | 自定义 2 | |

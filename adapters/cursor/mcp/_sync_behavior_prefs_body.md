@@ -1,6 +1,6 @@
----
-sync_source: 10-Topics/Cursor-usage-profile-and-templates.md
-sync_playbook: 10-Topics/Behavior-Preferences-Sync-Playbook.md
+﻿---
+sync_source: plans/Cursor-usage-profile-and-templates.md
+sync_playbook: plans/Behavior-Preferences-Sync-Playbook.md
 sync_scope: §2 错别字表 + §3 第 1–9 节与「其他」；不含 §4 话术模板、§5 迭代、§6 契合度日志
 synced_at: 2026-05-09
 target_notion_page: 行为偏好（供 Notion AI 参考）
@@ -85,10 +85,10 @@ target_notion_page: 行为偏好（供 Notion AI 参考）
 
 ## 6. 工具与环境
 
-- **工作区 Git / Gitee**：口语 **`提交git`**（及别名 **Git同步** / **推仓库** / **提交远端**）走 **`10-Topics/Gitee-Workspace-Git-Workflow.md`** 与规则 **`git-workspace-commit.mdc`**；与 **Notion 写入**（默认对话内六步）相互独立。
+- **工作区 Git / Gitee**：口语 **`提交git`**（及别名 **Git同步** / **推仓库** / **提交远端**）走 **`plans/Gitee-Workspace-Git-Workflow.md`** 与规则 **`git-workspace-commit.mdc`**；与 **Notion 写入**（默认对话内六步）相互独立。
 - **工具使用**：尽量自己跑终端与读文件，少让我手动复制。
 - **钩子 / 脚本**：**新建命令型钩子及相关启动脚本时，默认须同时支持 Python 与 Node.js**（互备实现或统一启动器；Windows 为主要环境时可采用与本库 `session_start_profile_launch` 相同思路：`cmd /c python … || node …`；注入类输出保持 UTF-8 一行 JSON）。
-- **指令创建与别名**：**当我要求“创建指令”时，默认即创建执行级规则（`.cursor/rules/*.mdc`）并登记到 `10-Topics/Cursor-command-aliases.md`；执行需同时支持完整指令与别名触发，且每个别名长度为 2-10 个字。**
+- **指令创建与别名**：**当我要求“创建指令”时，默认即创建执行级规则（`.cursor/rules/*.mdc`）并登记到 `plans/Cursor-command-aliases.md`；执行需同时支持完整指令与别名触发，且每个别名长度为 2-10 个字。**
 - **长记忆开场确认**：**默认按“下轮起点”轻确认后直接执行；仅在冲突/歧义时才完整询问“上一轮位置 + 本轮范围（章/阶段/环节）”；范围外内容仅登记待处理。**
 - **Notion 内执行**：先搜索是否已有页面/模板/数据库；新建放在当前相关页面体系下（除非另有指定）；对页面/数据库改动尽量 **一次合并**；标题用 **清晰可检索的中文**（可加 `{行事历}` 等前缀）。
 - **Notion 执行细则（2026-04-25 确认）**：

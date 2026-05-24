@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Notion CRUD 向导：网络 → 目录 → 选择增/查/改/删 → 按分支确认后调用 API。"""
 from __future__ import annotations
@@ -164,7 +164,7 @@ def step_markdown_path() -> Path:
     print()
     print("Markdown 正文文件")
     print(f"知识库根: {_VAULT_ROOT}")
-    print("示例: 10-Topics/Gitee-Workspace-Git-Workflow.md")
+    print("示例: plans/Gitee-Workspace-Git-Workflow.md")
     print()
     while True:
         raw = _prompt("路径: ")

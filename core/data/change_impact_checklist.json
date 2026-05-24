@@ -1,4 +1,4 @@
-{
+﻿{
   "meta": {
     "description": "影响面注册表 — 按对象类型预注册搜索范围。第一层变更前影响枚举（pre-change-impact-enumeration.mdc）读取本表获取应搜索的文件类型列表，确保不遗漏任何引用端点。",
     "usage": "Agent 做变更前影响枚举时，遍历 search_scopes 中所有 group，对每个 glob 执行关键词搜索，输出待同步清单。",
@@ -40,13 +40,13 @@
     
     {
       "group": "文档（10-Topics）",
-      "globs": ["10-Topics/**/*.md"],
+      "globs": ["plans/**/*.md"],
       "keywords": ["规则文件", ".cursor/rules", "工作流", "指令", "别名"],
       "note": "知识库主题笔记中的规则引用、工作流描述"
     },
     {
       "group": "网关与别名",
-      "globs": [".cursor/rules/gateway-*.mdc", "10-Topics/Cursor-command-aliases.md", "Command-Help-Index.md"],
+      "globs": [".cursor/rules/gateway-*.mdc", "plans/Cursor-command-aliases.md", "Command-Help-Index.md"],
       "keywords": ["别名", "映射", "command", "路由", "模块"],
       "note": "指令别名映射、跨模块引用登记"
     },

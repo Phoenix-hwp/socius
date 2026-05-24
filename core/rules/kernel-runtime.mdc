@@ -1,0 +1,138 @@
+﻿---
+description: 内核运行规则——知识库约+ 会话开端续接与收束 + 轮次确认 + 多轮长记忆（条件级：仅会话开端/收束/计划任务时加载，非全时段）Lifecycle: 长期
+Created: 2026-05-12
+alwaysApply: false
+severity: conditional
+task_triggers:
+  - session_start
+  - task_continuation
+  - session_close
+  - multi_round_upgrade
+  - tep_resume
+requires:
+  - gateway-command-router.mdc
+  - flow-behavior-auto-receipt.mdc
+glossary:
+  layer: 横切
+  purpose: 会话管理、知识库约定、多轮长记忆 理覆盖网关未覆盖的默认运行逻辑
+replaces:
+  - session-profile-workflow.mdc
+  - round-start-checkpoint-confirmation.mdc
+  - long-memory-round-workflow.mdc
+  - long-memory-knowledge-base.mdc
+guard_replaceable: false
+---
+
+# 内核运行规则
+
+## §0 Cursor_Knowledge（Obsidian 长记忆库
+- **库根路径**：将Obsidian 库作为文件夹Cursor 中打开时，**工作区根目录**即知识库根（`CURSOR_PROJECT_DIR` 一致）；勿写死盘符路径- **用*：存放个人项目的长期上下文、决策记录、术语表、流程与复盘，供 Cursor Agent 检索与引用
+### Agent 行为约定
+
+1. **何时查库**：问题涉及「之前约定过的事」「项目背景」「个人偏好」「持久化事实」或用户显式提到知识笔记时，优先搜索/阅读本仓库内相关 Markdown，再作答。
+2. **如何引用**：给vault 内相对路径，区分「笔记原文」与「推断」。
+3. **如何更新**：按合适的目录结构新建或编`.md`，使用清晰标题与必要 frontmatter；避免无故改写历史笔记。
+4. **Obsidian 语义**：理`[[双向链接]]`、标签与 frontmatter。
+### 建议目录
+
+- `inbox/`：临时捕获（`Lifecycle: 临时`，5 天自动清理）
+- `docs/`：主题笔记。
+- `projects/`：项目长期上下文
+- `90-Templates/`：模
+---
+
+## §1 会话开
+### 1.1 档案读取
+
+- **档案路径**：优`docs/usage_profile.md`；可`CURSOR_OBSIDIAN_PROFILE` 覆盖- **开*：优先依`.cursor/hooks.json` `sessionStart` 注入。若上下文中未见到注入内容，Read 上述路径后再作答
+### 1.2 M0 经验索引预查（任务续接前
+- Read `core/data/experience-index.jsonl`。按 `task_type` + `keywords` 匹配本次任务相关的历史经验（最20 行内搜索）- 若有匹配 提取匹配行的 `task_id` / `p008_level` / `result` / `behavior_log_line` / `decision_log_line` / `activation_log_lines`，按需精读对应日志行，注入为续接上下文- 若无匹配 静默跳过，不阻塞任务续接
+### 1.2a 跨设备上下文移交摘要（会话开端强制，M0 经验索引之前
+- Read `core/data/context-handoff.json`- 若文件不存在 静默跳过，继续执§1.2 M0 经验索引预查- 若文件存解析 `date` 字段进行 TTL 判断  - **距今 < 24 小时**：自动载入移交摘要，注入为续接上下文。在回复中标注：
+    ```
+    📦 已从 [last_device] 恢复上下文：[active_task] 距今[N] 小时    ```
+    载入**跳过** §1.2 M0 经验索引预查（移交摘要已提供精准上下文，不需要再按关键词匹配历史经验）  - **距今 24 小时**：不载入移交摘要，静默跳过，正常执行 §1.2 M0 经验索引预查。标`📦 移交摘要已过期（>24h），降级M0 索引查询`
+### 1.3 任务续接
+
+- Read `core/data/Active-Task-Tracker.json`。按活跃任务策略续接：匹配关键词自动续接、展示列表等轻确认、直接新需求不展示列表。细则见 `flow-behavior-auto-receipt.mdc`
+### 1.3a TEP 连载恢复（V012 子任务跨天续接）
+
+触发：`Active-Task-Tracker` 中存`status="进行` 且包`last_checkpoint` 的条目
+执行步骤
+1. **筛选进行中条目**：从 `active` 数组提取所`status="进行` 的条目2. **读取 last_checkpoint**：提`method`、`input_from`、`output_to`、`intermediate_products`、`parameters`。
+3. **依赖校验**   - `input_from` 中每`{from, asset}`，检`asset` 对应的文产出物是否存在   - 全部存在 正常续接   - 部分缺失 标注 `上游依赖缺失：[asset1, asset2]`，询问用户是否继续（可能需重新执行上游）   - 全部缺失 标注 `🔴 连载链断裂，所有上游依赖缺失`，建议重新执行整条链路4. **生成续接提示**（格式）   ```
+   📎 TEP 连载恢复：{parent_task}
+   
+   当前子任务：{current_child} {action}
+   🔒 锁定方法：{method}
+   📦 已完成的上游产物：[asset1  asset2  asset3 缺失]
+   📤 本步产出路径：{output_to}
+   
+   是否继续执行此子任务   ```
+5. **AskQuestion 确认**：`[继续执行 {current_child}] [跳过此项] [查看全链路状态]`
+   - `继续执行`：注last_checkpoint 为上下文，正常执行子任务   - `跳过此项`：标记该子任务为 `已跳过`，检查是否有 `next_child` 可用   - `查看全链路状态`：展开整条 parent_task 的所有子任务状态（Pending-Plan-Tracker 读）6. **执行上下文注*：续接时`method` 字段注入 LLM#2 `confirmation_statement` 参数，确保执行方法一致性。将 `intermediate_products` 路径`parameters` 作为已知上下文注入7. **无进行中条目**：静默跳TEP 连载检查，继续执行 §1.2b（待办提醒）
+### 1.3b 待办提醒
+
+> 不再通过 sessionStart 钩子自动触发。用户输入「待办「查看待办」时，由 `gateway-command-router.mdc` 路由`Skills_Library/scripts/todo-reminder.py --scan` 执行
+### 1.4 L3 闸门检查（续接任务之前
+1. 读取 `core/data/Behavior-Fit-Log.jsonl`，统`format: "compact"` 的行数2. 0 `.cursor/rules/flow-behavior-l3-analysis.mdc` 不存🔒 强制阻断 AskQuestion `[确认创建 L3 分析规则] [稍后（下次提醒）]`
+   - `[确认创建]`：自动创建规+ 生成首次分析输出（`docs/L3_Analysis_Output.md`   - `[稍后]`：本轮正常进行，下次 sessionStart 再次阻断
+   - 未选择前不得执行其他操。
+3. 若规则已存在且自上次分析`Behavior-Fit-Log.jsonl` 新增 `format: "compact"` 的行  静默刷新 `docs/L3_Analysis_Output.md`（不阻断4. 若连。
+3 次分析同维度趋势方向一AskQuestion `[确认更新档案 §§1-3] [暂缓]`（附变更预览；可被用户本轮随时跳过）
+5. L3 分析细则`flow-behavior-auto-receipt.mdc`「L3 触发机制」
+---
+
+## §2 会话收束
+
+### 2.1 自动收束
+
+每轮对话结尾，Agent `flow-behavior-auto-receipt.mdc` 执行：轮级快纠偏检经验提取 方法可靠性更设备规则自学习
+### 2.2 手动收束
+
+触发语：`/收束`、`结束会话`、`结束对话`、`结束` `flow-behavior-auto-receipt.mdc` 步骤 E 执行完整收束（含经验提取检查，无论是否有任务状态变更）
+### 2.3 禁止
+
+收束中删`Behavior-Fit-Log.jsonl` 历史行；大段重写档案需用户明确要求
+---
+
+## §3 每轮开场检查点确认
+
+适用场景：长记忆、多轮推进、特殊项目（PRD 审阅、方案设计、长期复盘等）
+### 3.1 默认流程
+
+详见 `flow-conversation-resume.mdc`
+- 先读 `Master_Control` §8 轮次日志最末条提取位置/未完成项/下轮起点- 下轮起点清晰时一句轻确认；`Master_Control` 不存在时通过 AskQuestion `[升级为多轮] [稍后再说]` 触发 `flow-multi-round-upgrade.mdc`
+### 3.2 完整询问触发条件（仅在歧义时
+- 同日时段命中多条备份且无法自动判定主- 主控中的下轮起点缺失、冲突或已过- 用户本轮目标与上轮起点明显不一- 章节/阶段/环节表述无法对齐
+
+完整询问：`上一轮到第几阶段/环节？本轮要继续哪一阶段/环节？`
+
+### 3.3 范围锁定
+
+本轮只能处理用户确认的唯一范围；范围外内容仅登记到主控待处理池"，不得展开改写
+### 3.4 类型化字
+主控文件 §1 `推进类型`：`章节` / `阶段` / `环节`；未声明默认 `章节`
+### 3.5 开场回执格
+- `已读取检查点`：回显位置与未完成项-3 条）
+- `待你确认`：轻确认或完整询- `确认后执行`：说明边界锁
+---
+
+## §4 多轮长记忆流
+适用场景：用户明确某主题将进行多轮长对话（项目型或主题型）
+### 4.1 初始
+详见 `flow-multi-round-upgrade.mdc`：升级流程（创建 Master_Control + Project_Memo + 对话备份目录 + R0 初始化）
+### 4.2 推进模式
+
+主控文件 `Master_Control.md` §1 必须声明 `推进模式`：`章节式` / `开放式`。未声明时默`章节式`，并在当轮询问确认是否改为开放式
+### 4.3 每轮开
+先读 `Master_Control` 轻确认下轮起点；`Master_Control` 不存在时触发 `flow-multi-round-upgrade.mdc`
+### 4.4 每轮输出结构（固定）
+
+问题清单 / 可执行方/ 建议改写 / 本轮结论 + 下轮入口
+### 4.5 轮次收束
+
+触发`总结本轮对话` `flow-behavior-auto-receipt.mdc` 执行小结生成与写回
+### 4.6 合并闸门
+
+用户明确表示合并时，通过 AskQuestion `[确认合并] [暂缓]` 确认，先做一致性快检后写入主文档并追加合并记录

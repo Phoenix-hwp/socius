@@ -1,4 +1,4 @@
-{
+﻿{
   "_description": "概念树运行时索引。随协议消化渐进生长，不做人工预建全量树。每次新建协议或发现新概念时更新。",
   "_schema": {
     "<concept_anchor>": {
@@ -1493,7 +1493,7 @@
     "protocols": [
       "CP-119"
     ],
-    "factor_registry": "phoenix-agent/src/p008/factor_registry.json",
+    "factor_registry": "guard/src/p008/factor_registry.json",
     "first_seen": "2026-05-21"
   },
   "Mungerism.ChecklistSystem": {
@@ -1637,7 +1637,7 @@
     "display_name": "逻辑谬误分类与对策",
     "summary": "14 类核心谬误分 5 组成因：相关/歧义/预设/因果/归纳",
     "protocol": "CP-125",
-    "factor_registry": "phoenix-agent/src/p008/factor_registry.json",
+    "factor_registry": "guard/src/p008/factor_registry.json",
     "created": "2026-05-21"
   },
   "CriticalThinking.ARS": {
