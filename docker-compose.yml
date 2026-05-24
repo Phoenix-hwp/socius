@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  # 本地 Ollama 模型服务
+  ollama:
+    image: ollama/ollama:latest
+    container_name: phoenix-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # 启动后拉取默认模型（可选）
+    command: serve
+
+  # Phoenix 框架 — 独立运行
+  phoenix:
+    build: .
+    container_name: phoenix-core
+    depends_on:
+      - ollama
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONIOENCODING=utf-8
+      - PHOENIX_MODEL=ollama-local
+      - OLLAMA_HOST=ollama  # Docker 内部 DNS
+      # 云端模型 API Key（可选，不设置则只用本地 Ollama）
+      # - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      # - KIMI_API_KEY=${KIMI_API_KEY}
+    volumes:
+      - ./core:/phoenix/core:ro
+      - ./adapters:/phoenix/adapters:ro
+      - ./protocols:/phoenix/protocols:ro
+      - phoenix_data:/phoenix/data
+    command: verify
+
+volumes:
+  ollama_data:
+  phoenix_data:
