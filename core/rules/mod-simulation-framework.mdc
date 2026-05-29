@@ -1,0 +1,165 @@
+---
+description: 仿真机制统一框架：定义仿真场景类型(S1/S2/S3)、写保护规则、数据隔离规则、知识反哺回路。面向全系统所有环节提供可配置的仿真验证能力。
+alwaysApply: false
+Lifecycle: 长期
+Created: 2026-05-18
+glossary:
+  layer: 2-模块框架  purpose: 为知识脑和执行层之间架设验证桥接层，支持对任意子系统/能力/知识进行刻意练习式仿  downstream:
+    - flow-simulation-execute.mdc（仿真执行工作流    - Simulation-Sandbox/scenarios.json（可配置场景注册表）
+    - Simulation-Sandbox/task-pool.json（任务池    - Simulation-Sandbox/training-plan.json（训练计划）
+    - Simulation-Sandbox/coverage-matrix.json（L 级覆盖矩阵，2026-05-22 新增  upstream:
+    - core/knowledge/framework.md（知识脑四层架构    - core/knowledge/classifier.md（消化管Step R 反馈    - mod-decision-framework.mdc（P008 决策    - flow-behavior-auto-receipt.mdc（行为收束）
+    - flow-skill-execute.mdc（Skill 执行安全审查）
+guard_replaceable: framework
+---
+
+# 仿真机制统一框架（Simulation Framework
+## 一、架构定
+仿真机制*横跨认知层和执行层的桥接*，补全知识脑的第五个输出端：
+
+```
+知识消化 协议  [仿真验证] 桥接                                       协议入库   验证结果反哺协议
+                         (confirms / challenges / refines)
+```
+
+### 与现有四层架构的关系
+
+仿真机制不取代任何现有层，而是新增一*验证回路的物理载*
+```
+┌─────────────────────────────────────────认知层（知识脑）                         classifier extract protocol                                                     仿真验证回路                         (反哺知识)                                                       能力←── 仿真机制 ──执行          (P008    (Sandbox)    (Scripts     └─────────────────────────────────────────```
+
+### 核心原则
+
+1. **物理隔离**：仿真产物全部写`Simulation-Sandbox/`，不污染生产数据
+2. **写保护白名单**：仿真模式下，`Write`/`StrReplace`/`Delete` 的目标路径必须匹`Simulation-Sandbox/**`，否则拦。
+3. **git stash 基线**：仿真开始前记录基线，结束后 `git diff --stat` 确认无越权写4. **知识双向回路**：仿真验证协协议指导仿真设计——两个方向同等重
+---
+
+## 二、三类仿真场
+| 场景类型 | 目标 | 输入 | 输出 | 知识脑联|
+|:---|:---|:---|:---|:---|
+| **S1 能力验证** | 验证某条协议在真实场景下是否有效 | 一条协+ 一个仿真任| 验证结论（confirm/challenge/refine 经验数据 | 协议 validated_count 增加；若 challenge 触发 pended_review |
+| **S2 子系统打* | 针对某个子系统进行密集练| 仿真场景声明 + 任务| 性能数据 + 改进建议 + Step T 总结 | 改进建议反哺target_rules |
+| **S3 经验积累** | 产生真实的行为数| 开放式仿真任务 | 行为快照 + 经验提取 + 协议有效性反| 经验入库User-Knowledge-Registry；协议有效性写activation-log.jsonl |
+
+场景可配置：`Simulation-Sandbox/scenarios.json` 中声明新场景，无需修改框架代码
+---
+
+## 三、任务链 9 环节覆盖
+
+仿真覆盖从需求理解到协议反馈的完9 环节，每类场景可聚焦特定环节
+```
+[需求理解] [P008 评估] [任务拆解] [KB 预载入]
+                                                Step 1：结构探+ 复述                 Step 2-KB：activation 召回
+                                                [读材料] [执行] [C0 自我诊断] [经验提取]
+                                                Step 2：效+ 准确                 C-bis：T1/T2/T3 分层
+         [协议反馈]：effective / bystander / miscue
+```
+
+---
+
+## 四、写保护规则（强制）
+
+### 4.1 写入白名
+仿真模式下，所有文件写入操作的目标路径必须匹配以下模式之一
+| 允许写入 | 路径模式 |
+|:---|:---|
+| 仿真产物 | `Simulation-Sandbox/outputs/**` |
+| 仿真日志 | `Simulation-Sandbox/logs/**` |
+| 沙箱暂存 | `Simulation-Sandbox/sandbox/**` |
+| 场景/任务配置 | `Simulation-Sandbox/scenarios.json` / `task-pool.json` / `training-plan.json` |
+
+### 4.2 禁止写入
+
+仿真模式下的写入操作**不得**触及以下路径
+| 禁止写入 | 原因 |
+|:---|:---|
+| `.cursor/rules/**` | 内核规则，仿真不应修|
+| `protocols/**` | 知识脑协议，仿真不应直接修改 |
+| `docs/**` | 生产数据，仿真不应污|
+| `Skills_Library/skill-registry.json` | 技能注册表 |
+| `Skills_Library/scripts/**` | 执行脚本 |
+
+### 4.3 白名单豁免（仅以下情况可写生产文件）
+
+- 用户在本轮仿真中**明确*「将这条协议正式入库」→ 走正常消化管线（非仿真模式）
+- 用户在本轮仿真中**明确*「将这条经验写入生产日志」→ 走正C-bis 流程（非仿真模式- **除上述两种情况外，任何写入生产文件的操作均视为越权，立即拦截**
+
+### 4.4 三层写保
+| | 机制 | 作用 |
+|:---|:---|:---|
+| 1 层：写入白名| 仿真模式下路径检| 防训练代码误|
+| 2 层：git diff --stat | 仿真结束后差异审| 即使白名单被绕过，也能发现并回滚 |
+| 。
+3 层：高风险操作红色警| `flow-high-risk-safety.mdc` 兜底 | 递归删除等高风险操作强制确认 |
+
+---
+
+## 五、数据隔离规
+| 数据类型 | 生产日志 | 仿真日志 |
+|:---|:---|:---|
+| P008 决策日志 | `core/data/Decision-Log.jsonl` | `Simulation-Sandbox/logs/decision-log.jsonl` |
+| 任务拆解日志 | `core/data/Decomposition-Log.jsonl` | `Simulation-Sandbox/logs/decomposition-log.jsonl` |
+| 行为快照 | `core/data/Round-Behavior-Hot.jsonl` | `Simulation-Sandbox/logs/behavior-snapshot.jsonl` |
+| Skill 评分 | `Skills_Library/skill-performance-log.jsonl` | `Simulation-Sandbox/logs/skill-performance.jsonl` |
+| 经验提取 | `core/data/User-Knowledge-Registry.jsonl` | `Simulation-Sandbox/logs/experience-extract.jsonl` |
+| 训练总结 | | `Simulation-Sandbox/logs/summary-{TG-xxx}.json` |
+
+### 隔离规则
+
+- 仿真产生的所有日志写`Simulation-Sandbox/logs/`，与生产日志物理隔离
+- 仿真日志可被后续仿真任务读取（作为历史参考），但不参与生产系统的 FSM、P008 决策、行为档- 若用户明确要求将仿真日志迁移到生产日志，走独立的「仿真→生产」迁移流
+---
+
+## 六、知识反哺回
+### 6.1 协议验证反馈
+
+仿真结束后，逐条评估本次仿真中激活的协议的有效性：
+
+| 反馈类型 | 条件 | 动作 | 落点 |
+|:---|:---|:---|:---|
+| **confirmed** | 协议在仿真中有效指导了执| validated_count +1 | `protocols/CP-xxx.md` frontmatter |
+| **challenged** | 仿真结果与协议主张冲| 标记 pended_review = true | `core/knowledge/activation-log.jsonl` |
+| **bystander** | 协议被激活但未实际使| bystander_count +1 | `core/knowledge/activation-log.jsonl` |
+| **gap** | 仿真中暴露了知识缺口（无对应协议| 标注知识缺口，建议补| Step T 总结 + `Simulation-Sandbox/logs/` |
+
+### 6.2 短板→优化闭
+仿真收束中暴露的短板，按以下路径反馈
+```
+Step T 总结 短板诊断 优化建议 标注优先                                                               🔴 立即创建待办
+                           🟡 加入待消化池
+                           🟢 仅在周报中列```
+
+---
+
+## 七、与现有规则的协
+| 现有规则 | 仿真模式下的行为 | 差异 |
+|:---|:---|:---|
+| `mod-decision-framework.mdc`（P008| 照常评估，但日志写入仿真日志 | 日志隔离 |
+| `task-init-protocol.mdc` | 照常执行 Step 1-5，但产物路径白名单约| 产物路径隔离 |
+| `flow-behavior-auto-receipt.mdc` | C0 自我诊断照常；C-bis 经验提取写入仿真日志 | 日志隔离 |
+| `flow-skill-execute.mdc` | 照常执行写限制和差异审查，白名单缩小Simulation-Sandbox/** | 白名单范围缩|
+| `pre-change-impact-enumeration.mdc` | 照常执行，但仅搜Simulation-Sandbox/ 内的引用 | 搜索范围缩小 |
+| `flow-high-risk-safety.mdc` | 照常执行，不豁免 | 无差|
+
+---
+
+## 八、触发入
+| 触发| 语义 | 路由 |
+|:---|:---|:---|
+| `仿真` / `模拟` | 通用入口，列出可用场景让用户| `flow-simulation-execute.mdc` §阶段 1 |
+| `全链路仿真` / `全场模拟` | 跑一次完整的 9 环节任务| `flow-simulation-execute.mdc`（S2-full-chain|
+| `今天的仿真` | training-plan.json 自动取当天任| `flow-simulation-execute.mdc` §阶段 1 |
+| `验证 <协议ID>` | 对指定协议做 S1 能力验证 | `flow-simulation-execute.mdc`（S1|
+| `决策训练` / `边际测试` | 刻意P008 边界裁决 | `flow-simulation-execute.mdc`（S2-P008-boundary|
+| `拆解训练` | 刻意练任务拆| `flow-simulation-execute.mdc`（S2-decomposition|
+| `仿真报告` / `训练报告` | 汇总本本周仿真数据 | 读取 Simulation-Sandbox/logs/ 汇总输|
+| 待办选中 `V012-DRILL-*` | 待办弹窗「进V012 链路练习| `flow-v012-drill-bridge.mdc` `flow-v012-pipeline-execute.mdc` |
+
+---
+
+## Agent 自检（每次仿真前
+- [ ] 仿真模式是否已激活？（写入白名单是否已切换为 Simulation-Sandbox/**- [ ] git stash 基线是否已记录？
+- [ ] 本次仿真场景和目标是否已在启动简报中向用户说明？
+- [ ] 写入操作前是否检查了目标路径在白名单内？
+- [ ] 仿真结束后是否执行了 `git diff --stat` 差异审查- [ ] Step T 总结是否已输出并归档- [ ] L 级覆盖矩阵（coverage-matrix.json）是否已更新

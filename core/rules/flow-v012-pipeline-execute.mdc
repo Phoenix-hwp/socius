@@ -1,0 +1,57 @@
+---
+description: V012 管线 — 代码编排层负责状态调度，本文件仅保留 LLM 判断类约束
+alwaysApply: false
+Lifecycle: 长期
+Created: 2026-05-24
+Updated: 2026-05-26
+glossary:
+  layer: 3-工作流执行层
+  purpose: 辅助 core/v012_orchestrator.py 的 LLM 判断约束
+  downstream:
+    - core/v012_orchestrator.py
+    - Simulation-Sandbox/task-pool.json
+  upstream:
+    - flow-v012-drill-bridge.mdc
+    - task-init-protocol.mdc
+    - mod-simulation-framework.mdc
+guard_replaceable: true
+---
+
+# V012 管线 — LLM 判断约束
+
+> 状态调度已由 `core/v012_orchestrator.py` 代码化。
+> 本文件仅保留 LLM 在每阶段需遵守的判断类约束。
+> **不包含**数据合并逻辑、阶段转移、执行顺序——这些由代码保证。
+
+## §A 数据合并规则
+
+合并 briefs 和 Task-Type-Registry 的 slots 时：briefs 中已有声明的项优先；registry 仅用于 briefs 未覆盖的兜底。合并逻辑见 `v012_orchestrator.py`。
+
+## §B LLM 确认约束
+
+- 每个 must_ask 项**必须逐一向用户确认**，不得跳过或合并。
+- 用户已明确提供的信息 → 直接 filled，不再问。
+- 确认完毕即进入下一阶段。**禁止额外追问**已确认或无歧义的项。
+
+## §C LLM 拆解约束
+
+- 禁止只读一个文件就出报告；必须覆盖全量目标文件。
+- 禁止产出物落在 Simulation-Sandbox 之外。
+- 禁止跳过权限评估直接执行。
+
+## §D 分叉规则
+
+- N=1（简单任务）→ 跳过排期，直接执行。不写入 Pending-Plan-Tracker。
+- N≥2（复杂任务）→ 走排期确认 + 生成待办表。待办写入由 `v012_orchestrator.py` 代码执行。
+
+## §E 禁止行为
+
+- 禁止短路（只读一个文件就出报告）
+- 禁止跳过 must_ask 阶段
+- 禁止先问后展示（C-bis 必须先输出完整结果再确认）
+- 禁止在仍有 must_ask 未确认时进入 C
+- 禁止进入已废弃的阶段 D/E（代码层已移除）
+
+## §F 与 flow-simulation-execute 的关系
+
+本规则**取代**练习场景下的「阶段 2 单次 TIP 执行」。仍保留写保护与 Step T 格式。

@@ -1,0 +1,96 @@
+{
+  "entity": "Plan",
+  "version": "2026-05-26",
+  "file": "core/data/Pending-Plan-Tracker.json",
+  "role": "系统中唯一的工作追踪单元。结构化元数据存 JSON，详情存 plans/<id>.md",
+  "primary_key": "id",
+  "arrays": ["vision", "pending", "archive"],
+  "quick_check": [
+    "parent_task 为 null 或存在于同 tracker 的 vision/pending/archive",
+    "cancelled 不可逆",
+    "同一数组内字段集合一致，缺失用 null",
+    "子任务 done ≠ 父任务 completed"
+  ],
+  "state_machine": {
+    "top_level": {
+      "states": ["pending", "in_progress", "completed", "cancelled"],
+      "transitions": [
+        {"from": "pending", "to": "in_progress", "trigger": "首个子任务开工或手动标记"},
+        {"from": "in_progress", "to": "completed", "trigger": "全链路验收通过或用户确认"},
+        {"from": "*", "to": "cancelled", "trigger": "用户通过 AskQuestion 确认原因后"}
+      ],
+      "irreversible": [{"from": "cancelled", "to": "*", "note": "不可回退到 pending 或 in_progress"}],
+      "cancelled_guard": "变更为 cancelled 前须通过 AskQuestion 获取用户确认及取消原因，由 tracker.meta.reminder_rules.cancel_policy 强制执行"
+    },
+    "subtask": {
+      "states": ["pending", "done"],
+      "transitions": [
+        {"from": "pending", "to": "done"}
+      ],
+      "note": "done 表示本步工作完成，不等同父任务完成。父任务须所有子任务 done + pipeline 验收后才可 completed"
+    },
+    "vision": {
+      "states": ["vision", "in_progress", "completed"],
+      "note": "无 planned_date；仅当 trigger_condition 满足或用户主动回顾时审视"
+    }
+  },
+  "id_prefixes": {
+    "P###": {"arrays": ["pending", "archive"], "type": "plan", "description": "用户计划——有明确 planned_date"},
+    "V###": {"arrays": ["vision"], "type": "vision", "description": "远期愿景——无 planned_date，无截止约束"},
+    "V012-DRILL-###": {"arrays": ["pending", "archive"], "type": "drill", "description": "TEP 链路练习任务", "parent_task": "V012"},
+    "V012-DRILL-###-PT#": {"arrays": ["pending"], "type": "subtask", "description": "TEP 拆解子步骤", "parent_task_pattern": "V012-DRILL-*"},
+    "S1-###": {"arrays": ["pending"], "type": "sim_task", "description": "仿真阶段任务 (Phase 1)", "parent_task": "P067"},
+    "M2-##": {"arrays": ["pending"], "type": "migration_task", "description": "P068 迁移子任务", "parent_task": "P068"}
+  },
+  "fields": {
+    "common": {
+      "id": {"type": "string", "required": true, "note": "主键，前缀不可变更"},
+      "topic": {"type": "string", "required": true, "max_chars": 50, "applies_to": ["P###", "V###", "V012-DRILL-###"]},
+      "description": {"type": "string", "required": true, "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"], "note": "子任务描述，替代 topic"},
+      "status": {"type": "string", "required": true, "enum_ref": "state_machine"},
+      "file": {"type": "string", "required": true, "format": "plans/<id>.md"},
+      "resume_keywords": {"type": "array<string>", "required": false, "note": "对话关键词匹配时触发关联提醒"}
+    },
+    "plan_only": {
+      "planned_date": {"type": "date", "required": false, "applies_to": ["P###", "V012-DRILL-###"]},
+      "task_type": {"type": "string", "required": false, "ref": "Task-Type-Registry.type_id", "applies_to": ["P###"]},
+      "parent_task": {"type": "string", "required": false, "ref": "self.id", "applies_to": ["V012-DRILL-###", "V012-DRILL-###-PT#", "S1-###", "M2-##"]},
+      "notes": {"type": "string", "max_chars": 200, "required": false, "applies_to": ["P###", "V012-DRILL-###"]},
+      "completed_date": {"type": "date", "required_when": "status ∈ {completed, cancelled}", "applies_to": ["P###", "V###", "V012-DRILL-###"]},
+      "dependencies": {"type": "array<string>", "ref": "self.id", "applies_to": ["V###"], "note": "Vision 间的跨计划依赖"},
+      "source_memo": {"type": "object", "ref": "project memo", "applies_to": ["P###"], "note": "关联的项目备忘条目 {path, entry}"},
+      "first_seen": {"type": "date", "applies_to": ["V###"]},
+      "source": {"type": "string", "applies_to": ["V###"]},
+      "category": {"type": "string", "applies_to": ["V###"]}
+    },
+    "tep_subtask": {
+      "_note": "以下字段由 TEP 管线阶段二（LLM#2 拆解排期）自动填充，标记为机器元数据",
+      "method": {"type": "string", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"], "note": "锁定方法声明——摘要，连载恢复时注入"},
+      "estimated_minutes": {"type": "number", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"]},
+      "output_to": {"type": "string", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"], "note": "本步产出物路径"},
+      "tool_lock": {"type": "string", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"], "nullable": true, "note": "锁定工具关键词"},
+      "deadline": {"type": "date", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"], "nullable": true},
+      "planned_completion": {"type": "date", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"]},
+      "review_gap_days": {"type": "number", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"], "nullable": true},
+      "depends_on": {"type": "array<string>", "ref": "self.id", "applies_to": ["V012-DRILL-###-PT#"], "note": "前置子任务 DAG"},
+      "input_from": {"type": "array<{from_task, asset}>", "applies_to": ["V012-DRILL-###-PT#"], "note": "上游资产依赖（比 depends_on 粒度更细）"},
+      "source_task": {"type": "string", "ref": "self.id", "applies_to": ["V012-DRILL-###-PT#", "S1-###", "M2-##"], "note": "TEP 拆解溯源——父任务 ID"}
+    }
+  },
+  "relationships": [
+    {"from": "parent_task", "to": "Plan", "cardinality": "N:1", "constraint": "父必须存在于同 tracker 的 vision/pending/archive"},
+    {"from": "task_type", "to": "TaskType", "cardinality": "N:1", "via": "task_type → type_id"},
+    {"from": "depends_on", "to": "Plan", "cardinality": "N:N", "constraint": "DAG，不能形成环"},
+    {"from": "input_from.from_task", "to": "Plan", "cardinality": "N:N", "constraint": "指定到具体资产文件的依赖"},
+    {"from": "dependencies", "to": "Plan", "cardinality": "N:N", "note": "Vision 间跨计划依赖"}
+  ],
+  "constraints": [
+    {"id": "C-PLAN-001", "rule": "parent_ref_exists", "level": "error", "check": "parent_task 为 null 或存在于同 tracker 的 vision/pending/archive 中"},
+    {"id": "C-PLAN-002", "rule": "cancel_irreversible", "level": "error", "check": "status 不可从 cancelled 变更为 pending 或 in_progress"},
+    {"id": "C-PLAN-003", "rule": "cancel_requires_confirm", "level": "error", "check": "变更为 cancelled 前须通过 AskQuestion 获取确认和取消原因", "enforced_by": "tracker.meta.reminder_rules.cancel_policy"},
+    {"id": "C-PLAN-004", "rule": "subtask_done_not_parent_completed", "level": "warn", "check": "子任务 done 不自动触发父任务 completed。父任务须所有子任务 done + pipeline 验收"},
+    {"id": "C-PLAN-005", "rule": "array_field_consistency", "level": "warn", "check": "同一数组内所有记录字段集合一致，缺失用 null"},
+    {"id": "C-PLAN-006", "rule": "id_prefix_immutable", "level": "error", "check": "id 前缀不可变更"},
+    {"id": "C-PLAN-007", "rule": "subtask_seq_contiguous", "level": "error", "check": "V012-DRILL-*-PT# 的 PT 序号从 1 起连续"}
+  ]
+}

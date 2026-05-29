@@ -9,6 +9,9 @@ description = "Socius — Your AI Work Partner: Cognitive Engine + Decision Fram
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
+dependencies = [
+    "aiohttp>=3.9",
+]
 authors = [{name = "Socius", email = "socius@example.com"}]
 keywords = ["ai", "knowledge-management", "cognitive-science", "decision-framework", "protocols"]
 classifiers = [
@@ -23,8 +26,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/socius/socius"
-Repository = "https://github.com/socius/socius"
+Homepage = "https://github.com/Phoenix-hwp/socius"
+Repository = "https://github.com/Phoenix-hwp/socius"
 
 [project.scripts]
 socius = "socius_cli:main"

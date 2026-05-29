@@ -1,0 +1,47 @@
+---
+description: 行为偏好 CRUD 统一框架：定义阶段结构（开端续接 / 轮级快照 / 任务收束 / 手动收束），不含具体步骤
+alwaysApply: false
+glossary:
+  layer: 2-模块框架  module: BehaviorPreferences
+guard_replaceable: framework
+
+> **Guard 轨道**：行为日志的反馈评分`feedback.py` 执行（exit_code/status/schema/duration 客观评分）。收束写Behavior-Fit-Log/Decision-Log 是纯 Agent 操作，无对应 Guard 代码，保留本框架完整流程
+Lifecycle: long
+---
+
+# 行为偏好 CRUD 统一框架
+
+## 适用范围
+
+凡涉**任务状态跟踪、跨轮续接、轮级行为快照、自动收束、手动收* 等行为偏好操作均适用
+---
+
+## 抽象阶段结构
+
+| 阶段 | 名称 | 核心职责 | 下层工作流引|
+|:---:|:---|:---|:---|
+| **A** | 开端续| 会话开始时读取任务表，按策略续接活跃任| `session-profile-workflow.mdc`（门户） |
+| **B** | 轮级快照 | 每轮结尾自动记录行为摘要：热快照（操作维度，6 字段 温快照（认知维度 字段）双表分| `flow-behavior-auto-receipt.mdc` 步骤 A + A.2 |
+| **C** | 任务收束 | 任务完成时合并快照追加到 `core/data/Behavior-Fit-Log.jsonl`，归档任| `flow-behavior-auto-receipt.mdc` 步骤 C |
+| **C+** | 技能评| 任务完成时对调用技能执行五维表现评分（正确自主副作效率/能耗），写`skill-performance-log.jsonl` 并更`skill-registry.json` | `flow-behavior-auto-receipt.mdc` 步骤 C+ |
+| **D** | 手动收束 | 用户触发 `/收束` 时执行完整版 | `flow-behavior-auto-receipt.mdc` 步骤 E |
+
+---
+
+## 核心文件索引
+
+| 层级 | 文件 | 职责 |
+|:---|:---|:---|
+| 第二| `mod-behavior-crud-framework.mdc` | 本文统一框架、阶段边|
+| 第三| `flow-behavior-auto-receipt.mdc` | 操作细则 步骤 A–E 全链路（C+ 技能评估） |
+| 横切 | `kernel-runtime.mdc` | 门户 委托到本框架与第三层 |
+| 注册| `docs/Behavior-Dimensions-Registry.md` | 维度与值域定义 |
+| 跟踪 | `core/data/Active-Task-Tracker.json` | 任务状态持久化 |
+| 快照 | `core/data/Round-Behavior-Hot.jsonl` + `core/data/Round-Behavior-Warm.jsonl` | 轮级行为快照（热快照与温快照分离存储|
+| 评估 | `mod-skill-evaluation.mdc` | 技能表现五维评分标准（C+ 调用|
+| 评估数据 | `Skills_Library/skill-performance-log.jsonl` | 技能表现评分日志（C+ 写、.5 读） |
+
+---
+
+## 跨模块衔
+- **任务跟踪**：独立文件跟踪，跨会话持久化，由阶段 A 读取、阶C 更新- **L3 分析**：阶C 产出标准化行（写`core/data/Behavior-Fit-Log.jsonl`L3 在满足阈值后触发模式发现与趋势检测- **技能评*：阶C+ 对调用技能执行五维评分（引用 `mod-skill-evaluation.mdc` §3），写入 `skill-performance-log.jsonl` 并更`skill-registry.json`- **冲突检*：B+ 层（即时/记录/统计），不单独成阶段，嵌入阶B/C

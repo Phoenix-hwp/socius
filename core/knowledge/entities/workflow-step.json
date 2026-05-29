@@ -1,0 +1,68 @@
+{
+  "type_id": "workflow_step",
+  "description": "工作流步骤实体——定义一条管线中的单个步骤，包含 executor、输入输出约束、checkpoint schema。编排器逐步骤推进时读取本实体决定如何执行。",
+  "lifecycle": "long_lived",
+  "created": "2026-05-27",
+  "updated": "2026-05-27",
+  "schema": {
+    "id": {
+      "type": "string",
+      "description": "步骤唯一标识，如 Step_0B / Step_1-4 / P2。同时作为 checkpoint JSON 中 phases.{id} 的键。"
+    },
+    "name": {
+      "type": "string",
+      "description": "人类可读步骤名，如「来源去重检查」"
+    },
+    "pipeline": {
+      "type": "string",
+      "description": "所属管线 ID：knowledge_digestion | task_initiation。多条管线可共享同一步骤定义。"
+    },
+    "executor": {
+      "type": "string",
+      "enum": ["llm", "code", "hybrid"],
+      "description": "执行方式。llm=调模型推理；code=调 Python 函数；hybrid=代码预处理后送入 LLM 判断"
+    },
+    "llm_prompt": {
+      "type": "string | null",
+      "description": "仅 executor=llm/hybrid 时有效。本步骤的 LLM system_prompt 片段，编排器将其与管线上下文合并后调用 complete_messages。"
+    },
+    "code_handler": {
+      "type": "string | null",
+      "description": "仅 executor=code/hybrid 时有效。编排器调用的 Python 函数路径，如 pipeline_runner._step_0B_dedupe。"
+    },
+    "input_requires": {
+      "type": "array[string]",
+      "description": "本步需要的输入数据键列表，编排器从 checkpoint 或管线上下文中注入。如 ['source_text', 'source_title']。"
+    },
+    "output_produces": {
+      "type": "array[string]",
+      "description": "本步产出的数据键列表，编排器写入 checkpoint 的 phase_data 字段。如 ['units', 'summary']。"
+    },
+    "checkpoint_fields": {
+      "type": "array[string]",
+      "description": "本步完成时需写入 checkpoint 的字段（超出 output_produces 的元数据）。
+      编排器自动写入 status / completed_at / summary；本字段定义额外数据。如 ['units', 'classification_results']。"
+    },
+    "required": {
+      "type": "boolean",
+      "description": "是否为必须步骤。false 时编排器检查 skip_condition，满足则自动跳过。"
+    },
+    "skip_condition": {
+      "type": "string | null",
+      "description": "跳过条件表达式。null=不可跳过。如 'source_has_no_images'（Step_0V）、'domain_protocol_count < 5'（P3）。编排器用 Python eval 在安全命名空间内求值。"
+    },
+    "retry_on_failure": {
+      "type": "number",
+      "default": 1,
+      "description": "LLM 返回不可解析时的重试次数上限"
+    },
+    "success_criteria": {
+      "type": "string | null",
+      "description": "判断本步是否成功的条件。null=由编排器根据 output_produces 的非空性自动判断。如 'all units have cp_type assigned'。"
+    },
+    "order_in_pipeline": {
+      "type": "number",
+      "description": "在管线步骤序列中的序号（0-based）。用于编排器确定推进顺序。"
+    }
+  }
+}

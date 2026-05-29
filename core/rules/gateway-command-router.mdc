@@ -1,5 +1,6 @@
 ---
 description: 第一层网关层——指令别名路由与全局异常兜底
+alwaysApply: false
 Lifecycle: 长期
 Created: 2026-05-12
 Updated: 2026-05-23 (P008 条件唤醒 待办选中仿真/V012/意图级任务强制加
@@ -59,7 +60,7 @@ guard_replaceable: false
    - 命中规则后按 `action` 执行：`replace`（自动替from→to）、`before`（在命令前追to）、`after`（在命令后追to）、`warn`（提示已有修正建议但不自动应用）、`block`（拒绝执行并说明原因
    - 应用修正后，在执行前简短标`已应用设备规<id>rationale>`，让用户感知
    - 跨设备兼容：本文件随 Git 同步；运行时仅匹配当OS+Shell 的规则，无关规则自动跳过，不产生副作
-1. **先在 `adapters/cursor/aliases.md` 中查*完全匹配***高相似匹*（同义词、近义说法）
+1. **先在 `10-Topics/Cursor-command-aliases.md` 中查找*完全匹配***高相似匹*（同义词、近义说法）
 2. **若命中映*：必须先执行映射动作（通常是先 Read 指定文件并基于该文件继续处理），不得跳过到无关检
 3. **若未命中映射**：才执行常规搜索；并可建议用户把该短指令加入别名清单
 
@@ -68,7 +69,7 @@ guard_replaceable: false
 ## 创建指令默认行为（强制）
 
 - 当用户要创建指令"时，默认理解为：**创建一个执行级规则**（`.cursor/rules/*.mdc`），而不只是写在普通笔记里
-- 创建时必须同步登记到 `adapters/cursor/aliases.md`，并给该指令配置 1 个或多个别名
+- 创建时必须同步登记到 `10-Topics/Cursor-command-aliases.md`，并给该指令配置 1 个或多个别名
 
 ## 别名长度约束（强制）
 
@@ -78,8 +79,25 @@ guard_replaceable: false
 
 ## 别名映射
 
-> 完整别名清单`adapters/cursor/aliases.md`。路由流Step 1 在匹配时 Read 该文件
-> 帮助索引`Command-Help-Index.md`（`help` 指令入口）
+> 完整别名清单`10-Topics/Cursor-command-aliases.md`。路由流Step 1 在匹配时 Read 该文件
+> 帮助索`docs/help.md`（`help` 指令入口）
+
+### 「任务清单」查看（强制走脚本）
+用户输入「任务清单」「task list」时，**必须**执行统一脚本，不得自己解析 JSON：
+- 默认查看 → `shell python core/scripts/list_tasks.py`
+- 查看全部 → `shell python core/scripts/list_tasks.py --all`
+- 自定义天数 → `shell python core/scripts/list_tasks.py --days N`
+- **禁止**直接用 `read` 读 `Pending-Plan-Tracker.json` 然后自己排版
+
+### 「待办」查看（Decision Queue，强制走脚本）
+用户输入「待办」「decision」时，**必须**执行统一脚本，不得自己解析 JSON：
+- 查看 → `shell python core/scripts/list_decisions.py`
+- 机读 → `shell python core/scripts/list_decisions.py --format json`
+- **禁止**直接用 `read` 读 `Decision-Queue.json` 然后自己排版
+
+### 旧别名兼容（保留）
+以下旧指令仍指向 `list_todos.py`（向后兼容）：
+- 「todo」「list」→ `shell python core/scripts/list_todos.py --all`
 
 ---
 
@@ -163,5 +181,5 @@ Guard 命令行工具（`guard.py`）不可用或执行失败时，Backend（Cur
 
 ## 规则索引
 
-> 完整规则索引（严重级分类、模块分层清单）`Command-Help-Index.md`
+> 完整规则索引（严重级分类、模块分层清单）`docs/help.md`
 > 路由流程中需要匹配模块规则时，通过别名映射Read 对应 `mod-*` / `flow-*` 文件

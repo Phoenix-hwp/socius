@@ -221,6 +221,7 @@
       "last_task": null,
       "migration_ready": false,
       "note": "特殊类型——知识脑生长任务，C3（高创意/原创理解），L2（确认后执行）",
+      "pipeline": "knowledge_digestion",
       "required_slots": [
         {
           "name": "source_path",

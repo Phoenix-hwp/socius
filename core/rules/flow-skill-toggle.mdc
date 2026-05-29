@@ -1,0 +1,104 @@
+---
+description: 技能开关工作流：单技能开关 / 全开全关 / 休眠 / 归档，通过 AskQuestion 面板交互
+alwaysApply: false
+Lifecycle: 长期
+Created: 2026-05-12
+glossary:
+  layer: 3-工作流执行层
+  purpose: 技能开关工作流 单技能开/ 全开全关 / 休眠 / 归档，通过 AskQuestion 面板交互
+  downstream:
+    - mod-skills-library-framework.mdc（Skills Library 框架
+    - Skills_Library/config.json（单 Agent 配置
+    - Skills_Library/skill-registry.json（技能注册表
+guard_replaceable: false
+---
+
+# 技能开关工作流
+
+## 触发条件
+
+- 用户说「技能管理」「技能开关」「管Skills」「启XX 技能」「禁XX 技能」等
+
+## 入口 AskQuestion
+
+标题：「技能管理
+
+选项
+- `[查看所有技能]` §A
+- `[启闭单个技能]` §B
+- `[全开所有技能]` §C
+- `[全关所有技能]` §D
+- `[休眠技能]` §E
+- `[归档技能]` §F
+
+## §A 查看所有技
+
+1. 读取 `Skills_Library/skill-registry.json`
+2. 读取 `Skills_Library/config.json`
+3. 展示表格
+
+| ID | 名称 | 频率 | 状| 当前开| 锁定 |
+|:---|:---|:---|:---|:---|:---|
+
+4. 汇总：当前启用/ 总数，全开/全关状
+
+## §B 启闭单个技
+
+1. 展示所有可操作技能的编号列表（排locked: true 的技能）
+2. AskQuestion 选择技展示当前状
+3. AskQuestion `[开启] [关闭] [取消]`
+4. 更新 `Skills_Library/config.json` 中对`skills.<id>.enabled`
+5. 回执变更结果
+
+## §C 全开所有技
+
+1. 展示当前关闭中的技能清
+2. AskQuestion `[确认全开] [取消]`
+3. 更新 `Skills_Library/config.json`
+   - `global_switch: "on"`
+   - 所有非锁定技能的 `enabled: true`
+4. 回执结果
+
+## §D 全关所有技
+
+1. AskQuestion `[确认全关] [取消]`
+   - 提示：全关后仅内核规则生效，所有外部技能不可用
+2. 更新 `Skills_Library/config.json`
+   - `global_switch: "off"`
+3. 回执结果
+
+## §E 休眠技
+
+1. 展示所active 状态技能的编号列表
+2. AskQuestion 选择技
+3. 更新 `Skills_Library/skill-registry.json` 中对应技`status: "dormant"`
+4. 同步更新 `Skills_Library/config.json` `enabled: false`
+5. 回执结果
+
+## §F 归档技
+
+1. 展示所有非 locked 技能的编号列表
+2. AskQuestion 选择技
+3. 二次确认：AskQuestion `[确认归档] [取消]`
+   - 提示：归档后技能文件移动到 `.trash/Skills_Library/<name>/`0 天后物理删除
+4. 更新 `Skills_Library/skill-registry.json`
+   - `status: "archived"`
+   - `archived_at: "<当前日期>"`
+5. 移动技能目录到 `.trash/Skills_Library/<name>/`
+6. 更新 `Skills_Library/config.json` 移除该技能配
+7. 回执结果
+
+## 锁定保护
+
+- `skill-registry.json` `locked: true` 的技能：
+  - §B 中不展示（不可操作）
+  - §C 全开时跳过（保持当前状态）
+  - §D 全关时跳过（保持当前状态）
+  - §E 休眠时展示但标注「已锁定」，需二次确认
+  - §F 归档时不展示
+- 锁定/解锁操作须在 `skill-registry.json` 中手动修改，AskQuestion 快捷入口
+
+## 降级
+
+- `Skills_Library/config.json` 不存从模板生成，所有可选技能默认关
+- `Skills_Library/skill-registry.json` 不存提示「技能注册表缺失，Skills Library 未初始化

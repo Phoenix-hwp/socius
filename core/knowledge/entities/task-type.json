@@ -1,0 +1,54 @@
+{
+  "entity": "TaskType",
+  "version": "2026-05-26",
+  "file": "core/data/Task-Type-Registry.json",
+  "role": "定义几类基本的意图→模式映射。为 P008 FSM 提供'同类任务'判定依据，支撑 L 的升级/降级。为 V012 槽位补全提供 required_slots 模板。",
+  "primary_key": "type_id",
+  "quick_check": [
+    "type_id 与 Skills_Library/task-type-registry.md 共享键",
+    "typical_L 为 FSM 初始 L 级别",
+    "expected_C 为创意度天花板——任务实际 C 超出时触发偏差检测",
+    "consecutive_successes ≥5 → migration_ready，Agent 可提议从别名路由迁移到 P008",
+    "required_slots 的策略(must_ask/context_derive/auto_fill)决定槽位补全行为"
+  ],
+  "fields": {
+    "meta": {
+      "type_id": {"type": "string", "required": true, "note": "主键，跨文件共享标识"},
+      "label": {"type": "string", "required": true, "note": "中文显示名"},
+      "description": {"type": "string", "required": false, "note": "简短描述 ≤ 50 字"},
+      "typical_dimensions": {"type": "object", "required": true, "note": "{S, Rev, A, E, Auth, V} 各 0-3，作为 P008 维度基线"},
+      "typical_L": {"type": "integer", "required": true, "note": "默认委托级别 (0-3)"},
+      "expected_C": {"type": "integer", "required": true, "note": "创意度天花板 (0-3)。C 已从 L 计算移除 (2026-05-23)，保留为偏差检测"},
+      "consecutive_successes": {"type": "integer", "required": false, "note": "连续成功计数，≥5 → migration_ready"},
+      "last_task": {"type": "date", "required": false},
+      "migration_ready": {"type": "boolean", "required": false, "note": "达到迁移动态时标记"},
+      "note": {"type": "string", "required": false, "note": "设计备注 / 迁移记录"}
+    },
+    "slots": {
+      "required_slots": {"type": "array", "required": false, "note": "V012 槽位模板。每项: {name, label_cn, strategy, example_prompt/default_rule}"},
+      "strategy_enum": {
+        "must_ask": "必须向用户询问——不确定信息，不填则执行会出错",
+        "context_derive": "从对话上下文推导——可推断但不保证准确",
+        "auto_fill": "自动填充——有固定默认规则，不需要用户参与"
+      }
+    },
+    "skills": {
+      "skills": {"type": "object", "required": false, "note": "{internal, external, candidates, uncovered}——技能覆盖映射"},
+      "related_knowledge": {"type": "array<string>", "required": false, "note": "相关知识域标签"}
+    }
+  },
+  "relationships": [
+    {"from": "skills", "to": "Skill", "cardinality": "N:N", "via": "skill-registry.json"},
+    {"from": "capability_id", "to": "Protocol", "cardinality": "N:N", "via": "协议卡片 frontmatter 的 capability_id 字段", "note": "协议产出后挂载到任务类型"}
+  ],
+  "state_machine": {
+    "description": "TaskType 自身无状态机。consecutive_successes 追踪迁移就绪度——连续成功 ≥5 后标记 migration_ready，Agent 主动提议从命令级别名路由迁移到 P008 意图评估链路"
+  },
+  "constraints": [
+    {"id": "C-TT-001", "rule": "consecutive_successes_threshold", "level": "info", "check": "consecutive_successes ≥5 → migration_ready = true"},
+    {"id": "C-TT-002", "rule": "C_deviation_detect", "level": "warn", "check": "任务实际 C > expected_C 时触发 C 偏差检测，按差额映射到 L_from_C"},
+    {"id": "C-TT-003", "rule": "expected_C_bounds", "level": "error", "check": "expected_C ∈ {0, 1, 2, 3}"},
+    {"id": "C-TT-004", "rule": "typical_dimensions_bounds", "level": "error", "check": "S/Rev/A/E/Auth/V 各 ∈ {0, 1, 2, 3}"},
+    {"id": "C-TT-005", "rule": "required_slots_strategy_valid", "level": "error", "check": "每个 slot 的 strategy ∈ {must_ask, context_derive, auto_fill}"}
+  ]
+}

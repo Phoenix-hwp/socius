@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "规则索引 — 供 Agent 按需检索。触发场景匹配时用 read 查看对应规则，不注入全文。",
+    "updated": "2026-05-25"
+  },
+  "categories": {
+    "safety": {
+      "label": "🛡️ 安全防护",
+      "rules": {
+        "flow-high-risk-safety": {
+          "file": "flow-high-risk-safety.mdc",
+          "summary": "拦截 rm -rf / 杀进程 / Git reset --hard；高风险操作必须先确认",
+          "trigger": "执行 shell 删除命令、Git 破坏性操作、操作仓库范围外路径时"
+        }
+      }
+    },
+    "cross_device": {
+      "label": "💻 跨设备与密钥",
+      "rules": {
+        "git-cross-device-and-secrets": {
+          "file": "git-cross-device-and-secrets.mdc",
+          "summary": "禁止硬编码盘符/路径；Token 不入 Git；密钥缺省降级提示",
+          "trigger": "写配置、引用本地绝对路径、操作密钥文件时"
+        }
+      }
+    },
+    "data": {
+      "label": "📊 数据规范",
+      "rules": {
+        "data-governance-standards": {
+          "file": "data-governance-standards.mdc",
+          "summary": "JSON 不存 >50 字长文本；单一权威源；字段集合一致；frontmatter 首字母大写",
+          "trigger": "写 JSON/JSONL 文件、创建 .md 文件时"
+        }
+      }
+    },
+    "impact": {
+      "label": "🔍 变更审计",
+      "rules": {
+        "pre-change-impact-enumeration": {
+          "file": "pre-change-impact-enumeration.mdc",
+          "summary": "重命名/删除前搜全库引用；变更后 git diff 分类审查",
+          "trigger": "删除文件、重命名、修改 JSON 字段名时"
+        }
+      }
+    },
+    "coding": {
+      "label": "📝 编码约束",
+      "rules": {
+        "script-coding-constraints": {
+          "file": "script-coding-constraints.mdc",
+          "summary": "禁止硬编码路径、跨目录导入；新增规则须声明 guard_replaceable + Lifecycle",
+          "trigger": "新建/修改 .py 脚本或 .mdc 规则文件时"
+        }
+      }
+    },
+    "behavior": {
+      "label": "🧠 行为记忆",
+      "rules": {
+        "flow-behavior-auto-receipt": {
+          "file": "flow-behavior-auto-receipt.mdc",
+          "summary": "任务完成后记录行为偏好；轮级快照 + 任务级归纳",
+          "trigger": "任务收束时"
+        }
+      }
+    }
+  }
+}

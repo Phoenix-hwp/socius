@@ -1,0 +1,68 @@
+{
+  "entity": "Protocol",
+  "version": "2026-05-26",
+  "file": "Knowledge-Brain/protocols/cards/CP-*.md",
+  "activation_file": "Knowledge-Brain/protocols/activation.json",
+  "role": "知识脑消化管线产出的最小可引用知识单元。按六类知识分类，每个协议经历 candidate→validated→active 的生命周期，激活后供能力层与执行层引用。",
+  "primary_key": "protocol_id (CP-###)",
+  "quick_check": [
+    "status ∈ {candidate, validated, active}",
+    "cp_type ∈ {conceptual, procedural, structural, strategic, experiential, regulatory}",
+    "validated_count ≥ 1 且无用户纠正 → status 可升级为 validated",
+    "activated_count - effective_count ≥ 5 且 effective_count = 0 → bystander 降权",
+    "activation 元数据已拆分到 activation.json，CP-*.md 仅保留人类可读正文"
+  ],
+  "state_machine": {
+    "states": ["candidate", "validated", "active"],
+    "transitions": [
+      {"from": "candidate", "to": "validated", "trigger": "validated_count ≥ 1 且无用户纠正"},
+      {"from": "validated", "to": "active", "trigger": "经验收讨论确认后迁移"}
+    ],
+    "downgrade_rules": {
+      "bystander": {"trigger": "同一 task_type 下 activated_count - effective_count ≥ 5 且 effective_count = 0", "action": "该 task_type 不再激活此协议"},
+      "stale": {"trigger": "last_effective_at > 6 个月或 last_activated_at > 90 天", "action": "进入审查队列"},
+      "strategy_error": {"trigger": "Agent 引用此协议但其 guidance 与用户纠正方向矛盾", "action": "标记 strategy_error，暂停激活直到审查"}
+    }
+  },
+  "fields": {
+    "base": {
+      "status": {"type": "string", "required": true, "enum": ["candidate", "validated", "active"]},
+      "cp_type": {"type": "string", "required": true, "enum": ["conceptual", "procedural", "structural", "strategic", "experiential", "regulatory"]},
+      "cp_subtypes": {"type": "array<string>", "required": false, "note": "辅分类 ≤ 2。legal: conceptual/procedural/structural/strategic/experiential/regulatory/visual"},
+      "concept_anchor": {"type": "string", "required": true, "format": "Domain.Term", "ref": "concept-tree.json"},
+      "validated_count": {"type": "integer", "required": true, "default": 0},
+      "capability_id": {"type": "string", "required": false, "ref": "Task-Type-Registry.type_id"},
+      "applicable_roles": {"type": "array<string>", "required": false, "note": "预留——未来角色模块引用时筛选"},
+      "source_origin": {"type": "string", "required": true, "enum": ["personal", "enterprise", "project", "public"]},
+      "source_access": {"type": "string", "required": true, "enum": ["public", "role_gated", "member_only"]},
+      "sources": {"type": "array<{system, title, url}>", "required": false, "note": "消化来源的追溯链接"}
+    },
+    "activation": {
+      "_note": "activation 区块的机器可读版本已拆分到 Knowledge-Brain/protocols/activation.json。CP-*.md frontmatter 中的 activation 字段为人类可读副本",
+      "task_types": {"type": "array<string>", "note": "L1 任务级——什么任务类型会用到我"},
+      "decision_signal": {"type": "string", "note": "L2 决策级——什么决策点该想起我"},
+      "anti_pattern": {"type": "string", "note": "L2 反模式——看到什么错误行为就该触发我"},
+      "capability_hint": {"type": "string", "note": "L3 能力级——执行什么能力时可能用到我"}
+    }
+  },
+  "cp_type_routing": {
+    "description": "六类知识消化后按类型路由到不同目标",
+    "conceptual": "概念定义协议 → ③ 新协议",
+    "procedural": "操作步骤/模板 → ② 操作转化 → template-generator.md",
+    "structural": "分析框架/维度 → ③ 新协议 + ① 审视现有系统",
+    "strategic": "决策条件/排除规则 → ③ 新协议 + ① 对接 P008 维度基线",
+    "experiential": "案例/错误模式 → ③ 新协议（经验协议）",
+    "regulatory": "约束原则 → ③ 新协议 + ① 审视现有约束"
+  },
+  "relationships": [
+    {"from": "concept_anchor", "to": "Concept", "cardinality": "N:1", "via": "concept-tree.json"},
+    {"from": "capability_id", "to": "TaskType", "cardinality": "N:1", "via": "type_id"},
+    {"from": "activation.task_types", "to": "TaskType", "cardinality": "N:N", "note": "协议在哪些任务类型中被激活"}
+  ],
+  "constraints": [
+    {"id": "C-CP-001", "rule": "frontmatter_required", "level": "error", "check": "status, cp_type, concept_anchor, source_origin, source_access 必须存在"},
+    {"id": "C-CP-002", "rule": "bystander_degradation", "level": "warn", "check": "同一 task_type 下 activated - effective ≥ 5 且 effective = 0 → 该 task_type 不再激活"},
+    {"id": "C-CP-003", "rule": "stale_check", "level": "warn", "check": "last_effective > 6 个月或 last_activated > 90 天 → 审查队列"},
+    {"id": "C-CP-004", "rule": "strategy_error_detect", "level": "warn", "check": "Agent 引用 guidance 被用户纠正 → 标记并暂停"}
+  ]
+}

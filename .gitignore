@@ -16,7 +16,6 @@ inbox/
 .claude/
 _*.*
 bootstrap-*.*
-Command-Help-Index.md
 Cursor_Knowledge.code-workspace
 temp_validate.py
 
@@ -57,6 +56,46 @@ core/skills/
 Simulation-Sandbox/
 
 # ============================================
+# 个人运行时数据（不进入公开仓库）
+# ============================================
+# 知识消化产生的个人协议（core/knowledge/protocols/ 中的模板保留）
+Knowledge-Brain/protocols/CP-[0-9]*.md
+Knowledge-Brain/protocols/activation.json
+
+# 运行时日志
+core/logs/
+
+# 个人报告
+reports/
+
+# Checkpoint 归档（个人任务执行记录）
+core/data/checkpoints/archive/
+
+# 个人决策队列与消化日志
+core/data/Decision-Queue.json
+core/data/digest-log.jsonl
+
+# 个人任务追踪（包含大量个人数据）
+core/data/Active-Task-Tracker.json
+core/data/Pending-Plan-Tracker.json
+
+# 个人运行时日志（行为偏好、决策记录、经验索引等）
+core/data/Decision-Log.jsonl
+core/data/Behavior-Fit-Log.jsonl
+core/data/Behavior-Fit-Log_legacy_archive.jsonl
+core/data/Round-Behavior-Hot.jsonl
+core/data/Round-Behavior-Warm.jsonl
+core/data/experience-index.jsonl
+core/data/Decomposition-Log.jsonl
+core/data/User-Knowledge-Registry.jsonl
+
+# 测试产物
+test_*.txt
+
+# 个人任务计划
+plans/
+
+# ============================================
 # 运行时缓存与回收站
 # ============================================
 .trash/
@@ -67,6 +106,7 @@ node_modules/
 
 # Temp scripts and debug output
 temp/
+socius_config.json
 
 # pip editable install artifacts
 phoenix_core.egg-info/

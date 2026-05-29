@@ -7,7 +7,7 @@ Operates on a pre-classified mapping dict. Idempotent — skips if already prese
 import os
 from pathlib import Path
 
-RULES_DIR = Path(r"d:\Phoenix\cursor-knowledge\.cursor\rules")
+RULES_DIR = Path(os.environ.get("CURSOR_PROJECT_DIR", os.getcwd())) / ".cursor" / "rules"
 
 # ── Classification mapping ──────────────────────────────────────
 # Each entry: filename -> guard_replaceable value
@@ -44,7 +44,7 @@ CLASSIFICATION: dict[str, str] = {
     "mod-skills-library-framework.mdc":      "framework",
     "mod-system-audit.mdc":                  "framework",
 
-    # Workflow (Layer 3) — 19 files
+    # Workflow (Layer 3) — 22 files
     "flow-behavior-auto-receipt.mdc":        "false",
     "flow-capability-encapsulate.mdc":       "false",
     "flow-conversation-backup.mdc":          "partial",
@@ -64,6 +64,8 @@ CLASSIFICATION: dict[str, str] = {
     "flow-skill-acquire.mdc":                "false",
     "flow-skill-execute.mdc":                "partial",
     "flow-skill-toggle.mdc":                 "false",
+    "flow-v012-drill-bridge.mdc":            "false",
+    "flow-v012-pipeline-execute.mdc":        "partial",
 }
 
 

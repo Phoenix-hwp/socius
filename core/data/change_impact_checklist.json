@@ -46,7 +46,7 @@
     },
     {
       "group": "网关与别名",
-      "globs": [".cursor/rules/gateway-*.mdc", "plans/Cursor-command-aliases.md", "Command-Help-Index.md"],
+      "globs": [".cursor/rules/gateway-*.mdc", "10-Topics/Cursor-command-aliases.md", "docs/help.md"],
       "keywords": ["别名", "映射", "command", "路由", "模块"],
       "note": "指令别名映射、跨模块引用登记"
     },

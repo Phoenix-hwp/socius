@@ -1,0 +1,100 @@
+---
+description: 变更前影响枚举：重命名/删除/移动/字段名变更前，搜全库引用并同步
+alwaysApply: false
+severity: safety
+task_triggers:
+  - file_rename
+  - file_delete
+  - field_rename
+  - path_change
+  - structure_change
+requires:
+  - script-coding-constraints.mdc
+  - pre-edit-script-change-brief.mdc
+Lifecycle: 长期
+Created: 2026-05-12
+Updated: 2026-05-20
+glossary:
+  layer: 横切
+  purpose: 变更前后双保§1-4 搜引用（Agent 探索，不可代码化）；§5 差异审查（Guard feedback.py 补充客观信号评分
+  sequence: 1
+  downstream:
+    - pre-edit-script-change-brief.mdc
+    - script-coding-constraints.mdc
+    - ".cursor/change-impact-checklist.json（影响面注册表）"
+  guard_implemented_in: "guard/src/p008/feedback.py (ObjectiveFeedback 补充 exit_code/schema 评分，非替代 git diff)"
+guard_replaceable: partial
+---
+description: 变更前影响枚举：重命名/删除/移动/字段名变更前，搜全库引用并同步
+
+# 变更前影响枚
+
+## 适用范围
+
+凡对以下对象*实质性变*（重命名、删除、移动、字段名修改、路径常量变更、数据结构键名变更），须*第一笔落*之前强制执行本规则
+
+**触发条件**（满足任一条即触发）：
+- 重命删除/移动文件或目
+- 修改 JSON/JSONL 字段
+- 修改路径常量或引
+- 修改 API/工具接口名、命令行参数
+- 修改数据结构的键
+
+**不触*：仅修改注释/文案、仅修改 `.md` 正文、仅新增文件、用户明确说「跳过
+
+## 强制步骤（不可代码化 依赖 Agent 探索能力
+
+### 步骤 1：提取变更关键词
+从本轮变更目标中提取 1-3 个核心关键词
+
+### 步骤 2：读取影响面注册
+Read `.cursor/change-impact-checklist.json`，获`search_scopes` 数组
+
+### 步骤 3：逐组搜索、列出待同步清单
+Grep 执行关键词搜索，输出影响面表格与待同步清单
+
+### 步骤 4：全打勾后落
+所有引用同步完成后才可落盘。搜索结果为 0 回执 `全库无引用，可安全变更`
+
+---
+
+## §5 执行后差异审查（防非预期副作用）
+
+> **Guard 轨道补充**：`ObjectiveFeedback.assess()` 在执行完成后自动基于 exit_code/stdout/schema/duration 给出客观评分。但 git diff 审查仍需 Agent 手动执行——Guard 无法替代 git 操作
+
+### 触发条件
+
+- 本轮对话中对  个文件执行了写入
+- 执行了外部技能（Skills_Library 中的 skill
+- Earth Library 批量入库（≥3 条）
+- JSON/JSONL 数据文件的结构化写入
+- 用户明确要求「检查本轮变更
+
+### 执行步骤
+
+#### 步骤 5a：获取基
+```
+git rev-parse HEAD
+```
+
+#### 步骤 5b：执行差异审
+```
+git diff --stat
+git diff -- <.cursor/rules/ docs/>
+```
+
+#### 步骤 5c：分类展示（预期/ 连锁影响 / 非预期）
+
+#### 步骤 5d：确回滚
+- 无非预期变更 回执通过
+- 有非预期变更 AskQuestion `[确认保留全部] [回滚非预期文件] [回滚全部]`
+
+## 例外与降
+
+- **Grep 不可*：降级为 Glob 逐个 Read（不可跳过）
+- **关键词模*：默认搜索所`.py/.mjs/.mdc`
+- **紧急热修复**：用户明确说「跳过」时本轮跳过，注`已跳过`
+
+## 失败兜底
+
+若仍有引用丢提示用户完善 `change-impact-checklist.json`

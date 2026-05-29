@@ -250,71 +250,119 @@ class CursorToolProvider:
             return {"success": False, "output": "", "error": f"文件不存在: {path}"}
         content = path.read_text(encoding="utf-8")
         offset = params.get("offset", 0)
-        limit = params.get("limit")
+        limit = params.get("limit", 400)  # 默认截断，防上下文溢出；规则文件最长约 400 行
         lines = content.split("\n")
-        if limit:
-            lines = lines[offset : offset + limit]
-        elif offset > 0:
-            lines = lines[offset:]
-        return {"success": True, "output": "\n".join(lines), "error": None}
+        total = len(lines)
+        sliced = lines[offset : offset + limit] if limit else lines[offset:]
+        output = "\n".join(sliced)
+        if limit and offset + limit < total:
+            output += f"\n\n...（已截断，共 {total} 行，已展示前 {offset + limit} 行。用 grep 定位目标，再用 read offset/limit 精读）"
+        return {"success": True, "output": output, "error": None}
 
     def _write(self, params: dict) -> dict:
-        path = Path(params.get("path", ""))
+        path_str = params.get("path", "")
+        path = Path(path_str)
         if not path.is_absolute():
             path = self.project_dir / path
         contents = params.get("contents", "")
+        if not contents.strip():
+            return {"success": False, "output": "", "error": "contents 为空（可能 LLM 输出被截断或解析失败）"}
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(contents, encoding="utf-8")
-        return {"success": True, "output": f"已写入: {path}", "error": None}
+        try:
+            path.write_text(contents, encoding="utf-8")
+            return {"success": True, "output": f"已写入: {path} ({len(contents)} 字符)", "error": None}
+        except PermissionError as e:
+            # Windows 中文/长路径编码兼容：尝试用 ASCII-safe 文件名重试
+            import sys as _sys_err
+            print(f"[WRITE_FALLBACK] {path_str} → PermissionError, trying ASCII-safe retry", file=_sys_err.stderr)
+            safe_stem = "".join(c for c in path.stem if c.isascii() and c.isalnum() or c in "-_.") or "fallback"
+            safe_path = path.parent / f"{safe_stem}{path.suffix}"
+            safe_path.write_text(contents, encoding="utf-8")
+            print(f"[WRITE_FALLBACK] OK → {safe_path}", file=_sys_err.stderr)
+            return {"success": True, "output": f"已写入: {safe_path} ({len(contents)} 字符，原路径 {path_str} 因 Windows 路径限制已转义)", "error": None}
 
     def _shell(self, params: dict) -> dict:
         command = params.get("command", "")
         cwd = params.get("working_directory")
-        if cwd:
+        if not cwd:
+            cwd = str(self.project_dir)
+        else:
             cwd = str(Path(cwd))
         timeout = params.get("block_until_ms", 30000) / 1000.0
+        import os
         try:
-            result = subprocess.run(
+            proc = subprocess.Popen(
                 command,
                 shell=True,
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 cwd=cwd,
-                timeout=timeout,
+                env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"},
             )
-            output = result.stdout
-            if result.stderr:
-                output += "\n[stderr]\n" + result.stderr
+            try:
+                stdout, stderr = proc.communicate(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                stdout, stderr = proc.communicate()
+                return {"success": False, "output": "", "error": f"超时 ({timeout}s)"}
+            output = stdout.decode("utf-8", errors="replace")
+            if stderr:
+                output += "\n[stderr]\n" + stderr.decode("utf-8", errors="replace")
             return {
-                "success": result.returncode == 0,
+                "success": proc.returncode == 0,
                 "output": output.strip(),
-                "exit_code": result.returncode,
-                "error": None if result.returncode == 0 else f"exit_code={result.returncode}",
+                "exit_code": proc.returncode,
+                "error": None if proc.returncode == 0 else f"exit_code={proc.returncode}",
             }
-        except subprocess.TimeoutExpired:
-            return {"success": False, "output": "", "error": f"超时 ({timeout}s)"}
+        except FileNotFoundError:
+            return {"success": False, "output": "", "error": "shell 不可用"}
 
     def _grep(self, params: dict) -> dict:
         pattern = params.get("pattern", "")
         path = params.get("path")
         if not path:
             path = str(self.project_dir)
+        # 相对路径锚定到 project_dir
+        path_obj = Path(path)
+        if not path_obj.is_absolute():
+            path = str(self.project_dir / path_obj)
+        max_count = params.get("limit", 20)
+        import os
         try:
-            result = subprocess.run(
-                ["rg", "--no-heading", "-n", pattern, path],
-                capture_output=True,
-                text=True,
-                timeout=30,
+            proc = subprocess.Popen(
+                ["rg", "--no-heading", "-n", "-m", str(max_count), pattern, path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                cwd=str(self.project_dir),
+                env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"},
             )
-            return {"success": True, "output": result.stdout.strip(), "error": None}
+            stdout, stderr = proc.communicate(timeout=30)
+            output = stdout.decode("utf-8", errors="replace").strip()
+            if not output:
+                return {"success": True, "output": "(无匹配)", "error": None}
+            line_count = len(output.split("\n"))
+            if line_count >= max_count:
+                output += f"\n\n...（已截断，展示了前 {max_count} 条。缩小搜索范围或增加 limit 参数查看全部）"
+            return {"success": True, "output": output, "error": None}
         except FileNotFoundError:
             return {"success": False, "output": "", "error": "rg 未安装"}
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.communicate()
+            return {"success": False, "output": "", "error": "grep 超时"}
         except Exception as e:
             return {"success": False, "output": "", "error": str(e)}
 
     def _glob(self, params: dict) -> dict:
         pattern = params.get("glob_pattern", "**/*")
-        target = Path(params.get("target_directory", str(self.project_dir)))
+        target_dir = params.get("target_directory")
+        if target_dir is not None:
+            target = Path(target_dir)
+        else:
+            target = self.project_dir
+        # 相对路径锚定到 project_dir
+        if not target.is_absolute():
+            target = self.project_dir / target
         matches = sorted(str(p) for p in target.glob(pattern))
         return {"success": True, "output": "\n".join(matches), "error": None}
 
@@ -383,18 +431,29 @@ class CursorHookBus:
             if not cmd:
                 continue
             try:
-                proc = subprocess.run(
+                proc = subprocess.Popen(
                     cmd,
                     shell=True,
-                    capture_output=True,
-                    text=True,
-                    timeout=120,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                 )
+                try:
+                    stdout, stderr = proc.communicate(timeout=120)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+                    stdout, stderr = proc.communicate()
+                    results.append({
+                        "command": cmd,
+                        "exit_code": -1,
+                        "stdout": "",
+                        "stderr": "timeout",
+                    })
+                    continue
                 results.append({
                     "command": cmd,
                     "exit_code": proc.returncode,
-                    "stdout": proc.stdout.strip(),
-                    "stderr": proc.stderr.strip(),
+                    "stdout": stdout.decode("utf-8", errors="replace").strip(),
+                    "stderr": stderr.decode("utf-8", errors="replace").strip(),
                 })
             except subprocess.TimeoutExpired:
                 results.append({
@@ -605,23 +664,34 @@ class CursorAdapter:
         self,
         project_dir: str | None = None,
         *,
-        model_name: str = "deepseek-v4-pro",
+        provider_id: str = "deepseek",
+        model_name: str = "",
         api_key: str | None = None,
+        api_url: str | None = None,
     ):
         if project_dir is None:
             project_dir = Path.cwd()
         self.project_dir = Path(project_dir)
 
-        # 6 接口实例
-        self.rule_engine = CursorRuleEngine(str(self.project_dir / ".cursor" / "rules"))
+        # 规则/技能加载：优先 core/（公开仓库），fallback .cursor/（Cursor 平台）
+        _core_rules = str(self.project_dir / "core" / "rules")
+        _cursor_rules = str(self.project_dir / ".cursor" / "rules")
+        _rules_dir = _core_rules if Path(_core_rules).exists() else _cursor_rules
+        _core_skills = str(self.project_dir / "core" / "skills")
+        _cursor_skills = str(self.project_dir / ".cursor" / "skills")
+        _skills_dir = _core_skills if Path(_core_skills).exists() else _cursor_skills
+
+        self.rule_engine = CursorRuleEngine(_rules_dir)
         self.tool_provider = CursorToolProvider(str(self.project_dir))
         self.hook_bus = CursorHookBus(str(self.project_dir / ".cursor" / "hooks.json"))
-        self.skill_loader = CursorSkillLoader(str(self.project_dir / ".cursor" / "skills"))
+        self.skill_loader = CursorSkillLoader(_skills_dir)
         self.user_interaction = CursorUserInteraction()
 
         # IModelProvider: 延迟创建（避免无关场景的 API Key 校验）
+        self._provider_id = provider_id
         self._model_name = model_name
         self._api_key = api_key
+        self._api_url = api_url
         self._model_provider = None
 
     @property
@@ -630,13 +700,20 @@ class CursorAdapter:
         if self._model_provider is None:
             from core.model_providers import create_provider
 
-            self._model_provider = create_provider(self._model_name, api_key=self._api_key)
+            self._model_provider = create_provider(
+                self._provider_id,
+                model_name=self._model_name,
+                api_key=self._api_key,
+                api_url=self._api_url,
+            )
         return self._model_provider
 
-    def switch_model(self, model_name: str, *, api_key: str | None = None) -> None:
+    def switch_model(self, provider_id: str, *, model_name: str = "", api_key: str | None = None, api_url: str | None = None) -> None:
         """运行时切换模型。"""
+        self._provider_id = provider_id
         self._model_name = model_name
         self._api_key = api_key
+        self._api_url = api_url
         self._model_provider = None  # 下次访问时重建
 
     def summary(self) -> dict:
@@ -647,7 +724,7 @@ class CursorAdapter:
         return {
             "platform": "Cursor",
             "project_dir": str(self.project_dir),
-            "model": self._model_name,
+            "model": f"{self._provider_id}/{self._model_name or 'default'}",
             "rules_loaded": rules_count,
             "skills_discovered": skills_count,
             "hook_events": hooks_events,

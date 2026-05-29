@@ -1,0 +1,258 @@
+{
+  "meta": {
+    "description": "系统实体总索引——每个实体的权威定义位置、关键字段与快速检索信息。按存储位置分组，方便 Agent 定位。",
+    "principle": "LLM 检索优先——每条记录自包含最小检索信息，详细约束见 entities/ 目录下的独立说明书",
+    "updated": "2026-05-26"
+  },
+  "entities": [
+    {
+      "id": "Plan",
+      "data_file": "core/data/Pending-Plan-Tracker.json",
+      "arrays": ["vision", "pending", "archive"],
+      "key_fields": ["id", "topic", "status", "parent_task", "planned_date"],
+      "state_machine": "pending→in_progress→completed | *→cancelled | subtask: pending→done",
+      "parent_ref": "self (N:1)",
+      "refs_to": ["TaskType"],
+      "file": "core/knowledge/entities/plan.json"
+    },
+    {
+      "id": "TaskType",
+      "data_file": "core/data/Task-Type-Registry.json",
+      "key_fields": ["type_id", "typical_L", "expected_C", "typical_dimensions"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["Skill", "Protocol"],
+      "file": "core/knowledge/entities/task-type.json"
+    },
+    {
+      "id": "Protocol",
+      "data_file": "Knowledge-Brain/protocols/cards/CP-*.md",
+      "activation_file": "Knowledge-Brain/protocols/activation.json",
+      "key_fields": ["status", "cp_type", "concept_anchor", "validated_count"],
+      "state_machine": "candidate→validated→active",
+      "parent_ref": null,
+      "refs_to": ["ConceptTree", "TaskType"],
+      "file": "core/knowledge/entities/protocol.json"
+    },
+    {
+      "id": "P008Dimensions",
+      "data_file": "guard/src/p008/dimensions.py",
+      "key_fields": ["S", "Rev", "A", "C", "E", "Auth", "V", "K"],
+      "note": "V 维度已废弃（2026-05-22）；C 维度从 L 计算移除（2026-05-23），保留为偏差检测",
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["TaskType"],
+      "file": "core/knowledge/entities/p008-dimensions.json"
+    },
+    {
+      "id": "P008Result",
+      "data_file": "guard/src/p008/p008_result.py",
+      "key_fields": ["S", "Rev", "A", "C", "E", "Auth", "V", "K", "T", "L_R", "L_C", "level"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["P008Dimensions", "FSMState", "PremortemResult", "ToulminResult"],
+      "inline_defined": true
+    },
+    {
+      "id": "FSMState",
+      "data_file": "guard/src/p008/p008_result.py (dataclass)",
+      "key_fields": ["task_type", "current_effective_L", "consecutive_successes", "probation_remaining"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["TaskType"],
+      "inline_defined": true
+    },
+    {
+      "id": "Decision",
+      "data_file": "core/data/Decision-Log.jsonl",
+      "key_fields": ["task_id", "dimensions", "L_final", "kb_protocols_activated"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["Plan", "Protocol"],
+      "inline_defined": true
+    },
+    {
+      "id": "MethodReliability",
+      "data_file": "core/data/method_reliability_registry.json",
+      "key_fields": ["task_type", "method", "hostname", "state"],
+      "state_machine": "正常→降权→禁用 (可恢复)",
+      "parent_ref": null,
+      "refs_to": ["TaskType"],
+      "inline_defined": true
+    },
+    {
+      "id": "DeviceExecutionRule",
+      "data_file": "core/data/device_execution_rules.json",
+      "key_fields": ["id", "os", "shell", "condition", "action"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "WorkflowDefinition",
+      "data_file": "core/data/workflow_definitions.json",
+      "key_fields": ["name", "source_file", "trigger_condition", "steps"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["Rule", "WorkflowStep"],
+      "inline_defined": true
+    },
+    {
+      "id": "WorkflowStep",
+      "data_file": "core/knowledge/entities/workflow-step.json",
+      "key_fields": ["id", "executor", "required", "order_in_pipeline", "pipeline"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["WorkflowDefinition", "Checkpoint"],
+      "file": "core/knowledge/entities/workflow-step.json"
+    },
+    {
+      "id": "Checkpoint",
+      "data_file": "core/data/checkpoints/{task_id}.json",
+      "key_fields": ["task_id", "pipeline", "status", "phases", "completed_at"],
+      "state_machine": "in_progress→done | in_progress→failed",
+      "parent_ref": null,
+      "refs_to": ["WorkflowStep", "Plan"],
+      "inline_defined": true
+    },
+    {
+      "id": "PipelineRunner",
+      "data_file": "core/pipeline_runner.py",
+      "key_fields": ["run_pipeline", "load_checkpoint", "save_checkpoint", "execute_step"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["WorkflowStep", "Checkpoint", "WorkflowDefinition", "IModelProvider"],
+      "inline_defined": true
+    },
+    {
+      "id": "TransitionPlan",
+      "data_file": "core/data/Transition-Plan-Registry.json",
+      "key_fields": ["id", "current", "threshold", "upgrade"],
+      "state_machine": "活跃→archive (closed)",
+      "parent_ref": null,
+      "refs_to": ["Plan (Vision)"],
+      "inline_defined": true
+    },
+    {
+      "id": "ActiveTask",
+      "data_file": "core/data/Active-Task-Tracker.json",
+      "key_fields": ["id", "type", "status", "parent", "children"],
+      "state_machine": "待处理→进行中→已完成/取消",
+      "parent_ref": "self (树形层级)",
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "BehaviorFit",
+      "data_file": "core/data/Behavior-Fit-Log.jsonl",
+      "key_fields": ["dimension", "trigger", "agent_action", "user_feedback", "outcome"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "ActivationLog",
+      "data_file": "Knowledge-Brain/activation-log.jsonl",
+      "key_fields": ["protocol_id", "activated_count", "effective_count"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["Protocol"],
+      "inline_defined": true
+    },
+    {
+      "id": "ExperienceIndex",
+      "data_file": "core/data/experience-index.jsonl",
+      "key_fields": [],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["Plan"],
+      "inline_defined": true
+    },
+    {
+      "id": "RoundBehaviorHot",
+      "data_file": "core/data/Round-Behavior-Hot.jsonl",
+      "key_fields": [],
+      "note": "热快照——逐轮即时行为记录",
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "RoundBehaviorWarm",
+      "data_file": "core/data/Round-Behavior-Warm.jsonl",
+      "key_fields": [],
+      "note": "温快照——多轮聚合后的行为摘要",
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "UserKnowledgeRegistry",
+      "data_file": "core/data/User-Knowledge-Registry.jsonl",
+      "key_fields": [],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "Concept",
+      "data_file": "core/knowledge/concept-tree.json",
+      "key_fields": ["display_name", "protocol", "summary"],
+      "state_machine": null,
+      "parent_ref": "概念树层级 (parent/children)",
+      "refs_to": ["Protocol"],
+      "inline_defined": true
+    },
+    {
+      "id": "Rule",
+      "data_file": ".cursor/rules/*.mdc",
+      "key_fields": ["guard_replaceable", "alwaysApply", "层级归属(gateway/mod/flow)"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "ProviderConfig",
+      "data_file": "core/model_registry.py (ProviderConfig dataclass)",
+      "key_fields": ["provider_id", "api_url", "env_key", "default_model", "max_context_tokens"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "ChangeImpactChecklist",
+      "data_file": "core/data/change_impact_checklist.json",
+      "key_fields": ["search_scopes"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "AdapterInterface",
+      "data_file": "core/adapter_interfaces.py",
+      "key_fields": ["IModelProvider", "IRuleEngine", "IToolProvider", "IHookBus", "ISkillLoader", "IUserInteraction"],
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": [],
+      "inline_defined": true
+    },
+    {
+      "id": "Decomposition",
+      "data_file": "core/data/Decomposition-Log.jsonl",
+      "key_fields": [],
+      "note": "TEP 任务拆解日志",
+      "state_machine": null,
+      "parent_ref": null,
+      "refs_to": ["Plan"],
+      "inline_defined": true
+    }
+  ]
+}

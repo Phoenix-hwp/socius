@@ -178,7 +178,46 @@ class KBValidator:
 
         return result
 
-    def validate_multiple(
+    def register_knowledge_brain_learn_checklist(self) -> None:
+        """注册知识脑学习任务的输出检查清单（4 个输出端）。
+
+        四个输出端定义自 core/knowledge/framework.md：
+            - 概念锚点：被消化概念的核心定义 + 与其他概念的关联
+            - 框架对照：与已有框架/协议的异同对比
+            - 方法边界：适用场景、不适用场景、常见误用
+            - 行动清单：可立即执行的 2-5 条行动建议
+
+        每个输出端通过 verifiable_field 对应 digest-report 中的 section。
+        pattern 用宽松匹配——只要 section 非空即通过（不判断质量）。
+        """
+        self._checklists["knowledge_brain_learn"] = [
+            {
+                "step_id": "1",
+                "description": "概念锚点：核心定义 + 关联概念",
+                "verifiable_field": "concept_anchor",
+                "verifiable_pattern": r"\S{20,}",  # 至少 20 个非空字符
+            },
+            {
+                "step_id": "2",
+                "description": "框架对照：与已有框架的异同对比",
+                "verifiable_field": "framework_comparison",
+                "verifiable_pattern": r"\S{10,}",
+            },
+            {
+                "step_id": "3",
+                "description": "方法边界：适用/不适用/误用说明",
+                "verifiable_field": "method_boundaries",
+                "verifiable_pattern": r"\S{10,}",
+            },
+            {
+                "step_id": "4",
+                "description": "行动清单：2-5 条可执行行动项",
+                "verifiable_field": "action_checklist",
+                "verifiable_pattern": r"\S{10,}",
+            },
+        ]
+
+    def validate_framework_adherence(
         self,
         protocol_ids: list[str],
         execution_output: dict,
@@ -209,3 +248,36 @@ class KBValidator:
             report.overall_adherence = 0.0
 
         return report
+
+    # ── 知识脑消化报告专项校验 ──
+
+    def validate_digest_report(self, digest_text: str) -> ProtocolValidationResult:
+        """解析 digest-report.md，校验是否覆盖四个输出端。
+
+        从 markdown 文本中提取 ## 标题段落，映射到四个输出端字段，
+        然后走标准 validate() 流程。
+        """
+        import re
+
+        # 注册 checklist（幂等）
+        if "knowledge_brain_learn" not in self._checklists:
+            self.register_knowledge_brain_learn_checklist()
+
+        # 解析 markdown → 四个字段
+        sections: dict[str, str] = {}
+        for m in re.finditer(r"##\s+(.+?)\n([\s\S]*?)(?=\n##|\Z)", digest_text):
+            title = m.group(1).strip()
+            body = m.group(2).strip()
+
+            # 模糊匹配：标题含关键词 → 对应输出端字段
+            tl = title.lower()
+            if "概念" in tl or "锚点" in tl or "concept" in tl:
+                sections["concept_anchor"] = body
+            elif "框架" in tl or "对照" in tl or "framework" in tl or "comparison" in tl:
+                sections["framework_comparison"] = body
+            elif "边界" in tl or "适用" in tl or "boundary" in tl:
+                sections["method_boundaries"] = body
+            elif "行动" in tl or "清单" in tl or "checklist" in tl or "action" in tl:
+                sections["action_checklist"] = body
+
+        return self.validate("knowledge_brain_learn", sections)

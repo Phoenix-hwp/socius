@@ -1,0 +1,94 @@
+---
+description: Notion「增」操作：创建页面/数据库行的具体步骤（6步标准流程）
+Lifecycle: 长期
+Created: 2026-05-12
+alwaysApply: false
+glossary:
+  layer: 3-工作流执行层
+  module: Notion
+  operation: create
+  depends: [mod-notion-precondition, mod-notion-crud-framework]
+guard_replaceable: false
+---
+
+# Notion 创建页面工作
+
+## 适用范围
+
+凡会Notion **写入或新* 的操作均适用：插件（MCP）、`run_notion_workflow.py` / `do_create_page`、其他脚本、REST **创建页面或数据库*
+
+**统一骨架**：网络（阶段A）→ 目录（阶段B）→ **本工作流（阶段C-增）**。全流程`mod-notion-crud-framework.mdc`
+
+只读（查询、fetch、不涉及选定目录写库dry-run）仍须遵守阶段A的网络确认；本工作流侧重 **新建落库前的交互与确*
+
+---
+
+## 前置要求
+
+- 已完**阶段 A**（网络确**`Y`**）`mod-notion-precondition.mdc`
+- 已完**阶段 B**（目录落parent 已选定）`flow-notion-select-parent.mdc`
+
+---
+
+## 步骤（固定六步）
+
+**原则**：每一Agent **只推进一*，每步只向用户索**当前步所需的一个答*。在未收**6 * 的执行许可前*不得**调用写入 API
+
+| 步骤 | 名称 | Agent 行为 | 用户典型回复 |
+|:---:|:---|:---|:---|
+| **1** | **标题策略** | 仅询问新建标题如何处| AskQuestion `[手动输入] [自动生成]` |
+| **2** | **标题落地** | 若手动：请用**只发一行标*br>若自动：先收集正文来源，Agent **拟定标题并展*，用户确认或改为手动 | 一行标题；或对拟题「确/ 改成…|
+| **3** | **正文收集** | 收集正文来源（Markdown 路径、用户口述、检索摘要等| （素材来源确认）|
+| **4** | **正文预览** | 展示将写入的正文 **完整预览**（表列表可保Markdown 形态）；说明数据来源*在收到确认前禁止写入** | 修改意见；或 AskQuestion `[确认写入] [修改预览]` |
+| **5** | **执行与回* | **自动通道选择**br>1. 判定内容长度（字符数 > 长文阈`chars` 或预blocks > 长文阈`blocks`）→ **长文**<br>2. **长文**：调upsert 脚本（默`notion_upsert_workflow.py`，启用查+ 断点续传保护br>3. **短文**：优MCP `notion-create-pages`，失败时脚本兜底<br>4. 写入成功后回**页面链接**、块数、是否启用续传保护等 | （步已授权）|
+| **6** | **清理** | 删除本地临时 `.md`（若有）；长文模式完成续传后状态文件自动清| - |
+
+**固定口令**：步使用 **`AskQuestion`** 工具弹出 `[确认写入] [修改预览]` 选项（替代旧版文本口令「确认写入」），用户点`[确认写入]` 后方可进入步。`[修改预览]` 表示用户有修改意见，停留在步
+
+---
+
+## 对话内交互形态（强制
+
+1. **禁止**把多步叠成一段「清+ `Y + + notion.dir…` 拼接示例」当作默认引
+2. **目录**：用**只回复编*；Agent **内部**映射 `url`/`value`*不得**要求用户抄写 `notion.dir.*` 长串（用户主动粘贴除外）
+3. **可选本机菜*：与对话步骤语义对齐*非默*，不替代对话内六步）
+   - CMD 逐步向导：`.cursor/mcp/notion_write_menu.cmd` `python notion_write_menu.py`
+   - GUI 面板（脚本兜底）：`.cursor/tools/notion_gui_menu.ps1`
+
+---
+
+## 目录与标题（摘要
+
+- 目录：数据文`notion_cascader_directory_choices.json`；缺失或过期时提示刷`refresh_notion_directory_choices.cmd`（刷新动作本身遵守网络确认）。详`flow-notion-select-parent.mdc`
+- 标题：须在步选定 **1 手动** **2 自动**；自动须在落库前展示拟题
+- 禁止：未确认目录即写入；未确认标题策略即自拟标题落库；未收到 AskQuestion `[确认写入]`（或等价且无歧义同意）即调用 API
+
+---
+
+## 异常处理
+
+| 异常场景 | 处理方式 |
+|:---|:---|
+| 用户未发确认口令 | 停留在预览阶段，询问修改意见 |
+| API 写入失败（短MCP）| 保留预览，提示重试或转为本地保存 |
+| 长文写入中断 | 自动保存状态到 `Daily-Backups/.notion_state/`，提示用户重跑即可续|
+| 重复创建（同名已存在）| upsert 脚本自动识别 返回 `skipped` 或按 `on_conflict` 策略处理 |
+| 标题策略但无法自动生| 回退到策，请用户提供标题 |
+
+---
+
+## Agent 自检（写入前
+
+- [ ] 本条对话首次写入是否已取**`Y`**（`mod-notion-precondition.mdc`）？
+- [ ] 是否已完**阶段B 目录（编号）**（`mod-notion-crud-framework.mdc`）？
+- [ ] 是否已完**步骤1 标题策略与标题落*
+- [ ] 是否已展**步骤4 正文预览**并通过 AskQuestion `[确认写入]`（或无二义的同意）？
+- [ ] 是否避免默认父级、避免跳过预览？
+
+---
+
+## 用户一句话合并授权（可· 非默认）
+
+仅当用户 **主动**一次说清且无歧义时可跳过逐步追问，且须包含：**`Y`***目录（编号或 URL/ID**标题策略与标题或自动生成说明***正文要点或路*、以及明确执行意图
+
+**禁止**把本节当作默UX*禁止**用代码式拼接模板教学

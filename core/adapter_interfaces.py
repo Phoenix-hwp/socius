@@ -56,6 +56,26 @@ class IModelProvider(Protocol):
         """
         ...
 
+    def complete_messages(
+        self, system_prompt: str, /, *, messages: list[dict]
+    ) -> str:
+        """多轮消息数组推理——利用 API 提供商的 prompt caching 降低 token 消耗。
+
+        Args:
+            system_prompt: 系统提示词
+            messages: 已完成的多轮对话消息数组
+                ``[{role: "user"|"assistant"|"tool", content: str}]``
+
+        Returns:
+            模型生成的完整文本（非流式）
+
+        与 ``complete()`` 的关系：
+            - ``complete()`` 为单轮简单调用设计（prompt 拼成 1 条 user 消息）
+            - ``complete_messages()`` 为 Agent 循环设计——逐轮累加消息，
+              让 DeepSeek/Kimi 等支持 prompt caching 的 API 自动缓存前缀
+        """
+        ...
+
     def complete_json(self, prompt: str, /, *, schema: dict | None = None) -> dict:
         """单次推理，返回结构化 JSON。
 
