@@ -67,8 +67,8 @@ def verify_rule_loading():
     always_apply = [r for r in rules if r.get("frontmatter", {}).get("alwaysApply")]
     always_apply_names = [r["filename"] for r in always_apply]
 
-    # 手动清单 — 8 个 alwaysApply: true 的规则（来自 grep 验证）
-    expected_always = {
+    # Cursor 本地环境需要 8 条（含仅本地生效的），CI 公开仓库仅 5 条
+    expected_always_full = {
         "gateway-command-router.mdc",
         "pre-change-impact-enumeration.mdc",
         "external-dependency-boundary.mdc",
@@ -78,6 +78,15 @@ def verify_rule_loading():
         "script-coding-constraints.mdc",
         "git-cross-device-and-secrets.mdc",
     }
+    # CI 环境（core/rules/）：部分规则 alwaysApply 在公开仓库设为 false
+    expected_always = expected_always_full
+    if rules_dir != (REPO_ROOT / ".cursor" / "rules"):
+        # 公开仓库中以下 3 条是 alwaysApply: false
+        expected_always = expected_always_full - {
+            "external-dependency-boundary.mdc",
+            "pre-change-impact-enumeration.mdc",
+            "pre-edit-script-change-brief.mdc",
+        }
 
     missing = expected_always - set(always_apply_names)
     extra = set(always_apply_names) - expected_always
@@ -415,7 +424,7 @@ def verify_adapter_entry():
 
         # switch_model 测试
         adapter.switch_model("kimi-k2.6")
-        assert adapter._model_name == "kimi-k2.6"
+        assert adapter._provider_id == "kimi-k2.6"
         assert adapter._model_provider is None  # 惰性创建，切换后应重置
         adapter.switch_model("deepseek-v4-pro")
         results.append("✅ switch_model() 函数正常")
