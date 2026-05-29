@@ -9,7 +9,6 @@
 
 import argparse
 import json
-from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]

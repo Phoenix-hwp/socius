@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # 惰性导入：避免框架层强依赖 aiohttp
 # ──────────────────────────────────────────────
 try:
-    import aiohttp
+    import aiohttp  # noqa: F401
     _HAS_ASYNC = True
 except ImportError:
     _HAS_ASYNC = False
@@ -42,9 +42,9 @@ def _check_async() -> None:
 # ──────────────────────────────────────────────
 # 同步后备：基于 urllib 的同步 Provider
 # ──────────────────────────────────────────────
-import urllib.request
-import urllib.error
-import ssl
+import urllib.request  # noqa: E402
+import urllib.error  # noqa: E402
+import ssl  # noqa: E402
 
 _SSL_CONTEXT = ssl.create_default_context()
 

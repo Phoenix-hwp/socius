@@ -184,7 +184,7 @@ def _print_final_summary(checkpoint: dict) -> None:
         return
 
     # ── 再降级：没有可展示的总结 ──
-    print(f"\n  ℹ 终末总结：本次消化未生成跨域合成报告或读后总结，可能因 domain 分类数据不足。")
+    print("\n  ℹ 终末总结：本次消化未生成跨域合成报告或读后总结，可能因 domain 分类数据不足。")
 
 
 def _eval_skip_condition(condition: str, checkpoint: dict, step: dict) -> bool:
@@ -440,7 +440,6 @@ def _parse_step_output(raw_output: str, step: dict) -> dict:
     yaml_pattern = re.compile(r'-\s+(\w+)\s*:\s*(.+?)(?=\n-\s+\w+\s*:|\n\n|\Z)', re.DOTALL)
     matches = yaml_pattern.findall(raw)
     if matches:
-        import ast
         parsed_items = []
         for key, val in matches:
             val = val.strip().rstrip(",")
@@ -787,7 +786,7 @@ def _handler_D_write_digest_log(step: dict, checkpoint: dict, project_dir: Path)
     # ── 收集各步骤数据 ──
     p2 = phases.get("P2", {}).get("phase_data", {})
     step_r_raw = phases.get("Step_R", {}).get("phase_data", {})
-    p3_raw = phases.get("P3", {}).get("phase_data", {})
+    p3_raw = phases.get("P3", {}).get("phase_data", {})  # noqa: F841
 
     # ── 预览将要写入的文件 ──
     protocols_dir = project_dir / "Knowledge-Brain" / "protocols"
@@ -810,17 +809,17 @@ def _handler_D_write_digest_log(step: dict, checkpoint: dict, project_dir: Path)
             print(f"       · {pp.name}  ({anchor}){tag}")
         print()
         try:
-            keep = input(f"    是否写入？直接回车写入，输入「丢弃」跳过: ").strip()
+            keep = input("    是否写入？直接回车写入，输入「丢弃」跳过: ").strip()
         except (EOFError, KeyboardInterrupt):
             keep = ""
         if keep in ("丢弃", "discard", "删除", "delete"):
-            print(f"    ⏭ 已跳过写入，管线分析结果保留在 checkpoint 中")
+            print("    ⏭ 已跳过写入，管线分析结果保留在 checkpoint 中")
             return {
                 "success": True,
                 "output": f"用户选择不写入，跳过 {len(preview_files)} 份协议",
                 "protocols_written": [],
             }
-        print(f"    ✅ 确认写入")
+        print("    ✅ 确认写入")
 
     # ── 实际写入 ──
     for (proto_path, anchor), (idx, unit) in zip(

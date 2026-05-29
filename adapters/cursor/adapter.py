@@ -22,9 +22,7 @@ from __future__ import annotations
 
 import json as _json
 import logging
-import re
 import subprocess
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -271,7 +269,7 @@ class CursorToolProvider:
         try:
             path.write_text(contents, encoding="utf-8")
             return {"success": True, "output": f"已写入: {path} ({len(contents)} 字符)", "error": None}
-        except PermissionError as e:
+        except PermissionError:
             # Windows 中文/长路径编码兼容：尝试用 ASCII-safe 文件名重试
             import sys as _sys_err
             print(f"[WRITE_FALLBACK] {path_str} → PermissionError, trying ASCII-safe retry", file=_sys_err.stderr)

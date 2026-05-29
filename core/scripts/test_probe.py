@@ -84,7 +84,7 @@ def collect_light_map():
         "total_flags": total,
         "health_pct": round(health, 1),
         "tally": tally,
-        "lamps": [{"flag": t, "label": l, "count": c} for t, l, c in lamp_order],
+        "lamps": [{"flag": t, "label": line, "count": c} for t, line, c in lamp_order],
     }
     with open(MAP_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
@@ -194,7 +194,7 @@ DONE 时附加 FLAG: DONE 并说明产出物路径。
         print(f"\n{'─'*50}\n[轮 {rnd}/{max_rounds}]\n{response[:500]}")
 
         # 提取 FLAG 行
-        flag_lines = [l.strip() for l in response.split("\n") if l.strip().startswith("FLAG:")]
+        flag_lines = [line.strip() for line in response.split("\n") if line.strip().startswith("FLAG:")]
         for fl in flag_lines:
             parts = fl.replace("FLAG:", "").strip().split(maxsplit=1)
             flag_type = parts[0] if parts else "UNKNOWN"

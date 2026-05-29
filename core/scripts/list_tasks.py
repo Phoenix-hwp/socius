@@ -9,7 +9,6 @@
 
 import argparse
 import json
-import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
 

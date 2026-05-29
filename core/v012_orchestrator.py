@@ -118,7 +118,7 @@ def build_phase_b_prompt(slots: list[dict], task_id: str, briefs_content: str) -
         lines.append(f"  {i}. {s['label_cn']}")
 
     if auto_fill:
-        lines.append(f"\n已自动填充（无需询问）：")
+        lines.append("\n已自动填充（无需询问）：")
         for s in auto_fill:
             lines.append(f"  - {s['label_cn']}")
 
@@ -225,8 +225,6 @@ def _build_subtasks_from_briefs(task_id: str, briefs_content: str, min_count: in
     else:
         output_path = f"Simulation-Sandbox/outputs/{task_id}/"
 
-    today = _date.today().isoformat()
-    # 简单排期：子任务 1 今天，后续每天一个
     def _day_offset(offset: int) -> str:
         return (_date.today() + __import__("datetime").timedelta(days=offset)).isoformat()
 
@@ -392,16 +390,16 @@ def v012_orchestrate(
             briefs_path.write_text(briefs_content, encoding="utf-8")
     else:
         if debug:
-            print(f"[V012 Orchestrator] 阶段 B: 无需确认，跳过")
+            print("[V012 Orchestrator] 阶段 B: 无需确认，跳过")
 
     # ── 阶段 C：拆解（LLM 输出拆解方案）──
-    print(f"    ⚙ 正在分析任务结构并拆解为子任务...")
+    print("    ⚙ 正在分析任务结构并拆解为子任务...")
     # 技能缺口检测：检查 Task-Type-Registry 中该 task_type 的 uncovered 条目
     _uncovered = _get_uncovered_skills(registry_path, task_type)
     _uncovered_hint = format_uncovered_skills_prompt(task_type, _uncovered) if _uncovered else ""
     if _uncovered:
         print(f"    ⚠ 检测到 {len(_uncovered)} 个缺失技能: {_uncovered}")
-        print(f"    💡 建议先安装缺失技能——回复「安装技能」开始安装流程")
+        print("    💡 建议先安装缺失技能——回复「安装技能」开始安装流程")
     decompose_prompt = build_decompose_prompt(task_id, briefs_content, slots) + _uncovered_hint
     decompose_result = adapter.model_provider.complete(
         decompose_prompt,
@@ -460,9 +458,9 @@ def v012_orchestrate(
               f"{len(llm_subtask_descs) if llm_subtask_descs else 0} valid): {llm_subtask_descs}")
     subs = _build_subtasks_from_briefs(task_id, briefs_content, N, llm_descriptions=llm_subtask_descs)
     if not subs:
-        # 兜底：基于 task_id 和 min_subtasks 构造最简子任务
+        # 兜底：基于 N 构造最简子任务
         subs = []
-        for i in range(1, min_subtasks + 1):
+        for i in range(1, N + 1):
             subs.append({
                 "id": f"{task_id}-PT{i}",
                 "description": f"{task_id} 子任务 {i}",
@@ -480,9 +478,9 @@ def v012_orchestrate(
 
     def _show_panel(subtasks: list[dict], show_adjust_hint: bool = True) -> None:
         print(f"\n    当前任务预计分为 {len(subtasks)} 个阶段进行：\n")
-        print(f"    ┌──────┬──────────────────────────────────────┬────────┬──────────────┐")
-        print(f"    │  #   │ 阶段                                  │ 预估   │ 计划日期      │")
-        print(f"    ├──────┼──────────────────────────────────────┼────────┼──────────────┤")
+        print("    ┌──────┬──────────────────────────────────────┬────────┬──────────────┐")
+        print("    │  #   │ 阶段                                  │ 预估   │ 计划日期      │")
+        print("    ├──────┼──────────────────────────────────────┼────────┼──────────────┤")
         for i, s in enumerate(subtasks, 1):
             desc_short = s["description"][:36]
             mins = s.get("estimated_minutes", "?")
@@ -496,12 +494,12 @@ def v012_orchestrate(
             print(f"    │  {i:<3} │ {desc_short:<36} │ {str(mins)+'min':<6} │ {date_str:<12} │")
             if dep_note:
                 print(f"    │      │ {'↳ ' + dep_note.strip():<49} │        │              │")
-        print(f"    └──────┴──────────────────────────────────────┴────────┴──────────────┘")
-        print(f"\n    以上拆解是否合理？")
-        print(f"      1) 写入任务，稍后手动执行")
-        print(f"      2) 写入任务 + 立即开始执行第一阶段")
+        print("    └──────┴──────────────────────────────────────┴────────┴──────────────┘")
+        print("\n    以上拆解是否合理？")
+        print("      1) 写入任务，稍后手动执行")
+        print("      2) 写入任务 + 立即开始执行第一阶段")
         if show_adjust_hint:
-            print(f"      如需调整排期，直接输入调整内容（如「阶段2调整到5月26日」）。")
+            print("      如需调整排期，直接输入调整内容（如「阶段2调整到5月26日」）。")
         print()
 
     _show_panel(subs)
@@ -554,7 +552,7 @@ def v012_orchestrate(
             continue
 
         # ── 未识别 ──
-        print(f"    未识别输入。请回复「确认」/ 1 / 2 / 或「阶段N调整到M月D日」。")
+        print("    未识别输入。请回复「确认」/ 1 / 2 / 或「阶段N调整到M月D日」。")
 
     # ── 日负载检查（确认后、写入前）──
     load_warnings: list[str] = []
@@ -579,7 +577,7 @@ def v012_orchestrate(
         load_warnings = ["⚠ 负载计算不可用，已跳过日负载检查"]
 
     if load_warnings:
-        print(f"\n    📊 日负载提醒：")
+        print("\n    📊 日负载提醒：")
         for w in load_warnings:
             print(f"       {w}")
         print()
